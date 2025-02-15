@@ -64,6 +64,24 @@ public class Placer implements INBTSerializable<CompoundTag> {
         this.formerDirection = formerDirection;
     }
 
+    public Placer randomFormerDirection(){
+        int i = RANDOM_SOURCE.nextIntBetweenInclusive(0, 4);
+        switch (i){
+            case 0:
+                this.formerDirection = FormerDirection.X;
+                break;
+            case 1:
+                this.formerDirection = FormerDirection.NX;
+                break;
+            case 2:
+                this.formerDirection = FormerDirection.Z;
+                break;
+            case 3:
+                this.formerDirection = FormerDirection.NZ;
+        }
+        return this;
+    }
+
     public static synchronized void generateIO(LevelAccessor levelAccessor, BlockPos pos1, BlockPos pos2, Placer placer) throws IOException {
         if(!placer.placerFile.exists()){
             try {
