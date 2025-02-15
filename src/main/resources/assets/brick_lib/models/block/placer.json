@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "brick_lib:block/placer",
+    "particle": "brick_lib:block/placer"
+  },
+  "render_type": "solid"
+}
