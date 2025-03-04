@@ -1,0 +1,75 @@
+{
+  "nightmare_around": {
+    "subtitle": "outland_horizon.subtitle.ambient",
+    "sounds": [
+      "outland_horizon:audio/nightmare/around1",
+      "outland_horizon:audio/nightmare/around2",
+      "outland_horizon:audio/nightmare/around3",
+      "outland_horizon:audio/nightmare/around4",
+      "outland_horizon:audio/nightmare/around5",
+      "outland_horizon:audio/nightmare/around6",
+      "outland_horizon:audio/nightmare/around7",
+      "outland_horizon:audio/nightmare/around8"
+    ]
+  },
+  "flesh_block_breaking": {
+    "subtitle": "subtitles.block.generic.hit",
+    "sounds": [
+      "outland_horizon:audio/nightmare/flesh_block_breaking"
+    ]
+  },
+  "flesh_block_broken": {
+    "subtitle": "subtitles.block.generic.break",
+    "sounds": [
+      "outland_horizon:audio/nightmare/flesh_block_broken"
+    ]
+  },
+  "nightmare_comes": {
+    "subtitle": "subtitles.game.nightmare.comes",
+    "sounds": [
+      "outland_horizon:audio/nightmare/comes"
+    ]
+  },
+  "gun": {
+    "subtitle": "subtitles.item.gun",
+    "sounds": [
+      "outland_horizon:audio/misc/gun/gun"
+    ]
+  },
+  "snipe_gun": {
+    "subtitle": "subtitles.item.gun",
+    "sounds": [
+      "outland_horizon:audio/misc/gun/snipe_gun"
+    ]
+  },
+  "rocket_launcher": {
+    "subtitle": "subtitles.item.gun",
+    "sounds": [
+      "outland_horizon:audio/misc/gun/rocket_launcher"
+    ]
+  },
+  "bomb": {
+    "subtitle": "subtitles.item.gun",
+    "sounds": [
+      "outland_horizon:audio/misc/gun/bomb"
+    ]
+  },
+  "machine_gun": {
+    "subtitle": "subtitles.item.gun",
+    "sounds": [
+      "outland_horizon:audio/misc/gun/machine_gun"
+    ]
+  },
+  "staff_shoot": {
+    "subtitle": "subtitles.item.gun",
+    "sounds": [
+      "outland_horizon:audio/misc/staff/shoot"
+    ]
+  },
+  "ba": {
+    "subtitle": "subtitles.item.gun",
+    "sounds": [
+      "outland_horizon:audio/item/weapon/bababoy"
+    ]
+  }
+}
