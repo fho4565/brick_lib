@@ -121,21 +121,6 @@ public class BrickForgeCommonEvents {
                                 )
                         )
         );
-        event.getDispatcher().register(
-                Commands.literal("placer").requires(stack -> Constants.isInDevelopEnvironment() && stack.hasPermission(2))
-                        .executes(context -> {
-                                    Vec3 position = context.getSource().getPosition();
-                                    BlockPos blockPos = BlockPos.containing(position);
-                                    Placer placer = new Placer();
-                                    placer.placeBlock(Blocks.STONE.defaultBlockState());
-                                    placer.moveAndPlaceBlock(Placer.MoveDirection.FORMER, Blocks.STONE.defaultBlockState());
-                                    placer.moveAndPlaceBlock(Placer.MoveDirection.RIGHT, Blocks.STONE.defaultBlockState());
-                                    placer.place(context.getSource().getLevel(), blockPos);
-
-                                    return 0;
-                                }
-                        )
-        );
     }
 
 
