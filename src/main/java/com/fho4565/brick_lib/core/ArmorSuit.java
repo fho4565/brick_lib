@@ -18,6 +18,7 @@ public class ArmorSuit {
     private final ItemStack helmet, chestplate, leggings, boots;
     private final String id;
     final HashSet<UUID> players = new HashSet<>();
+    private boolean enabled = true;
 
     public ArmorSuit(String id, ItemStack helmet, ItemStack chestplate, ItemStack leggings, ItemStack boots) {
         this.id = id;
@@ -38,6 +39,13 @@ public class ArmorSuit {
                 ItemUtils.itemStackEqualsWithoutDamageValue(item4,boots);
     }
 
+    public boolean enabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
     private boolean contains(Player player) {
         return players.contains(player.getUUID());
@@ -54,6 +62,7 @@ public class ArmorSuit {
     }
 
     public void tick(Player player){
+        if(!enabled) return;
         if (isComplete(player)) {
             if (!contains(player)) {
                 onArmorSuitCompleted(player);

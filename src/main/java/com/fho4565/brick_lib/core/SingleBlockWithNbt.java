@@ -10,22 +10,13 @@ import java.util.Objects;
 
 /**
  * 单个坐标和方块的保存对象，并带有NBT
- */
-public class SingleBlockWithNbt extends SingleBlock{
-    private final CompoundTag nbt;
+ * */
+public record SingleBlockWithNbt(BlockPos blockPos, BlockState blockState, CompoundTag nbt) {
 
-    /**
-     *
-     */
-    public SingleBlockWithNbt(BlockPos blockPos, BlockState blockState, CompoundTag nbt) {
-        super(blockPos, blockState);
-        this.nbt = nbt;
+    public static SingleBlockWithNbt of(BlockPos blockPos, BlockState blockState,CompoundTag nbt) {
+        return new SingleBlockWithNbt(blockPos, blockState,nbt);
     }
 
-    public static SingleBlockWithNbt of(BlockPos blockPos, BlockState blockState, CompoundTag nbt) {
-        return new SingleBlockWithNbt(blockPos, blockState, nbt);
-    }
-    @Override
     public CompoundTag serialize() {
         CompoundTag compoundTag = new CompoundTag();
         long pos = blockPos.asLong();
@@ -49,32 +40,4 @@ public class SingleBlockWithNbt extends SingleBlock{
         }
         return SingleBlockWithNbt.of(BlockPos.of(pos), state, compoundTag.getCompound("nbt"));
     }
-
-    public CompoundTag nbt() {
-        return nbt;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (SingleBlockWithNbt) obj;
-        return Objects.equals(this.blockPos, that.blockPos) &&
-                Objects.equals(this.blockState, that.blockState) &&
-                Objects.equals(this.nbt, that.nbt);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(blockPos, blockState, nbt);
-    }
-
-    @Override
-    public String toString() {
-        return "SingleBlockWithNbt[" +
-                "blockPos=" + blockPos + ", " +
-                "blockState=" + blockState + ", " +
-                "nbt=" + nbt + ']';
-    }
-
 }

@@ -3,15 +3,18 @@ package com.fho4565.brick_lib.client.gui.component;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.ImageWidget;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 /**
  * 可以旋转和切换的图片
  * @author fho4565
  */
-public class BImage extends ImageWidget implements IBrickComponent{
+public class BImage extends AbstractWidget implements IBrickComponent{
     private final ResourceLocation[] textures;
     private float rotateAngle = 0.0f;
     private int index = 0;
@@ -24,7 +27,7 @@ public class BImage extends ImageWidget implements IBrickComponent{
         this(0,0,w,h,textures[0]);
     }
     public BImage(int x, int y, int w, int h, ResourceLocation... textures){
-        super(x,y,w,h,textures[0]);
+        super(x,y,w,h, Component.literal(""));
         this.textures = textures;
     }
 
@@ -144,5 +147,13 @@ public class BImage extends ImageWidget implements IBrickComponent{
         bufferbuilder.vertex(matrix4f, this.getX() + this.getWidth(), this.getY(), 0.0F).uv(maxU, minV).endVertex();
 
         BufferUploader.drawWithShader(bufferbuilder.end());
+    }
+
+    /**
+     * @param pNarrationElementOutput
+     */
+    @Override
+    protected void updateWidgetNarration(NarrationElementOutput pNarrationElementOutput) {
+
     }
 }

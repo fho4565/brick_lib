@@ -6,47 +6,59 @@ import net.minecraft.world.entity.player.Player;
 
 import java.util.Optional;
 
+/**
+ * <p>操作玩家变量的工具类</p>
+ * <p>玩家变量会自动在双端之间同步，客户端获取变量请调用"client"开头的方法</p>
+ *
+ * @author fho4565
+ */
 public class PlayerVariables {
-    public static Optional<Integer> intValue(Player player, String key){
+    public static Optional<Integer> intValue(Player player, String key) {
         return Optional.ofNullable(getBrickAttribute(player).integers.get(key));
     }
-    public static void setIntValue(Player player,String key,int value){
-        getBrickAttribute(player).integers.put(key,value);
+
+    public static void setIntValue(Player player, String key, int value) {
+        getBrickAttribute(player).integers.put(key, value);
         serverSyncAttribute(player);
     }
-    public static Optional<Double> doubleValue(Player player, String key){
+
+    public static Optional<Double> doubleValue(Player player, String key) {
         return Optional.ofNullable(getBrickAttribute(player).doubles.get(key));
     }
-    public static void setDoubleValue(Player player,String key,double value){
-        getBrickAttribute(player).doubles.put(key,value);
+
+    public static void setDoubleValue(Player player, String key, double value) {
+        getBrickAttribute(player).doubles.put(key, value);
         serverSyncAttribute(player);
     }
-    public static Optional<String> stringValue(Player player, String key){
+
+    public static Optional<String> stringValue(Player player, String key) {
         return Optional.ofNullable(getBrickAttribute(player).strings.get(key));
     }
-    public static void setStringValue(Player player,String key,String value){
-        getBrickAttribute(player).strings.put(key,value);
+
+    public static void setStringValue(Player player, String key, String value) {
+        getBrickAttribute(player).strings.put(key, value);
         serverSyncAttribute(player);
     }
 
 
-    public static Optional<Integer> clientIntValue(String key){
+    public static Optional<Integer> clientIntValue(String key) {
         return Optional.ofNullable(BrickAttributeProvider.integers.get(key));
     }
 
-    public static Optional<Double> clientDoubleValue(String key){
+    public static Optional<Double> clientDoubleValue(String key) {
         return Optional.ofNullable(BrickAttributeProvider.doubles.get(key));
     }
 
-    public static Optional<String> clientStringValue(String key){
+    public static Optional<String> clientStringValue(String key) {
         return Optional.ofNullable(BrickAttributeProvider.strings.get(key));
     }
+
     protected static BrickAttributeProvider.BrickAttribute getBrickAttribute(Player player) {
         return player.getCapability(BrickAttributeProvider.BrickCapability.BRICK_ATTRIBUTE).orElse(new BrickAttributeProvider.BrickAttribute(player));
     }
 
     protected static void serverSyncAttribute(Player player) {
-        if(player instanceof ServerPlayer serverPlayer) {
+        if (player instanceof ServerPlayer serverPlayer) {
             NetworkUtils.sendToPlayer(new PlayerVariablesSyncPacket(getBrickAttribute(player)), serverPlayer);
         }
     }

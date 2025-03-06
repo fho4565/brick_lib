@@ -11,21 +11,9 @@ import java.util.Objects;
 
 /**
  * 单个坐标和方块的保存对象
- */
-public class SingleBlock {
-    protected final BlockPos blockPos;
-    @Nullable
-    protected final BlockState blockState;
-
-    /**
-     *
-     */
-    public SingleBlock(BlockPos blockPos, @Nullable BlockState blockState) {
-        this.blockPos = blockPos;
-        this.blockState = blockState;
-    }
-
-    public static SingleBlock of(BlockPos blockPos, @Nullable BlockState blockState) {
+ * */
+public record SingleBlock(BlockPos blockPos,@Nullable BlockState blockState) {
+    public static SingleBlock of(BlockPos blockPos,@Nullable BlockState blockState) {
         return new SingleBlock(blockPos, blockState);
     }
 
@@ -54,35 +42,4 @@ public class SingleBlock {
         }
         return SingleBlock.of(BlockPos.of(pos), state);
     }
-
-    public BlockPos blockPos() {
-        return blockPos;
-    }
-
-    @Nullable
-    public BlockState blockState() {
-        return blockState;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (SingleBlock) obj;
-        return Objects.equals(this.blockPos, that.blockPos) &&
-                Objects.equals(this.blockState, that.blockState);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(blockPos, blockState);
-    }
-
-    @Override
-    public String toString() {
-        return "SingleBlock[" +
-                "blockPos=" + blockPos + ", " +
-                "blockState=" + blockState + ']';
-    }
-
 }

@@ -48,17 +48,17 @@ public class BColor {
 
         }
         public List<Color> createGradient(){
-            List<Color> gradient = new ArrayList<>(createColorGradient(start,points.get(0).getLeft(),points.get(0).getRight()));
+            List<Color> gradient = new ArrayList<>(createGradientColor(start,points.get(0).getLeft(),points.get(0).getRight()));
             for (int i = 1; i < points.size(); i++) {
                 Pair<Color,Integer> point = points.get(i);
-                gradient.addAll(createColorGradient(points.get(i-1).getLeft(),point.getLeft(),point.getRight()));
+                gradient.addAll(createGradientColor(points.get(i-1).getLeft(),point.getLeft(),point.getRight()));
             }
-            gradient.addAll(createColorGradient(points.get(points.size()-1).getLeft(),end,points.get(points.size()-1).getRight()));
+            gradient.addAll(createGradientColor(points.get(points.size()-1).getLeft(),end,points.get(points.size()-1).getRight()));
             return gradient;
         }
     }
 
-    public static List<Color> createColorGradient(Color start, Color end, int steps) {
+    public static List<Color> createGradientColor(Color start, Color end, int steps) {
         List<Color> gradient = new ArrayList<>();
         float rStep = (float) (end.getRed() - start.getRed()) / (steps - 1);
         float gStep = (float) (end.getGreen() - start.getGreen()) / (steps - 1);
@@ -77,7 +77,7 @@ public class BColor {
         }
         return gradient;
     }
-    public static List<Integer> createColorGradient(int start, int end, int steps) {
+    public static List<Integer> createGradientColor(int start, int end, int steps) {
         List<Integer> gradient = new ArrayList<>();
         Color s = toColor(start);
         Color e = toColor(end);

@@ -30,9 +30,7 @@ import net.minecraft.world.scores.Score;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3f;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.function.Predicate;

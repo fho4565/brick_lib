@@ -4,7 +4,6 @@ import com.fho4565.brick_lib.BrickLib;
 import com.fho4565.brick_lib.ChatUtils;
 import com.fho4565.brick_lib.Constants;
 import com.fho4565.brick_lib.core.ArmorSuits;
-import com.fho4565.brick_lib.gen.ModLang;
 import com.fho4565.brick_lib.item.ICooldownItem;
 import com.fho4565.brick_lib.tools.placer.Placer;
 import com.fho4565.brick_lib.variables.BrickAttributeProvider;
@@ -123,20 +122,6 @@ public class BrickForgeCommonEvents {
                         )
         );
         event.getDispatcher().register(
-                Commands.literal("lang").requires(stack -> Constants.isInDevelopEnvironment() && stack.hasPermission(2))
-                        .executes(context -> {
-                                    int count = 0;
-                                    try {
-                                        count = ModLang.generate();
-                                    } catch (IOException e) {
-                                        BrickLib.LOGGER.error(e.getLocalizedMessage());
-                                    }
-                                    context.getSource().sendSystemMessage(Component.literal("generated " + count));
-                                    return count;
-                                }
-                        )
-        );
-        event.getDispatcher().register(
                 Commands.literal("placer").requires(stack -> Constants.isInDevelopEnvironment() && stack.hasPermission(2))
                         .executes(context -> {
                                     Vec3 position = context.getSource().getPosition();
@@ -156,8 +141,9 @@ public class BrickForgeCommonEvents {
 
     @SubscribeEvent
     public static void onAttachBrickCaps(AttachCapabilitiesEvent<Entity> event) {
-        if (!(event.getObject() instanceof Player)) return;
-        event.addCapability(new ResourceLocation(BrickLib.MOD_ID, "brick_attribute"), new BrickAttributeProvider(event.getObject()));
+        if(event.getObject() instanceof Player player) {
+            event.addCapability(new ResourceLocation(BrickLib.MOD_ID, "brick_attribute"), new BrickAttributeProvider(player));
+        }
     }
 
     @SubscribeEvent

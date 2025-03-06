@@ -101,7 +101,7 @@ public class ComponentUtils {
      * */
     public static Component generateColorGradientComponent(String content,int colorStart,int colorEnd){
         char[] chars = content.toCharArray();
-        List<Integer> color = BColor.createColorGradient(colorStart,colorEnd,content.length());
+        List<Integer> color = BColor.createGradientColor(colorStart,colorEnd,content.length());
         MutableComponent components = Component.empty();
         for (int i = 0; i < chars.length; i++) {
             char charComponent = chars[i];
