@@ -4,7 +4,6 @@ import com.fho4565.brick_lib.BrickLib;
 import com.fho4565.brick_lib.ChatUtils;
 import com.fho4565.brick_lib.Constants;
 import com.fho4565.brick_lib.core.ArmorSuits;
-import com.fho4565.brick_lib.gen.ModLang;
 import com.fho4565.brick_lib.item.ICooldownItem;
 import com.fho4565.brick_lib.tools.placer.Placer;
 
@@ -121,20 +120,7 @@ public class BrickForgeCommonEvents {
                                 )
                         )
         );
-        event.getDispatcher().register(
-                Commands.literal("lang").requires(stack -> Constants.isInDevelopEnvironment() && stack.hasPermission(2))
-                        .executes(context -> {
-                                    int count = 0;
-                                    try {
-                                        count = ModLang.generate();
-                                    } catch (IOException e) {
-                                        BrickLib.LOGGER.error(e.getLocalizedMessage());
-                                    }
-                                    context.getSource().sendSystemMessage(Component.literal("generated " + count));
-                                    return count;
-                                }
-                        )
-        );
+
     }
 
 
