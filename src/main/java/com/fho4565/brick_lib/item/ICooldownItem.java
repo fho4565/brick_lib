@@ -1,8 +1,10 @@
 package com.fho4565.brick_lib.item;
 
 import com.fho4565.brick_lib.registry.DataComponentRegister;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -244,4 +246,7 @@ public interface ICooldownItem {
         return Math.round(15 - 15 * (float) getCurrentCooldown(stack) / cooldownTime());
     }
 
+    default Component cooldownTooltip() {
+        return Component.translatable("text.brick_lib.cooldown", cooldownTime()).withStyle(ChatFormatting.DARK_GREEN);
+    }
 }
