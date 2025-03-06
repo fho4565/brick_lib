@@ -8,18 +8,18 @@ import net.minecraft.network.codec.StreamCodec;
 
 import static com.fho4565.brick_lib.item.ICooldownItem.*;
 
-public class Cooldown {
-    public static Codec<Cooldown> CODEC = RecordCodecBuilder.create(instance ->
+public class CooldownDataComponent {
+    public static Codec<CooldownDataComponent> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
-                    Codec.INT.fieldOf(COOLDOWN_TAG).forGetter(Cooldown::currentCd),
-                    Codec.INT.fieldOf(COOLDOWN_MAX_TAG).forGetter(Cooldown::maxTime),
-                    Codec.BOOL.fieldOf(TICK_TAG).forGetter(Cooldown::tick),
-                    Codec.BOOL.fieldOf(AUTO_TAG).forGetter(Cooldown::auto),
-                    Codec.BOOL.fieldOf(RENDER_BAR_TAG).forGetter(Cooldown::render_bar),
-                    Codec.BOOL.fieldOf(RENDER_BAR_WHEN_ENDS_TAG).forGetter(Cooldown::render_bar_when_ends)
-            ).apply(instance, Cooldown::new)
+                    Codec.INT.fieldOf(COOLDOWN_TAG).forGetter(CooldownDataComponent::currentCd),
+                    Codec.INT.fieldOf(COOLDOWN_MAX_TAG).forGetter(CooldownDataComponent::maxTime),
+                    Codec.BOOL.fieldOf(TICK_TAG).forGetter(CooldownDataComponent::tick),
+                    Codec.BOOL.fieldOf(AUTO_TAG).forGetter(CooldownDataComponent::auto),
+                    Codec.BOOL.fieldOf(RENDER_BAR_TAG).forGetter(CooldownDataComponent::render_bar),
+                    Codec.BOOL.fieldOf(RENDER_BAR_WHEN_ENDS_TAG).forGetter(CooldownDataComponent::render_bar_when_ends)
+            ).apply(instance, CooldownDataComponent::new)
     );
-    public static StreamCodec<RegistryFriendlyByteBuf, Cooldown> STREAM_CODEC = ByteBufCodecs.fromCodecWithRegistriesTrusted(CODEC);
+    public static StreamCodec<RegistryFriendlyByteBuf, CooldownDataComponent> STREAM_CODEC = ByteBufCodecs.fromCodecWithRegistriesTrusted(CODEC);
     protected int currentCd;
     int maxTime;
     boolean tick;
@@ -27,7 +27,7 @@ public class Cooldown {
     boolean render_bar;
     boolean render_bar_when_ends;
 
-    public Cooldown(int currentCd, int maxTime, boolean tick, boolean auto, boolean render_bar, boolean render_bar_when_ends) {
+    public CooldownDataComponent(int currentCd, int maxTime, boolean tick, boolean auto, boolean render_bar, boolean render_bar_when_ends) {
         this.tick = tick;
         this.render_bar_when_ends = render_bar_when_ends;
         this.render_bar = render_bar;
@@ -36,11 +36,11 @@ public class Cooldown {
         this.auto = auto;
     }
 
-    public static void setCODEC(Codec<Cooldown> CODEC) {
-        Cooldown.CODEC = CODEC;
+    public static void setCODEC(Codec<CooldownDataComponent> CODEC) {
+        CooldownDataComponent.CODEC = CODEC;
     }
 
-    public static void setStreamCodec(StreamCodec<RegistryFriendlyByteBuf, Cooldown> streamCodec) {
+    public static void setStreamCodec(StreamCodec<RegistryFriendlyByteBuf, CooldownDataComponent> streamCodec) {
         STREAM_CODEC = streamCodec;
     }
 

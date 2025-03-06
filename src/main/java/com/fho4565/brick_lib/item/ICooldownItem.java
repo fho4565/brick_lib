@@ -53,7 +53,7 @@ public interface ICooldownItem {
         if (stack.getComponents().get(DataComponentRegister.CooldownType.get()) == null) {
             stack.applyComponents(DataComponentPatch.builder()
                     .set(DataComponentRegister.CooldownType.get(),
-                            new Cooldown(cooldownTime(), cooldownTime(), true, false, true, false))
+                            new CooldownDataComponent(cooldownTime(), cooldownTime(), true, false, true, false))
                     .build());
         }
     }
@@ -69,9 +69,9 @@ public interface ICooldownItem {
      * 获取当前物品栈的冷却时间
      */
     default int getCurrentCooldown(ItemStack stack) {
-        Cooldown cooldown = stack.get(DataComponentRegister.CooldownType.get());
-        if (cooldown != null) {
-            return cooldown.currentCd;
+        CooldownDataComponent cooldownDataComponent = stack.get(DataComponentRegister.CooldownType.get());
+        if (cooldownDataComponent != null) {
+            return cooldownDataComponent.currentCd;
         }
         return 0;
     }
@@ -81,11 +81,11 @@ public interface ICooldownItem {
      */
     default void startCooldown(Player player, ItemStack stack) {
         init(stack);
-        Cooldown cooldown = stack.getComponents().get(DataComponentRegister.CooldownType.get());
-        if (cooldown != null) {
-            stack.update(DataComponentRegister.CooldownType.get(), cooldown, cooldown1 -> {
-                cooldown1.setCurrentCd(cooldown1.maxTime);
-                return cooldown1;
+        CooldownDataComponent cooldownDataComponent = stack.getComponents().get(DataComponentRegister.CooldownType.get());
+        if (cooldownDataComponent != null) {
+            stack.update(DataComponentRegister.CooldownType.get(), cooldownDataComponent, cooldownDataComponent1 -> {
+                cooldownDataComponent1.setCurrentCd(cooldownDataComponent1.maxTime);
+                return cooldownDataComponent1;
             });
         }
         onCooldownStart(player, stack);
@@ -95,11 +95,11 @@ public interface ICooldownItem {
      * 使当前物品栈停止冷却，不会触发{@link #onCooldownEnd(Player, ItemStack)}
      */
     default void stopCooldown(ItemStack stack) {
-        Cooldown cooldown = stack.getComponents().get(DataComponentRegister.CooldownType.get());
-        if (cooldown != null) {
-            stack.update(DataComponentRegister.CooldownType.get(), cooldown, cooldown1 -> {
-                cooldown1.setCurrentCd(0);
-                return cooldown1;
+        CooldownDataComponent cooldownDataComponent = stack.getComponents().get(DataComponentRegister.CooldownType.get());
+        if (cooldownDataComponent != null) {
+            stack.update(DataComponentRegister.CooldownType.get(), cooldownDataComponent, cooldownDataComponent1 -> {
+                cooldownDataComponent1.setCurrentCd(0);
+                return cooldownDataComponent1;
             });
         }
     }
@@ -109,20 +109,20 @@ public interface ICooldownItem {
      */
     default boolean shouldTick(ItemStack stack) {
         init(stack);
-        Cooldown cooldown = stack.getComponents().get(DataComponentRegister.CooldownType.get());
-        if (cooldown != null) {
-            return cooldown.tick;
+        CooldownDataComponent cooldownDataComponent = stack.getComponents().get(DataComponentRegister.CooldownType.get());
+        if (cooldownDataComponent != null) {
+            return cooldownDataComponent.tick;
         }
         return false;
     }
 
     default void setShouldTick(ItemStack stack, boolean shouldTick) {
         init(stack);
-        Cooldown cooldown = stack.getComponents().get(DataComponentRegister.CooldownType.get());
-        if (cooldown != null) {
-            stack.update(DataComponentRegister.CooldownType.get(), cooldown, cooldown1 -> {
-                cooldown1.setTick(shouldTick);
-                return cooldown1;
+        CooldownDataComponent cooldownDataComponent = stack.getComponents().get(DataComponentRegister.CooldownType.get());
+        if (cooldownDataComponent != null) {
+            stack.update(DataComponentRegister.CooldownType.get(), cooldownDataComponent, cooldownDataComponent1 -> {
+                cooldownDataComponent1.setTick(shouldTick);
+                return cooldownDataComponent1;
             });
         }
     }
@@ -132,20 +132,20 @@ public interface ICooldownItem {
      */
     default boolean autoCooldown(ItemStack stack) {
         init(stack);
-        Cooldown cooldown = stack.getComponents().get(DataComponentRegister.CooldownType.get());
-        if (cooldown != null) {
-            return cooldown.auto;
+        CooldownDataComponent cooldownDataComponent = stack.getComponents().get(DataComponentRegister.CooldownType.get());
+        if (cooldownDataComponent != null) {
+            return cooldownDataComponent.auto;
         }
         return false;
     }
 
     default void setAutoCooldown(ItemStack stack, boolean autoCooldown) {
         init(stack);
-        Cooldown cooldown = stack.getComponents().get(DataComponentRegister.CooldownType.get());
-        if (cooldown != null) {
-            stack.update(DataComponentRegister.CooldownType.get(), cooldown, cooldown1 -> {
-                cooldown1.setAuto(autoCooldown);
-                return cooldown1;
+        CooldownDataComponent cooldownDataComponent = stack.getComponents().get(DataComponentRegister.CooldownType.get());
+        if (cooldownDataComponent != null) {
+            stack.update(DataComponentRegister.CooldownType.get(), cooldownDataComponent, cooldownDataComponent1 -> {
+                cooldownDataComponent1.setAuto(autoCooldown);
+                return cooldownDataComponent1;
             });
         }
     }
@@ -154,19 +154,19 @@ public interface ICooldownItem {
      * 处理物品栈的冷却，此函数不应该被其他地方调用，否则会造成冷却计算错误
      */
     default void tickCooldown(Player player, ItemStack stack) {
-        Cooldown cooldown = stack.getComponents().get(DataComponentRegister.CooldownType.get());
+        CooldownDataComponent cooldownDataComponent = stack.getComponents().get(DataComponentRegister.CooldownType.get());
         if (!shouldTick(stack)) {
             return;
         }
         if (isInCooldown(stack)) {
-            if (cooldown != null) {
-                stack.update(DataComponentRegister.CooldownType.get(), cooldown, cooldown1 -> {
-                    int cd = cooldown1.currentCd - 1;  // 改为使用当前组件的cd值
-                    cooldown1.setCurrentCd(cd);
+            if (cooldownDataComponent != null) {
+                stack.update(DataComponentRegister.CooldownType.get(), cooldownDataComponent, cooldownDataComponent1 -> {
+                    int cd = cooldownDataComponent1.currentCd - 1;  // 改为使用当前组件的cd值
+                    cooldownDataComponent1.setCurrentCd(cd);
                     if (cd == 0) {
                         onCooldownEnd(player, stack);
                     }
-                    return cooldown1;
+                    return cooldownDataComponent1;
                 });
             }
         }
@@ -192,20 +192,20 @@ public interface ICooldownItem {
 
     default boolean shouldRenderCooldownBar(ItemStack stack) {
         init(stack);
-        Cooldown cooldown = stack.getComponents().get(DataComponentRegister.CooldownType.get());
-        if (cooldown != null) {
-            return cooldown.render_bar;
+        CooldownDataComponent cooldownDataComponent = stack.getComponents().get(DataComponentRegister.CooldownType.get());
+        if (cooldownDataComponent != null) {
+            return cooldownDataComponent.render_bar;
         }
         return true;
     }
 
     default void setShouldRenderCooldownBar(ItemStack stack, boolean shouldRenderBar) {
         init(stack);
-        Cooldown cooldown = stack.getComponents().get(DataComponentRegister.CooldownType.get());
-        if (cooldown != null) {
-            stack.update(DataComponentRegister.CooldownType.get(), cooldown, cooldown1 -> {
-                cooldown1.setRender_bar(shouldRenderBar);
-                return cooldown1;
+        CooldownDataComponent cooldownDataComponent = stack.getComponents().get(DataComponentRegister.CooldownType.get());
+        if (cooldownDataComponent != null) {
+            stack.update(DataComponentRegister.CooldownType.get(), cooldownDataComponent, cooldownDataComponent1 -> {
+                cooldownDataComponent1.setRender_bar(shouldRenderBar);
+                return cooldownDataComponent1;
             });
         }
     }
@@ -215,20 +215,20 @@ public interface ICooldownItem {
      */
     default boolean renderCooldownBarWhenEnds(ItemStack stack) {
         init(stack);
-        Cooldown cooldown = stack.getComponents().get(DataComponentRegister.CooldownType.get());
-        if (cooldown != null) {
-            return cooldown.render_bar_when_ends;
+        CooldownDataComponent cooldownDataComponent = stack.getComponents().get(DataComponentRegister.CooldownType.get());
+        if (cooldownDataComponent != null) {
+            return cooldownDataComponent.render_bar_when_ends;
         }
         return false;
     }
 
     default void setRenderCooldownBarWhenEnds(ItemStack stack, boolean shouldRenderBarWhenEnds) {
         init(stack);
-        Cooldown cooldown = stack.getComponents().get(DataComponentRegister.CooldownType.get());
-        if (cooldown != null) {
-            stack.update(DataComponentRegister.CooldownType.get(), cooldown, cooldown1 -> {
-                cooldown1.setRender_bar_when_ends(shouldRenderBarWhenEnds);
-                return cooldown1;
+        CooldownDataComponent cooldownDataComponent = stack.getComponents().get(DataComponentRegister.CooldownType.get());
+        if (cooldownDataComponent != null) {
+            stack.update(DataComponentRegister.CooldownType.get(), cooldownDataComponent, cooldownDataComponent1 -> {
+                cooldownDataComponent1.setRender_bar_when_ends(shouldRenderBarWhenEnds);
+                return cooldownDataComponent1;
             });
         }
     }
