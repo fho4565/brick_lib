@@ -1,7 +1,7 @@
 package com.fho4565.brick_lib.core;
 
 import com.fho4565.brick_lib.ItemUtils;
-import com.fho4565.brick_lib.events.brick_evemts.ArmorSuitEvent;
+import com.fho4565.brick_lib.events.brick_events.ArmorSuitEvent;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;

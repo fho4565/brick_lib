@@ -9,6 +9,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.io.File;
 
@@ -79,7 +80,7 @@ public class Constants {
 
     protected static void initGeneral(){
         isInDevelopEnvironment = !FMLEnvironment.production;
-        versionFolderPath = String.valueOf(ModList.get().getModFileById(BRICK_MOD_ID).getFile().getFilePath().getParent().getParent());
+        versionFolderPath = FMLPaths.GAMEDIR.get().toString();
         initiatedGeneral = true;
     }
     private static void installWorldVariables(MinecraftServer server){

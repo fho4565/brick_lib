@@ -2,7 +2,7 @@ package com.fho4565.brick_lib.events;
 
 
 import com.fho4565.brick_lib.BrickLib;
-import com.fho4565.brick_lib.network.NetworkUtils;
+import com.fho4565.brick_lib.network.BrickNetwork;
 import com.fho4565.brick_lib.variables.BrickAttributeProvider;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -15,8 +15,9 @@ public class ModCommonEvents {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onCommonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(NetworkUtils::register);
+        event.enqueueWork(BrickNetwork::register);
     }
+
     @SubscribeEvent
     public static void onRegisterCaps(RegisterCapabilitiesEvent event) {
         event.register(BrickAttributeProvider.BrickAttribute.class);

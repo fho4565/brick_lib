@@ -1,8 +1,8 @@
-package com.fho4565.brick_lib;
+package com.fho4565.brick_lib.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 
-public class BrickLibConfig {
+public class CommonConfig {
     public static final ForgeConfigSpec BRICK_COMMON_CONFIG;
     public static final ForgeConfigSpec.ConfigValue<Integer> placerMax;
 

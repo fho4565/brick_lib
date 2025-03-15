@@ -6,7 +6,6 @@ import com.fho4565.brick_lib.Constants;
 import com.fho4565.brick_lib.core.ArmorSuits;
 import com.fho4565.brick_lib.item.ICooldownItem;
 import com.fho4565.brick_lib.tools.placer.Placer;
-
 import com.fho4565.brick_lib.variables.BrickAttributeProvider;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -120,7 +119,6 @@ public class BrickForgeCommonEvents {
                                 )
                         )
         );
-
     }
 
 
@@ -166,6 +164,4 @@ public class BrickForgeCommonEvents {
     public static void onServerAboutToStart(ServerAboutToStartEvent event) {
         ArmorSuits.init();
     }
-
-
 }
