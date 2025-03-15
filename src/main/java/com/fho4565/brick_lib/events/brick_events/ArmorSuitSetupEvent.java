@@ -1,4 +1,4 @@
-package com.fho4565.brick_lib.events.brick_evemts;
+package com.fho4565.brick_lib.events.brick_events;
 
 import com.fho4565.brick_lib.core.ArmorSuit;
 import net.minecraftforge.eventbus.api.Event;

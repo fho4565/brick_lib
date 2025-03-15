@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 
-public class NetworkUtils {
+public class BrickNetwork {
     public static BNetworkChannel CHANNEL;
 
     public static void register() {
@@ -17,7 +17,6 @@ public class NetworkUtils {
                 PlayerVariablesSyncPacket::encoder,
                 PlayerVariablesSyncPacket::new,
                 PlayerVariablesSyncPacket::handler);
-
     }
 
     public static <MSG extends C2SPacket> void sendToServer(MSG message) {

@@ -14,10 +14,12 @@ public class BrickLib {
     public static final Executor THREAD_POOL = Executors.newCachedThreadPool();
     public static final String MOD_ID = "brick_lib";
     public static final Logger LOGGER = LogUtils.getLogger();
+
     public BrickLib() {
         FMLJavaModLoadingContext context = FMLJavaModLoadingContext.get();
         IEventBus modEventBus = context.getModEventBus();
-        //context.registerConfig(ModConfig.Type.SERVER, BrickLibConfig.BRICK_COMMON_CONFIG);
+        //context.registerConfig(ModConfig.Type.SERVER, CommonConfig.BRICK_COMMON_CONFIG);
         Constants.initGeneral();
     }
+
 }

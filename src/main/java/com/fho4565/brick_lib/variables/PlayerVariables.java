@@ -1,6 +1,6 @@
 package com.fho4565.brick_lib.variables;
 
-import com.fho4565.brick_lib.network.NetworkUtils;
+import com.fho4565.brick_lib.network.BrickNetwork;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
@@ -59,7 +59,7 @@ public class PlayerVariables {
 
     protected static void serverSyncAttribute(Player player) {
         if (player instanceof ServerPlayer serverPlayer) {
-            NetworkUtils.sendToPlayer(new PlayerVariablesSyncPacket(getBrickAttribute(player)), serverPlayer);
+            BrickNetwork.sendToPlayer(new PlayerVariablesSyncPacket(getBrickAttribute(player)), serverPlayer);
         }
     }
 }

@@ -17,4 +17,7 @@ public class C2SNetworkContext extends NetworkContext{
             consumer.accept(context.getSender());
         });
     }
+    public ServerPlayer getSender(){
+        return context.getSender();
+    }
 }
