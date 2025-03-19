@@ -1,11 +1,15 @@
 package com.fho4565.brick_lib.core;
 
+import com.fho4565.brick_lib.BrickLib;
 import com.fho4565.brick_lib.ItemUtils;
+import com.fho4565.brick_lib.core.packs.MaterialPack;
 import com.fho4565.brick_lib.events.brick_events.ArmorSuitEvent;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -13,11 +17,11 @@ import java.util.UUID;
 
 /**
  * 盔甲套装效果
- * */
+ */
 public class ArmorSuit {
+    final HashSet<UUID> players = new HashSet<>();
     private final ItemStack helmet, chestplate, leggings, boots;
     private final String id;
-    final HashSet<UUID> players = new HashSet<>();
     private boolean enabled = true;
 
     public ArmorSuit(String id, ItemStack helmet, ItemStack chestplate, ItemStack leggings, ItemStack boots) {
@@ -28,15 +32,28 @@ public class ArmorSuit {
         this.boots = boots;
     }
 
+
+    public static @Nullable ArmorSuit fromPack(String id, MaterialPack materialPack) {
+        Item helmet = materialPack.get(MaterialPack.ItemVariant.HELMET);
+        Item chestplate = materialPack.get(MaterialPack.ItemVariant.CHESTPLATE);
+        Item leggings = materialPack.get(MaterialPack.ItemVariant.LEGGINGS);
+        Item boots = materialPack.get(MaterialPack.ItemVariant.BOOTS);
+        if (helmet == null || chestplate == null || leggings == null || boots == null) {
+            BrickLib.LOGGER.error("ArmorSuit {} is not complete", id);
+            return null;
+        }
+        return new ArmorSuit(id, helmet.getDefaultInstance(), chestplate.getDefaultInstance(), leggings.getDefaultInstance(), boots.getDefaultInstance());
+    }
+
     public final boolean isComplete(Player player) {
         ItemStack item1 = player.getItemBySlot(EquipmentSlot.HEAD);
         ItemStack item2 = player.getItemBySlot(EquipmentSlot.CHEST);
         ItemStack item3 = player.getItemBySlot(EquipmentSlot.LEGS);
         ItemStack item4 = player.getItemBySlot(EquipmentSlot.FEET);
-        return ItemUtils.itemStackEqualsWithoutDamageValue(item1,helmet) &&
-                ItemUtils.itemStackEqualsWithoutDamageValue(item2,chestplate) &&
-                ItemUtils.itemStackEqualsWithoutDamageValue(item3,leggings) &&
-                ItemUtils.itemStackEqualsWithoutDamageValue(item4,boots);
+        return ItemUtils.itemStackEqualsWithoutDamageValue(item1, helmet) &&
+                ItemUtils.itemStackEqualsWithoutDamageValue(item2, chestplate) &&
+                ItemUtils.itemStackEqualsWithoutDamageValue(item3, leggings) &&
+                ItemUtils.itemStackEqualsWithoutDamageValue(item4, boots);
     }
 
     public boolean enabled() {
@@ -54,27 +71,27 @@ public class ArmorSuit {
     public void onArmorSuitCompleted(Player player) {
     }
 
-    public void onArmorSuitTick(Player player){
+    public void onArmorSuitTick(Player player) {
 
     }
 
     public void onArmorSuitUnset(Player player) {
     }
 
-    public void tick(Player player){
-        if(!enabled) return;
+    public void tick(Player player) {
+        if (!enabled) return;
         if (isComplete(player)) {
             if (!contains(player)) {
                 onArmorSuitCompleted(player);
-                MinecraftForge.EVENT_BUS.post(new ArmorSuitEvent.Complete(player,this));
+                MinecraftForge.EVENT_BUS.post(new ArmorSuitEvent.Complete(player, this));
                 players.add(player.getUUID());
             }
             onArmorSuitTick(player);
-            MinecraftForge.EVENT_BUS.post(new ArmorSuitEvent.Tick(player,this));
+            MinecraftForge.EVENT_BUS.post(new ArmorSuitEvent.Tick(player, this));
         } else {
             if (contains(player)) {
                 onArmorSuitUnset(player);
-                MinecraftForge.EVENT_BUS.post(new ArmorSuitEvent.Unset(player,this));
+                MinecraftForge.EVENT_BUS.post(new ArmorSuitEvent.Unset(player, this));
                 players.remove(player.getUUID());
             }
         }

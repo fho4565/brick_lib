@@ -8,7 +8,7 @@ import net.minecraft.util.RandomSource;
  * */
 public class ConstantBlockPos extends BlockPosProvider{
     final BlockPos blockPos;
-    private ConstantBlockPos(BlockPos blockPos) {
+    public ConstantBlockPos(BlockPos blockPos) {
         this.blockPos = blockPos;
     }
     public static ConstantBlockPos of(BlockPos blockPos){
