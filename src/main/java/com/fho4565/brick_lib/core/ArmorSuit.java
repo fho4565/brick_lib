@@ -1,11 +1,15 @@
 package com.fho4565.brick_lib.core;
 
+import com.fho4565.brick_lib.BrickLib;
 import com.fho4565.brick_lib.ItemUtils;
+import com.fho4565.brick_lib.core.packs.MaterialPack;
 import com.fho4565.brick_lib.events.brick_events.ArmorSuitEvent;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -26,6 +30,18 @@ public class ArmorSuit {
         this.chestplate = chestplate;
         this.leggings = leggings;
         this.boots = boots;
+    }
+
+    public static @Nullable ArmorSuit fromPack(String id, MaterialPack materialPack) {
+        Item helmet = materialPack.get(MaterialPack.ItemVariant.HELMET);
+        Item chestplate = materialPack.get(MaterialPack.ItemVariant.CHESTPLATE);
+        Item leggings = materialPack.get(MaterialPack.ItemVariant.LEGGINGS);
+        Item boots = materialPack.get(MaterialPack.ItemVariant.BOOTS);
+        if (helmet == null || chestplate == null || leggings == null || boots == null) {
+            BrickLib.LOGGER.error("ArmorSuit {} is not complete", id);
+            return null;
+        }
+        return new ArmorSuit(id, helmet.getDefaultInstance(), chestplate.getDefaultInstance(), leggings.getDefaultInstance(), boots.getDefaultInstance());
     }
 
     public final boolean isComplete(Player player) {
