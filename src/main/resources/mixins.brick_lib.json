@@ -1,0 +1,32 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.arc_studio.brick_lib.mixin.common",
+  "compatibilityLevel": "JAVA_${java_ver}",
+  "mixins": [
+    "CommandsMixin",
+    "ItemStackMixin",
+    "ServerLevelMixin",
+    "player.PlayerMixin",
+    "player.ServerPlayerGameModeMixin",
+    "player.ServerPlayerMixin",
+    "server.DedicatedServerMixin",
+    "server.GameTestServerMixin",
+    "server.MemoryServerHandshakePacketListenerImplMixin",
+    "server.MinecraftServerMixin",
+    "server.PlayerListMixin",
+    "server.ServerHandshakePacketListenerImplMixin"
+  ],
+  "client": [
+    "MinecraftMixin",
+    "client.ChatComponentMixin",
+    "client.ChatScreenMixin",
+    "client.ClientHandshakePacketListenerImplMixin",
+    "client.GuiGraphicsMixin",
+    "player.MultiPlayerGameModeMixin",
+    "server.IntegratedServerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
