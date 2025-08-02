@@ -13,11 +13,11 @@ import net.minecraft.resources.ResourceLocation;
  */
 public abstract class S2CPacket extends Packet implements ICHandlePacket {
     //? if > 1.20.4 {
-    @Override
+    /*@Override
     public Type<? extends CustomPacketPayload> type() {
         return new Type<>(id());
     }
-    //?}
+    *///?}
     public final void handler(S2CNetworkContext context) {
         context.enqueueWork(() -> SideExecutor.runOnClientOrException(() -> clientHandle(context)));
     }

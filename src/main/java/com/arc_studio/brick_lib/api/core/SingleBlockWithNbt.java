@@ -50,10 +50,10 @@ public record SingleBlockWithNbt(BlockPos blockPos, BlockState blockState, Compo
         if(!nbt.isEmpty()){
             try {
                 //? if >= 1.20.6 {
-                blockEntity.loadWithComponents(nbt, Constants.currentServer().registryAccess());
-                //?} else {
-                /*blockEntity.load(nbt);
-                *///?}
+                /*blockEntity.loadWithComponents(nbt, Constants.currentServer().registryAccess());
+                *///?} else {
+                blockEntity.load(nbt);
+                //?}
             } catch (Exception e) {
                 BrickLib.LOGGER.error(e.toString());
                 return null;
@@ -68,7 +68,7 @@ public record SingleBlockWithNbt(BlockPos blockPos, BlockState blockState, Compo
         long pos = blockPos.asLong();
         compoundTag.putLong("pos", pos);
         if (this.blockState != null) {
-            Tag blockState = BlockState.CODEC.encodeStart(NbtOps.INSTANCE, this.blockState)/*? >=1.20.6 {*/ .getOrThrow() /*?} else {*//*.get().orThrow()*//*?}*/;
+            Tag blockState = BlockState.CODEC.encodeStart(NbtOps.INSTANCE, this.blockState)/*? >=1.20.6 {*/ /*.getOrThrow() *//*?} else {*/.get().orThrow()/*?}*/;
             compoundTag.put("state", blockState);
         }
         compoundTag.put("nbt", nbt);

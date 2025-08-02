@@ -17,16 +17,16 @@ public class ClientHandshakePacketListenerImplMixin {
     @Shadow @Final private Connection connection;
 
     //? if >= 1.20.6 {
-    @Inject(method = "handleGameProfile", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/Connection;setupOutboundProtocol(Lnet/minecraft/network/ProtocolInfo;)V"))
+    /*@Inject(method = "handleGameProfile", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/Connection;setupOutboundProtocol(Lnet/minecraft/network/ProtocolInfo;)V"))
     public void defaultConfig(ClientboundGameProfilePacket packet, CallbackInfo ci) {
         BrickEventBus.postEvent(new LogInEvent.ClientSuccess(this.connection));
     }
-    //?} else if = 1.20.4 {
-    /*@Inject(method = "handleGameProfile", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/Connection;setListener(Lnet/minecraft/network/PacketListener;)V"))
+    *///?} else if = 1.20.4 {
+    @Inject(method = "handleGameProfile", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/Connection;setListener(Lnet/minecraft/network/PacketListener;)V"))
     public void defaultConfig(ClientboundGameProfilePacket packet, CallbackInfo ci) {
         BrickEventBus.postEvent(new LogInEvent.ClientSuccess(this.connection));
     }
-    *///?} else {
+    //?} else {
     /*@Inject(method = "handleGameProfile",at = @At(value = "INVOKE", target = "Lnet/minecraft/network/Connection;setProtocol(Lnet/minecraft/network/ConnectionProtocol;)V"))
     public void defaultConfig1(ClientboundGameProfilePacket packet, CallbackInfo ci) {
         BrickEventBus.postEvent(new LogInEvent.ClientSuccess(this.connection));

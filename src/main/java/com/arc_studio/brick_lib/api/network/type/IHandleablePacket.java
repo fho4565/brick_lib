@@ -24,12 +24,12 @@ interface IHandleablePacket
 {
     void encoder(PacketContent content);
 
-    /*//? if >=1.20.4 {
+    //? if <=1.20.4 {
     @Override
     default void write(FriendlyByteBuf arg){
         encoder(new PacketContent(arg));
     }
-    //?}*/
+    //?}
 
     @ApiStatus.Internal
     default PacketContent getEncodedPacketContent(PacketContent content) {

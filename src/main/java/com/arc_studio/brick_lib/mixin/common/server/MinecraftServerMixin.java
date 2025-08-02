@@ -42,37 +42,37 @@ public abstract class MinecraftServerMixin {
     }
 
     //? if >= 1.20.6 {
-    @Inject(method = "setInitialSpawn", locals = LocalCapture.CAPTURE_FAILSOFT, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/ServerLevelData;setSpawn(Lnet/minecraft/core/BlockPos;F)V", ordinal = 2, shift = At.Shift.AFTER))
+    /*@Inject(method = "setInitialSpawn", locals = LocalCapture.CAPTURE_FAILSOFT, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/ServerLevelData;setSpawn(Lnet/minecraft/core/BlockPos;F)V", ordinal = 2, shift = At.Shift.AFTER))
     private static void spawn0(ServerLevel level, ServerLevelData levelData, boolean generateBonusChest, boolean debug, CallbackInfo ci, ServerChunkCache serverChunkCache, ChunkPos chunkPos, int i, int j, int k, int l, int m, int n, BlockPos blockPos2) {
         LevelEvent.CreateSpawnPoint.Spawn events = new LevelEvent.CreateSpawnPoint.Spawn(level, blockPos2, 0.0F);
         BrickEventBus.postEvent(events);
         levelData.setSpawn(events.getSpawnPos(), events.getSpawnAngle());
     }
-    //?} else {
-    /*//? if forge && =1.20.1 {
-    /^@Inject(method = "setInitialSpawn", locals = LocalCapture.CAPTURE_FAILSOFT, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/ServerLevelData;setSpawn(Lnet/minecraft/core/BlockPos;F)V", ordinal = 2, shift = At.Shift.AFTER))
+    *///?} else {
+    //? if forge && =1.20.1 {
+    /*@Inject(method = "setInitialSpawn", locals = LocalCapture.CAPTURE_FAILSOFT, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/ServerLevelData;setSpawn(Lnet/minecraft/core/BlockPos;F)V", ordinal = 2, shift = At.Shift.AFTER))
     private static void spawnf1201(ServerLevel serverLevel, ServerLevelData serverLevelData, boolean bl, boolean bl2, CallbackInfo ci) {
         LevelEvent.CreateSpawnPoint.Spawn event = new LevelEvent.CreateSpawnPoint.Spawn(serverLevel, new BlockPos(serverLevelData.getXSpawn(),serverLevelData.getYSpawn(),serverLevelData.getZSpawn()), 0.0F);
         BrickEventBus.postEvent(event);
         serverLevelData.setSpawn(event.getSpawnPos(), event.getSpawnAngle());
     }
-    ^///?} else if neoforge && =1.20.4 {
-    /^@Inject(method = "setInitialSpawn", locals = LocalCapture.CAPTURE_FAILSOFT, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/ServerLevelData;setSpawn(Lnet/minecraft/core/BlockPos;F)V", ordinal = 2, shift = At.Shift.AFTER))
+    *///?} else if neoforge && =1.20.4 {
+    /*@Inject(method = "setInitialSpawn", locals = LocalCapture.CAPTURE_FAILSOFT, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/ServerLevelData;setSpawn(Lnet/minecraft/core/BlockPos;F)V", ordinal = 2, shift = At.Shift.AFTER))
     private static void spawn01(ServerLevel serverLevel, ServerLevelData serverLevelData, boolean bl, boolean bl2, CallbackInfo ci) {
         LevelEvent.CreateSpawnPoint.Spawn events = new LevelEvent.CreateSpawnPoint.Spawn(serverLevel, new BlockPos(serverLevelData.getXSpawn(),serverLevelData.getYSpawn(),serverLevelData.getZSpawn()), 0.0F);
         BrickEventBus.postEvent(events);
         serverLevelData.setSpawn(events.getSpawnPos(), events.getSpawnAngle());
     }
-    ^///?}
     *///?}
+    //?}
 
     @Inject(method = "setInitialSpawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/RegistryAccess;registry(Lnet/minecraft/resources/ResourceKey;)Ljava/util/Optional;"), cancellable = true)
     private static void spawnChest(ServerLevel level, ServerLevelData levelData, boolean generateBonusChest, boolean debug, CallbackInfo ci) {
         //? if >= 1.20.6 {
-        LevelEvent.SetBonusChest event = new LevelEvent.SetBonusChest(level, new BlockPos(levelData.getSpawnPos().getX(), levelData.getSpawnPos().getY(), levelData.getSpawnPos().getZ()));
-        //?} else {
-        /*LevelEvent.SetBonusChest event = new LevelEvent.SetBonusChest(level,new BlockPos(levelData.getXSpawn(),levelData.getYSpawn(),levelData.getZSpawn()));
-        *///?}
+        /*LevelEvent.SetBonusChest event = new LevelEvent.SetBonusChest(level, new BlockPos(levelData.getSpawnPos().getX(), levelData.getSpawnPos().getY(), levelData.getSpawnPos().getZ()));
+        *///?} else {
+        LevelEvent.SetBonusChest event = new LevelEvent.SetBonusChest(level,new BlockPos(levelData.getXSpawn(),levelData.getYSpawn(),levelData.getZSpawn()));
+        //?}
         BrickEventBus.postEvent(event);
         level.registryAccess()
                 .registry(Registries.CONFIGURED_FEATURE)

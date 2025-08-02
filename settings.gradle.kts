@@ -34,17 +34,17 @@ extensions.configure<StonecutterSettings> {
     kotlinController = true
     centralScript = "build.gradle.kts"
 
-    // TODO Disable any versions you don't want to support and enable any versions you want to support
-    // The versions listed here, commented out or otherwise, all have pre-made gradle.properties.
+    // TODO 禁用不想支持的任何版本，并启用要支持的任何版本
+    // 此处列出的版本，无论是注释掉还是其他方式，都有预制的 gradle.properties。
     shared {
         //vers("1.16.5-fabric","1.16.5")
-        vers("1.16.5-forge","1.16.5")
+        /*vers("1.16.5-forge","1.16.5")
         vers("1.18.2-fabric","1.18.2")
         vers("1.18.2-forge","1.18.2")
         vers("1.19.2-fabric","1.19.2")
         vers("1.19.2-forge","1.19.2")
         vers("1.19.4-fabric","1.19.4")
-        vers("1.19.4-forge","1.19.4")
+        vers("1.19.4-forge","1.19.4")*/
         vers("1.20.1-fabric","1.20.1")
         vers("1.20.1-forge","1.20.1")
         vers("1.20.4-fabric","1.20.4")
@@ -52,7 +52,7 @@ extensions.configure<StonecutterSettings> {
         vers("1.20.4-neoforge","1.20.4")
         vers("1.20.6-fabric","1.20.6")
         vers("1.20.6-neoforge","1.20.6")
-        vers("1.21-fabric","1.21")
+        /*vers("1.21-fabric","1.21")
         vers("1.21-neoforge","1.21")
         vers("1.21.1-fabric","1.21.1")
         vers("1.21.1-neoforge","1.21.1")
@@ -61,7 +61,7 @@ extensions.configure<StonecutterSettings> {
         vers("1.21.4-fabric","1.21.4")
         vers("1.21.4-neoforge","1.21.4")
         vers("1.21.5-fabric","1.21.5")
-        vers("1.21.5-neoforge","1.21.5")
+        vers("1.21.5-neoforge","1.21.5")*/
         vcsVersion="1.20.4-fabric"
     }
     create(rootProject)

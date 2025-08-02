@@ -17,11 +17,11 @@ import org.jetbrains.annotations.ApiStatus;
 public abstract class SACPacket extends Packet implements ICHandlePacket, ISHandlePacket {
 
     //? if > 1.20.4 {
-    @Override
+    /*@Override
     public Type<? extends CustomPacketPayload> type() {
         return new Type<>(id());
     }
-    //?}
+    *///?}
     @ApiStatus.Internal
     public final void serverHandleI(C2SNetworkContext context) {
         context.enqueueWork(() -> serverHandle(context));

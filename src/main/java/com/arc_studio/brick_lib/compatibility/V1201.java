@@ -7,8 +7,8 @@ import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.IdMap;
 //? if >= 1.20.6 {
-import net.minecraft.core.component.DataComponentMap;
-//?}
+/*import net.minecraft.core.component.DataComponentMap;
+*///?}
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -26,7 +26,7 @@ import java.util.function.Consumer;
  */
 public class V1201 {
     //? if >= 1.20.6 {
-    public static FriendlyByteBuf writeItemStack(FriendlyByteBuf buf, ItemStack pStack) {
+    /*public static FriendlyByteBuf writeItemStack(FriendlyByteBuf buf, ItemStack pStack) {
         if (pStack.isEmpty()) {
             buf.writeBoolean(false);
         } else {
@@ -133,5 +133,5 @@ public class V1201 {
             return !other.isEmpty() && i1.getCount() == other.getCount() && i1.getItem() == other.getItem() &&
                     (Objects.equals(i1.getComponentsPatch(), other.getComponentsPatch()));
     }
-    //?}
+    *///?}
 }

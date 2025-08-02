@@ -18,11 +18,11 @@ public class C2SPacket extends Packet implements ISHandlePacket {
 
     }
     //? if >1.20.4 {
-    @Override
+    /*@Override
     public Type<? extends CustomPacketPayload> type() {
         return new Type<>(id());
     }
-    //?}
+    *///?}
     public final void handler(C2SNetworkContext context) {
         context.enqueueWork(() -> serverHandle(context));
     }

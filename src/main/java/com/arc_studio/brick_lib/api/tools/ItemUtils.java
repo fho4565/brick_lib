@@ -16,11 +16,11 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
 
 //? if >= 1.20.6 {
-import net.minecraft.world.item.alchemy.PotionContents;
+/*import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.core.component.DataComponents;
-//?} else {
-/*import net.minecraft.world.item.alchemy.PotionUtils;
-*///?}
+*///?} else {
+import net.minecraft.world.item.alchemy.PotionUtils;
+//?}
 
 import java.util.Collection;
 import java.util.function.Consumer;
@@ -57,7 +57,7 @@ public class ItemUtils {
      * @param amount 扣除的耐久度，大于当前耐久度则物品损坏
      */
     public static void damageItemStack(ServerPlayer player, InteractionHand hand, int amount) {
-        damageItemStack(player,hand,amount,plr->plr.broadcastBreakEvent(/*? <1.20.6 {*/ /*hand *//*?} else {*/interactionHand2EquipmentSlot(hand)/*?}*/));
+        damageItemStack(player,hand,amount,plr->plr.broadcastBreakEvent(/*? <1.20.6 {*/ hand /*?} else {*//*interactionHand2EquipmentSlot(hand)*//*?}*/));
     }
 
     private static EquipmentSlot interactionHand2EquipmentSlot(InteractionHand hand) {
@@ -73,7 +73,7 @@ public class ItemUtils {
      */
     public static void damageItemStack(ServerPlayer player, ItemStack itemStack, int amount) {
         InteractionHand hand = inWhichHand(player, itemStack);
-        damageItemStack(player, hand,amount, plr->plr.broadcastBreakEvent(/*? <1.20.6 {*/ /*hand *//*?} else {*/interactionHand2EquipmentSlot(hand)/*?}*/));
+        damageItemStack(player, hand,amount, plr->plr.broadcastBreakEvent(/*? <1.20.6 {*/ hand /*?} else {*//*interactionHand2EquipmentSlot(hand)*//*?}*/));
     }
 
     /**
@@ -103,10 +103,10 @@ public class ItemUtils {
             return;
         }
         //? if >= 1.20.6 {
-        player.getItemInHand(hand).hurtAndBreak(--amount,  player, interactionHand2EquipmentSlot(hand));
-        //?} else {
-        /*player.getItemInHand(hand).hurtAndBreak(--amount, player, onBreak);
-        *///?}
+        /*player.getItemInHand(hand).hurtAndBreak(--amount,  player, interactionHand2EquipmentSlot(hand));
+        *///?} else {
+        player.getItemInHand(hand).hurtAndBreak(--amount, player, onBreak);
+        //?}
     }
 
     /**
@@ -114,19 +114,19 @@ public class ItemUtils {
      */
     public static ItemStack getPotion(Potion potion) {
         //? if >= 1.20.6 {
-        ItemStack itemStack = new ItemStack(Items.POTION);
+        /*ItemStack itemStack = new ItemStack(Items.POTION);
         itemStack.set(DataComponents.POTION_CONTENTS,new PotionContents(Holder.direct(potion)));
         return itemStack;
-        //?} else {
-        /*return PotionUtils.setPotion(new ItemStack(Items.POTION), potion);
-        *///?}
+        *///?} else {
+        return PotionUtils.setPotion(new ItemStack(Items.POTION), potion);
+        //?}
     }
 
     /**
      * 给予玩家物品，逻辑与give命令相同
      */
     public static int giveItem(ItemStack itemStack, Collection<ServerPlayer> targets) {
-        int maxStackSize = itemStack.getItem()/*? >=1.20.6 {*/ .getDefaultMaxStackSize() /*?} else {*//*.getMaxStackSize()*//*?}*/;
+        int maxStackSize = itemStack.getItem()/*? >=1.20.6 {*/ /*.getDefaultMaxStackSize() *//*?} else {*/.getMaxStackSize()/*?}*/;
         int j = maxStackSize * 100;
         int count = itemStack.getCount();
         if (count > j) {

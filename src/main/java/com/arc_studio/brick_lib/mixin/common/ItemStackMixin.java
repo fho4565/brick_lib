@@ -2,9 +2,9 @@ package com.arc_studio.brick_lib.mixin.common;
 
 import com.arc_studio.brick_lib.api.data.ItemAdditionalData;
 //? if >=1.20.6 {
-import net.minecraft.core.component.DataComponentMap;
+/*import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.PatchedDataComponentMap;
-//?}
+*///?}
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
@@ -26,7 +26,7 @@ public abstract class ItemStackMixin {
     public abstract Item getItem();
 
     //? if >=1.20.6 {
-    @Inject(method = "isSameItemSameComponents", at = @At("HEAD"), cancellable = true)
+    /*@Inject(method = "isSameItemSameComponents", at = @At("HEAD"), cancellable = true)
     private static void isSame(ItemStack stack, ItemStack other, CallbackInfoReturnable<Boolean> cir) {
         if (!stack.is(other.getItem())) {
             cir.setReturnValue(false);
@@ -41,8 +41,8 @@ public abstract class ItemStackMixin {
             cir.setReturnValue(Objects.equals(thisTag, otherTag));
         }
     }
-    //?} else {
-    /*@Inject(method = "isSameItemSameTags", at = @At("HEAD"), cancellable = true)
+    *///?} else {
+    @Inject(method = "isSameItemSameTags", at = @At("HEAD"), cancellable = true)
     private static void isSame(ItemStack stack, ItemStack other, CallbackInfoReturnable<Boolean> cir) {
         if (!stack.is(other.getItem())) {
             cir.setReturnValue(false);
@@ -57,5 +57,5 @@ public abstract class ItemStackMixin {
             cir.setReturnValue(Objects.equals(thisTag, otherTag));
         }
     }
-    *///?}
+    //?}
 }

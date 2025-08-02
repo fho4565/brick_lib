@@ -191,10 +191,10 @@ public class PlacerHelper {
             BlockEntity getEntity = ForgeCompatibility.getExistingBlockEntity(levelAccessor,offset);
             if (getEntity != null) {
                 //? if >= 1.20.6 {
-                getEntity.loadWithComponents(action.singleBlock().nbt(), Constants.currentServer().registryAccess());
-                //?} else {
-                /*getEntity.load(action.singleBlock().nbt());
-                *///?}
+                /*getEntity.loadWithComponents(action.singleBlock().nbt(), Constants.currentServer().registryAccess());
+                *///?} else {
+                getEntity.load(action.singleBlock().nbt());
+                //?}
             }
         } catch (CommandSyntaxException e) {
             BrickLib.LOGGER.error("Failed to parse line: {}", e.toString());

@@ -35,7 +35,7 @@ public abstract class ServerPlayerMixin {
     }*/
     //?}
     //? if fabric {
-    /*@Inject(method = "changeDimension", at = @At("HEAD"),remap = false)
+    @Inject(method = "changeDimension", at = @At("HEAD"),remap = false)
     public void change(ServerLevel serverLevel, CallbackInfoReturnable<Entity> cir) {
         ServerLevel serverLevel2 = this.serverLevel();
         ResourceKey<Level> resourceKey = serverLevel2.dimension();
@@ -45,5 +45,5 @@ public abstract class ServerPlayerMixin {
             }
         }
     }
-    *///?}
+    //?}
 }

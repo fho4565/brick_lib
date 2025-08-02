@@ -61,7 +61,7 @@ public abstract class MinecraftMixin {
     }
 
     //? if >= 1.20.6 {
-    @Inject(method = "setLevel", at = @At("HEAD"))
+    /*@Inject(method = "setLevel", at = @At("HEAD"))
     public void levelUnload(ClientLevel level, ReceivingLevelScreen.Reason reason, CallbackInfo ci) {
         if (this.level != null) {
             BrickEventBus.postEvent(new LevelEvent.Unload(this.level));
@@ -74,8 +74,8 @@ public abstract class MinecraftMixin {
             BrickEventBus.postEvent(new LevelEvent.Unload(this.level));
         }
     }
-    //?} else {
-    /*@Inject(method = "setLevel", at = @At("HEAD"))
+    *///?} else {
+    @Inject(method = "setLevel", at = @At("HEAD"))
     public void levelUnload(ClientLevel clientLevel, CallbackInfo ci) {
         if (this.level != null) {
             BrickEventBus.postEvent(new LevelEvent.Unload(this.level));
@@ -83,21 +83,21 @@ public abstract class MinecraftMixin {
     }
 
     //? if =1.20.4 {
-    /^@Inject(method = "clearClientLevel", at = @At("HEAD"))
+    @Inject(method = "clearClientLevel", at = @At("HEAD"))
     public void levelUnload1204(CallbackInfo ci) {
         if (this.level != null) {
             BrickEventBus.postEvent(new LevelEvent.Unload(this.level));
         }
     }
-    ^///?} else {
-    @Inject(method = "clearLevel(Lnet/minecraft/client/gui/screens/Screen;)V", at = @At("HEAD"))
+    //?} else {
+    /*@Inject(method = "clearLevel(Lnet/minecraft/client/gui/screens/Screen;)V", at = @At("HEAD"))
     public void levelUnload1201(CallbackInfo ci) {
         if (this.level != null) {
             BrickEventBus.postEvent(new LevelEvent.Unload(this.level));
         }
     }
-    //?}
     *///?}
+    //?}
 
     @Inject(at = @At("HEAD"), method = "tick")
     public void clientTickPre(CallbackInfo info) {

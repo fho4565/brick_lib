@@ -1,8 +1,8 @@
 package com.arc_studio.brick_lib.api.network;
 
 //? if >= 1.20.6 {
-import com.arc_studio.brick_lib.compatibility.V1201;
-//?}
+/*import com.arc_studio.brick_lib.compatibility.V1201;
+*///?}
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
@@ -77,10 +77,10 @@ public class PacketContent {
 
     public PacketContent writeItemStack(ItemStack itemStack) {
         //? if >= 1.20.6 {
-        V1201.writeItemStack(friendlyByteBuf,itemStack);
-        //?} else {
-        /*friendlyByteBuf.writeItem(itemStack);
-        *///?}
+        /*V1201.writeItemStack(friendlyByteBuf,itemStack);
+        *///?} else {
+        friendlyByteBuf.writeItem(itemStack);
+        //?}
         return this;
     }
 
@@ -116,10 +116,10 @@ public class PacketContent {
 
     public PacketContent writeGameProfile(GameProfile gameProfile) {
         //? if >= 1.20.6 {
-        V1201.writeGameProfile(friendlyByteBuf,gameProfile);
-        //?} else {
-        /*friendlyByteBuf.writeGameProfile(gameProfile);
-        *///?}
+        /*V1201.writeGameProfile(friendlyByteBuf,gameProfile);
+        *///?} else {
+        friendlyByteBuf.writeGameProfile(gameProfile);
+        //?}
         return this;
     }
 
@@ -162,10 +162,10 @@ public class PacketContent {
 
     public ItemStack readItemStack() {
         //? if >= 1.20.6 {
-        return V1201.readItemStack(friendlyByteBuf);
-        //?} else {
-        /*return friendlyByteBuf.readItem();
-        *///?}
+        /*return V1201.readItemStack(friendlyByteBuf);
+        *///?} else {
+        return friendlyByteBuf.readItem();
+        //?}
     }
 
     public String readUTF() {
@@ -194,10 +194,10 @@ public class PacketContent {
 
     public GameProfile readGameProfile() {
         //? if >= 1.20.6 {
-        return V1201.readGameProfile(friendlyByteBuf);
-        //?} else {
-        /*return friendlyByteBuf.readGameProfile();
-        *///?}
+        /*return V1201.readGameProfile(friendlyByteBuf);
+        *///?} else {
+        return friendlyByteBuf.readGameProfile();
+        //?}
     }
 
     public ChunkPos readChunkPos() {

@@ -2,7 +2,7 @@ package com.arc_studio.brick_lib.platform;
 
 
 //? if neoforge {
-import com.arc_studio.brick_lib.BrickLib;
+/*import com.arc_studio.brick_lib.BrickLib;
 import com.arc_studio.brick_lib.api.network.PacketContent;
 import com.arc_studio.brick_lib.api.network.context.C2SNetworkContext;
 import com.arc_studio.brick_lib.api.network.context.S2CNetworkContext;
@@ -18,7 +18,7 @@ import net.neoforged.bus.api.EventPriority;
 
 //? if < 1.20.4 {
 //?} else if <1.20.6 {
-/*import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
@@ -31,8 +31,8 @@ import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
 import net.neoforged.neoforge.network.handling.IPlayPayloadHandler;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
-*///?} else {
-import net.neoforged.bus.api.SubscribeEvent;
+//?} else {
+/^import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
@@ -41,22 +41,22 @@ import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.neoforged.neoforge.network.registration.HandlerThread;
-//?}
+^///?}
 import java.util.function.Function;
 //? if < 1.20.6 {
-/*@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-*///?} else {
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
-//?}
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+//?} else {
+/^@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+^///?}
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class NeoForgePlatform {
     //? if neoforge {
-    @SubscribeEvent(priority = EventPriority.LOWEST)
+    /^@SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onCommonSetup(
-            /*? >1.20.4 {*/ RegisterPayloadHandlersEvent /*? } else {*//*RegisterPayloadHandlerEvent*//*?}*/
+            /^¹? >1.20.4 {¹^/ /^¹RegisterPayloadHandlersEvent ¹^//^¹?} else {¹^/RegisterPayloadHandlerEvent/^¹?}¹^/
                     events) {
-        /*? >1.20.4 {*/ PayloadRegistrar /*?} else {*/
-        /*IPayloadRegistrar*//*?}*/ registrar = events.registrar(BrickLib.MOD_ID);
+        /^¹? >1.20.4 {¹^/ /^¹PayloadRegistrar ¹^//^¹?} else {¹^/
+        IPayloadRegistrar/^¹?}¹^/ registrar = events.registrar(BrickLib.MOD_ID);
         BrickRegistries.NETWORK_PACKET.foreachValueAndClear(packetConfig -> {
             if (packetConfig instanceof PacketConfig.C2S c2S) {
                 c2s(registrar, c2S);
@@ -74,9 +74,9 @@ public class NeoForgePlatform {
 
     }
 
-    private static <T extends C2SPacket> void c2s(/*? >=1.20.6 {*/ PayloadRegistrar /*?} else {*//*IPayloadRegistrar*//*?}*/ registrar, PacketConfig.C2S<T> c2S) {
+    private static <T extends C2SPacket> void c2s(/^¹? >=1.20.6 {¹^/ /^¹PayloadRegistrar ¹^//^¹?} else {¹^/IPayloadRegistrar/^¹?}¹^/ registrar, PacketConfig.C2S<T> c2S) {
         //? if > 1.20.4 {
-        StreamCodec<RegistryFriendlyByteBuf, T> codec = StreamCodec.of(
+        /^¹StreamCodec<RegistryFriendlyByteBuf, T> codec = StreamCodec.of(
                 (buf, packet) -> c2S.encoder().accept(packet, new PacketContent(buf)),
                 buf -> c2S.decoder().apply(new PacketContent(buf)));
         CustomPacketPayload.Type<T> type = new CustomPacketPayload.Type<>(c2S.id());
@@ -87,8 +87,8 @@ public class NeoForgePlatform {
                     c2S.packetHandler().accept(packet, new C2SNetworkContext((ServerPlayer) context.player()));
                 }
         );
-        //?} else {
-        /*registrar.play(c2S.id(),
+        ¹^///?} else {
+        registrar.play(c2S.id(),
                 buf -> c2S.decoder().apply(new PacketContent(buf)),
                 (arg, playPayloadContext) -> {
                     if (c2S.netHandle()) {
@@ -102,12 +102,12 @@ public class NeoForgePlatform {
                         });
                     }
                 });
-        *///?}
+        //?}
     }
 
-    private static <T extends S2CPacket> void s2c(/*? >=1.20.6 {*/ PayloadRegistrar /*?} else {*//*IPayloadRegistrar*//*?}*/ registrar, PacketConfig.S2C<T> s2C) {
+    private static <T extends S2CPacket> void s2c(/^¹? >=1.20.6 {¹^/ /^¹PayloadRegistrar ¹^//^¹?} else {¹^/IPayloadRegistrar/^¹?}¹^/ registrar, PacketConfig.S2C<T> s2C) {
         //? if > 1.20.4 {
-        StreamCodec<RegistryFriendlyByteBuf, T> codec = StreamCodec.of(
+        /^¹StreamCodec<RegistryFriendlyByteBuf, T> codec = StreamCodec.of(
                 (buf, packet) -> s2C.encoder().accept(packet, new PacketContent(buf)),
                 buf -> s2C.decoder().apply(new PacketContent(buf)));
         CustomPacketPayload.Type<T> type = new CustomPacketPayload.Type<>(s2C.id());
@@ -118,8 +118,8 @@ public class NeoForgePlatform {
                     s2C.packetHandler().accept(packet, new S2CNetworkContext());
                 }
         );
-        //?} else {
-        /*registrar.play(s2C.id(),
+        ¹^///?} else {
+        registrar.play(s2C.id(),
                 buf -> s2C.decoder().apply(new PacketContent(buf)),
                 (arg, playPayloadContext) -> {
                     if (s2C.netHandle()) {
@@ -133,12 +133,12 @@ public class NeoForgePlatform {
                         });
                     }
                 });
-        *///?}
+        //?}
     }
 
-    private static <T extends SACPacket> void sac(/*? >=1.20.6 {*/ PayloadRegistrar /*?} else {*//*IPayloadRegistrar*//*?}*/ registrar, PacketConfig.SAC<T> sAC) {
+    private static <T extends SACPacket> void sac(/^¹? >=1.20.6 {¹^/ /^¹PayloadRegistrar ¹^//^¹?} else {¹^/IPayloadRegistrar/^¹?}¹^/ registrar, PacketConfig.SAC<T> sAC) {
         //? if > 1.20.4 {
-        StreamCodec<RegistryFriendlyByteBuf, T> codec = StreamCodec.of(
+        /^¹StreamCodec<RegistryFriendlyByteBuf, T> codec = StreamCodec.of(
                 (buf, packet) -> sAC.encoder().accept(packet, new PacketContent(buf)),
                 buf -> sAC.decoder().apply(new PacketContent(buf)));
         CustomPacketPayload.Type<T> sacT = new CustomPacketPayload.Type<>(sAC.s2cID());
@@ -150,8 +150,8 @@ public class NeoForgePlatform {
                         (packet, context) -> sAC.serverHandler().accept(packet, new C2SNetworkContext((ServerPlayer) context.player()))
                 )
         );
-        //?} else {
-            /*registrar.play(sAC.id(),
+        ¹^///?} else {
+            registrar.play(sAC.id(),
                     buf -> sAC.decoder().apply(new PacketContent(buf)),
                     handler -> handler
                             .client((arg, playPayloadContext) -> {
@@ -177,7 +177,8 @@ public class NeoForgePlatform {
                                 }
                             })
             );
-            *///?}
+            //?}
     }
-    //?}
+    ^///?}
 }
+*/

@@ -6,9 +6,9 @@ plugins {
     id("architectury-plugin") version "3.4-SNAPSHOT" apply false
 }
 
-stonecutter active "1.20.6-neoforge" /* You may have to edit this. Make sure it matches one of the versions present in settings.gradle.kts */
+stonecutter active "1.20.4-fabric" /* You may have to edit this. Make sure it matches one of the versions present in settings.gradle.kts */
 
-// Builds every version into `build/libs/{mod.version}/`
+// 将每个版本构建到 'build/libs/{mod.version}/' 中
 stonecutter registerChiseled tasks.register("chiseledBuild", stonecutter.chiseled) {
     group = "project"
     ofTask("build")

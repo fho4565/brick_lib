@@ -1,6 +1,9 @@
 package com.arc_studio.brick_lib.platform;
 
-import com.arc_studio.brick_lib.BrickLib;
+
+
+//? if (forge) || oldnf {
+/*import com.arc_studio.brick_lib.BrickLib;
 import com.arc_studio.brick_lib.api.network.PacketContent;
 import com.arc_studio.brick_lib.api.network.context.C2SNetworkContext;
 import com.arc_studio.brick_lib.api.network.context.S2CNetworkContext;
@@ -11,23 +14,25 @@ import com.arc_studio.brick_lib.api.network.type.SACPacket;
 import com.arc_studio.brick_lib.register.BrickRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.network.Channel;
+import net.minecraftforge.network.ChannelBuilder;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.SimpleChannel;
 
 import java.util.concurrent.atomic.AtomicInteger;
-
-//? if (forge) || oldnf {
-
-/*//? if forge && < 1.20.4 {
-/^import net.minecraftforge.eventbus.api.SubscribeEvent;
+/^//? if forge && < 1.20.4 {
+/^¹import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
-^///?}
+¹^///?}
 
-//? if forge && =1.20.4 {
-/^import net.minecraftforge.eventbus.api.SubscribeEvent;
+//? if forge && >=1.20.4 {
+/^¹import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.network.NetworkDirection;
@@ -37,7 +42,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.SimpleChannel;
 import net.minecraftforge.network.*;
-^///?}
+¹^///?}
 
 //? if neoforge {
 import net.neoforged.bus.api.SubscribeEvent;
@@ -47,7 +52,7 @@ import net.neoforged.fml.events.lifecycle.FMLCommonSetupEvent;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 
-*///?}
+^/*///?}
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class ForgePlatform {
     //? if (forge) || oldnf {

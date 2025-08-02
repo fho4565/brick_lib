@@ -14,8 +14,8 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.core.Registry;
 //? if >= 1.20.6 {
-import net.minecraft.core.component.DataComponentType;
-//?}
+/*import net.minecraft.core.component.DataComponentType;
+*///?}
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -53,7 +53,7 @@ import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 //? if < 1.20.6 {
-/*import net.minecraft.world.level.chunk.ChunkStatus;*/
+import net.minecraft.world.level.chunk.ChunkStatus;
 //?}
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.gameevent.PositionSourceType;
@@ -106,10 +106,10 @@ public class BrickRegistries {
     public static final VanillaRegistry<PaintingVariant> PAINTING_VARIANT = new VanillaRegistry<>(BuiltInRegistries.PAINTING_VARIANT);
     public static final VanillaRegistry<ResourceLocation> CUSTOM_STAT = new VanillaRegistry<>(BuiltInRegistries.CUSTOM_STAT);
     //? if <= 1.20.4 {
-    /*public static final VanillaRegistry<ChunkStatus> CHUNK_STATUS = new VanillaRegistry<>(BuiltInRegistries.CHUNK_STATUS);*/
+    public static final VanillaRegistry<ChunkStatus> CHUNK_STATUS = new VanillaRegistry<>(BuiltInRegistries.CHUNK_STATUS);
     //?} else {
-    public static final BrickRegistry<Object> CHUNK_STATUS = create("chunk_status");
-    //?}
+    /*public static final BrickRegistry<Object> CHUNK_STATUS = create("chunk_status");
+    *///?}
     public static final VanillaRegistry<RuleTestType<?>> RULE_TEST = new VanillaRegistry<>(BuiltInRegistries.RULE_TEST);
     public static final VanillaRegistry<RuleBlockEntityModifierType<?>> RULE_BLOCK_ENTITY_MODIFIER = new VanillaRegistry<>(BuiltInRegistries.RULE_BLOCK_ENTITY_MODIFIER);
     public static final VanillaRegistry<PosRuleTestType<?>> POS_RULE_TEST = new VanillaRegistry<>(BuiltInRegistries.POS_RULE_TEST);
@@ -129,10 +129,10 @@ public class BrickRegistries {
     public static final VanillaRegistry<Activity> ACTIVITY = new VanillaRegistry<>(BuiltInRegistries.ACTIVITY);
     public static final VanillaRegistry<LootPoolEntryType> LOOT_POOL_ENTRY_TYPE = new VanillaRegistry<>(BuiltInRegistries.LOOT_POOL_ENTRY_TYPE);
     //? if <=1.20.4 {
-    /*public static final VanillaRegistry<LootItemFunctionType> LOOT_FUNCTION_TYPE = new VanillaRegistry<>(BuiltInRegistries.LOOT_FUNCTION_TYPE);*/
+    public static final VanillaRegistry<LootItemFunctionType> LOOT_FUNCTION_TYPE = new VanillaRegistry<>(BuiltInRegistries.LOOT_FUNCTION_TYPE);
     //?} else {
-    public static final BrickRegistry<Object> LOOT_FUNCTION_TYPE = create("loot_function_type");
-    //?}
+    /*public static final BrickRegistry<Object> LOOT_FUNCTION_TYPE = create("loot_function_type");
+    *///?}
     public static final VanillaRegistry<LootItemConditionType> LOOT_CONDITION_TYPE = new VanillaRegistry<>(BuiltInRegistries.LOOT_CONDITION_TYPE);
     public static final VanillaRegistry<LootNumberProviderType> LOOT_NUMBER_PROVIDER_TYPE = new VanillaRegistry<>(BuiltInRegistries.LOOT_NUMBER_PROVIDER_TYPE);
     public static final VanillaRegistry<LootNbtProviderType> LOOT_NBT_PROVIDER_TYPE = new VanillaRegistry<>(BuiltInRegistries.LOOT_NBT_PROVIDER_TYPE);
@@ -154,36 +154,36 @@ public class BrickRegistries {
     public static final VanillaRegistry<TreeDecoratorType<?>> TREE_DECORATOR_TYPE = new VanillaRegistry<>(BuiltInRegistries.TREE_DECORATOR_TYPE);
     public static final VanillaRegistry<FeatureSizeType<?>> FEATURE_SIZE_TYPE = new VanillaRegistry<>(BuiltInRegistries.FEATURE_SIZE_TYPE);
     //? if <= 1.20.4 {
-    /*
+    
         public static final VanillaRegistry<Codec<? extends BiomeSource>> BIOME_SOURCE = new VanillaRegistry<>(BuiltInRegistries.BIOME_SOURCE);
         public static final VanillaRegistry<Codec<? extends ChunkGenerator>> CHUNK_GENERATOR = new VanillaRegistry<>(BuiltInRegistries.CHUNK_GENERATOR);
         public static final VanillaRegistry<Codec<? extends SurfaceRules.ConditionSource>> MATERIAL_CONDITION = new VanillaRegistry<>(BuiltInRegistries.MATERIAL_CONDITION);
         public static final VanillaRegistry<Codec<? extends SurfaceRules.RuleSource>> MATERIAL_RULE = new VanillaRegistry<>(BuiltInRegistries.MATERIAL_RULE);
-        public static final VanillaRegistry<Codec<? extends DensityFunction>> DENSITY_FUNCTION_TYPE = new VanillaRegistry<>(BuiltInRegistries.DENSITY_FUNCTION_TYPE);*/
+        public static final VanillaRegistry<Codec<? extends DensityFunction>> DENSITY_FUNCTION_TYPE = new VanillaRegistry<>(BuiltInRegistries.DENSITY_FUNCTION_TYPE);
     //?} else {
-    public static final VanillaRegistry<MapCodec<? extends BiomeSource>> BIOME_SOURCE = new VanillaRegistry<>(BuiltInRegistries.BIOME_SOURCE);
+    /*public static final VanillaRegistry<MapCodec<? extends BiomeSource>> BIOME_SOURCE = new VanillaRegistry<>(BuiltInRegistries.BIOME_SOURCE);
     public static final VanillaRegistry<MapCodec<? extends ChunkGenerator>> CHUNK_GENERATOR = new VanillaRegistry<>(BuiltInRegistries.CHUNK_GENERATOR);
     public static final VanillaRegistry<MapCodec<? extends SurfaceRules.ConditionSource>> MATERIAL_CONDITION = new VanillaRegistry<>(BuiltInRegistries.MATERIAL_CONDITION);
     public static final VanillaRegistry<MapCodec<? extends SurfaceRules.RuleSource>> MATERIAL_RULE = new VanillaRegistry<>(BuiltInRegistries.MATERIAL_RULE);
     public static final VanillaRegistry<MapCodec<? extends DensityFunction>> DENSITY_FUNCTION_TYPE = new VanillaRegistry<>(BuiltInRegistries.DENSITY_FUNCTION_TYPE);
-    //?}
+    *///?}
     public static final VanillaRegistry<StructureProcessorType<?>> STRUCTURE_PROCESSOR = new VanillaRegistry<>(BuiltInRegistries.STRUCTURE_PROCESSOR);
     public static final VanillaRegistry<StructurePoolElementType<?>> STRUCTURE_POOL_ELEMENT = new VanillaRegistry<>(BuiltInRegistries.STRUCTURE_POOL_ELEMENT);
     public static final VanillaRegistry<CatVariant> CAT_VARIANT = new VanillaRegistry<>(BuiltInRegistries.CAT_VARIANT);
     public static final VanillaRegistry<FrogVariant> FROG_VARIANT = new VanillaRegistry<>(BuiltInRegistries.FROG_VARIANT);
     //? if <= 1.20.4 {
-    /*public static final VanillaRegistry<BannerPattern> BANNER_PATTERN = new VanillaRegistry<>(BuiltInRegistries.BANNER_PATTERN);*/
+    public static final VanillaRegistry<BannerPattern> BANNER_PATTERN = new VanillaRegistry<>(BuiltInRegistries.BANNER_PATTERN);
     //?} else {
-    public static final BrickRegistry<BannerPattern> BANNER_PATTERN = create("banner_pattern");
-    //?}
+    /*public static final BrickRegistry<BannerPattern> BANNER_PATTERN = create("banner_pattern");
+    *///?}
     public static final VanillaRegistry<Instrument> INSTRUMENT = new VanillaRegistry<>(BuiltInRegistries.INSTRUMENT);
     public static final VanillaRegistry<String> DECORATED_POT_PATTERNS = new VanillaRegistry<>(BuiltInRegistries.DECORATED_POT_PATTERNS);
     public static final VanillaRegistry<CreativeModeTab> CREATIVE_MODE_TAB = new VanillaRegistry<>(BuiltInRegistries.CREATIVE_MODE_TAB);
     //? if >= 1.20.6 {
-    public static final VanillaRegistry<DataComponentType<?>> DATA_COMPONENT_TYPE = new VanillaRegistry<>(BuiltInRegistries.DATA_COMPONENT_TYPE);
-    //?} else {
-    /*public static final BrickRegistry<Object> DATA_COMPONENT_TYPE = create("data_component_type");
-    *///?}
+    /*public static final VanillaRegistry<DataComponentType<?>> DATA_COMPONENT_TYPE = new VanillaRegistry<>(BuiltInRegistries.DATA_COMPONENT_TYPE);
+    *///?} else {
+    public static final BrickRegistry<Object> DATA_COMPONENT_TYPE = create("data_component_type");
+    //?}
 
     ///////////////////////////Brick Lib额外注册表
     /**

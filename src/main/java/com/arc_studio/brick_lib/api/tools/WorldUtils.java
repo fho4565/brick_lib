@@ -85,10 +85,10 @@ public class WorldUtils {
         LootParams params = (new LootParams.Builder(level)).withParameter(LootContextParams.THIS_ENTITY, thisEntity).withParameter(LootContextParams.ORIGIN, pos).create(LootContextParamSets.GIFT);
         // 获取战利品表并生成物品掉落
         //? if >= 1.20.6 {
-        level.getServer().reloadableRegistries().getLootTable(ResourceKey.create(Registries.LOOT_TABLE,lootTable)).getRandomItems(params).forEach(itemStack -> level.addFreshEntity(getItemEntity(level, pos, itemStack)));
-        //?} else {
-        /*level.getServer().getLootData().getLootTable(lootTable).getRandomItems(params).forEach(itemStack -> level.addFreshEntity(getItemEntity(level, pos, itemStack)));
-        *///?}
+        /*level.getServer().reloadableRegistries().getLootTable(ResourceKey.create(Registries.LOOT_TABLE,lootTable)).getRandomItems(params).forEach(itemStack -> level.addFreshEntity(getItemEntity(level, pos, itemStack)));
+        *///?} else {
+        level.getServer().getLootData().getLootTable(lootTable).getRandomItems(params).forEach(itemStack -> level.addFreshEntity(getItemEntity(level, pos, itemStack)));
+        //?}
     }
 
     /**
@@ -412,8 +412,8 @@ public class WorldUtils {
                     Optional<BlockEntity> blockEntity = Optional.ofNullable(ForgeCompatibility.getExistingBlockEntity(level, blockPos));
                     blockEntity.ifPresentOrElse(blockEntity1 -> consumer.accept(SingleBlockWithNbt.of(blockPos, level.getBlockState(blockPos), blockEntity1.saveWithFullMetadata(
                             //? if >= 1.20.6 {
-                            Constants.currentServer().registryAccess()
-                            //?}
+                            /*Constants.currentServer().registryAccess()
+                            *///?}
                                     ))),
                             () -> consumer.accept(SingleBlockWithNbt.of(blockPos, level.getBlockState(blockPos), new CompoundTag())));
                 }

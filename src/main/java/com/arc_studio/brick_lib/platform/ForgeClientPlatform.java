@@ -1,9 +1,8 @@
 package com.arc_studio.brick_lib.platform;
 
-
-import com.arc_studio.brick_lib.register.BrickRegistries;
 //? if forge {
-/*import net.minecraftforge.api.distmarker.Dist;
+ /*import com.arc_studio.brick_lib.register.BrickRegistries;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

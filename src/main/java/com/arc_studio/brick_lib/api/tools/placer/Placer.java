@@ -125,10 +125,10 @@ public class Placer implements ICompoundTagSerializer {
                                 BlockEntity blockEntity = levelAccessor.getBlockEntity(current);
                                 if (blockEntity != null) {
                                     //? if >= 1.20.6 {
-                                    blockEntity.loadWithComponents(placeAction.singleBlock.nbt(), Constants.currentServer().registryAccess());
-                                    //?} else {
-                                    /*blockEntity.load(placeAction.singleBlock.nbt());
-                                    *///?}
+                                    /*blockEntity.loadWithComponents(placeAction.singleBlock.nbt(), Constants.currentServer().registryAccess());
+                                    *///?} else {
+                                    blockEntity.load(placeAction.singleBlock.nbt());
+                                    //?}
                                 }
                             }
                         }
@@ -148,10 +148,10 @@ public class Placer implements ICompoundTagSerializer {
                                 BlockEntity blockEntity = levelAccessor.getBlockEntity(moved);
                                 if (blockEntity != null) {
                                     //? if >= 1.20.6 {
-                                    blockEntity.loadWithComponents(placeAction.singleBlock.nbt(), Constants.currentServer().registryAccess());
-                                    //?} else {
-                                    /*blockEntity.load(placeAction.singleBlock.nbt());
-                                    *///?}
+                                    /*blockEntity.loadWithComponents(placeAction.singleBlock.nbt(), Constants.currentServer().registryAccess());
+                                    *///?} else {
+                                    blockEntity.load(placeAction.singleBlock.nbt());
+                                    //?}
                                 }
                             }
                         }
@@ -165,10 +165,10 @@ public class Placer implements ICompoundTagSerializer {
                                 BlockEntity blockEntity = levelAccessor.getBlockEntity(offset);
                                 if (blockEntity != null) {
                                     //? if >= 1.20.6 {
-                                    blockEntity.loadWithComponents(placeAction.singleBlock.nbt(), Constants.currentServer().registryAccess());
-                                    //?} else {
-                                    /*blockEntity.load(placeAction.singleBlock.nbt());
-                                    *///?}
+                                    /*blockEntity.loadWithComponents(placeAction.singleBlock.nbt(), Constants.currentServer().registryAccess());
+                                    *///?} else {
+                                    blockEntity.load(placeAction.singleBlock.nbt());
+                                    //?}
                                 }
                             }
                         }
@@ -193,8 +193,8 @@ public class Placer implements ICompoundTagSerializer {
                                 chunkAccess.setBlockEntity(new ChestBlockEntity(placeAction.singleBlock.blockPos(),placeAction.singleBlock.blockState()));
                                 BrickLib.LOGGER.debug("placed block getEntity at {} type {}",current, pBlockEntity.saveWithId(
                                         //? if >= 1.20.6 {
-                                        Constants.currentServer().registryAccess()
-                                        //?}
+                                        /*Constants.currentServer().registryAccess()
+                                        *///?}
                                 ));
                             });
                         }
@@ -213,8 +213,8 @@ public class Placer implements ICompoundTagSerializer {
                             Optional.ofNullable(placeAction.singleBlock().blockEntity()).ifPresent(pBlockEntity -> {
                                 chunkAccess.setBlockEntity(pBlockEntity);
                                 BrickLib.LOGGER.debug("placed block getEntity at {} type {}",moved, pBlockEntity.saveWithId(//? if >= 1.20.6 {
-                                        Constants.currentServer().registryAccess()
-                                        //?}
+                                        /*Constants.currentServer().registryAccess()
+                                        *///?}
                                 ));
                             });
                         }
@@ -227,8 +227,8 @@ public class Placer implements ICompoundTagSerializer {
                             Optional.ofNullable(placeAction.singleBlock().blockEntity()).ifPresent(pBlockEntity -> {
                                 chunkAccess.setBlockEntity(pBlockEntity);
                                 BrickLib.LOGGER.debug("placed block getEntity at {} type {}",offset, pBlockEntity.saveWithId(//? if >= 1.20.6 {
-                                Constants.currentServer().registryAccess()
-                                //?}
+                                /*Constants.currentServer().registryAccess()
+                                *///?}
                                 ));
                             });
                         }

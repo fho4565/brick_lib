@@ -23,7 +23,7 @@ public record SingleBlock(BlockPos blockPos,@Nullable BlockState blockState) {
         long pos = blockPos.asLong();
         compoundTag.putLong("pos", pos);
         if (this.blockState != null) {
-            Tag blockState = BlockState.CODEC.encodeStart(NbtOps.INSTANCE, this.blockState)/*? >=1.20.6 {*/ .getOrThrow() /*?} else {*//*.get().orThrow()*//*?}*/;
+            Tag blockState = BlockState.CODEC.encodeStart(NbtOps.INSTANCE, this.blockState)/*? >=1.20.6 {*/ /*.getOrThrow() *//*?} else {*/.get().orThrow()/*?}*/;
             compoundTag.put("state", blockState);
         }
         return compoundTag;

@@ -3,8 +3,7 @@ package com.arc_studio.brick_lib.entrypoints;
 import com.arc_studio.brick_lib.BrickLib;
 
 /**
- * //TODO RENAME ME!
- * This is the entry point for your mod's common side, called by each modloader specific side.
+ * 这是模组公共端的入口点，由每个模组加载器特定端调用。
  */
 public class CommonEP {
     public static void init(){

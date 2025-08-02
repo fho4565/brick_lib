@@ -4,7 +4,7 @@ package com.arc_studio.brick_lib.api.data;
 import net.minecraft.nbt.CompoundTag;
 
 //? if >= 1.20.6 {
-import net.minecraft.network.RegistryFriendlyByteBuf;
+/*import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.nbt.NbtOps;
 import com.mojang.serialization.Codec;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.core.component.DataComponentType;
 import java.util.function.Function;
 
-//?}
+*///?}
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import java.util.function.Consumer;
@@ -25,8 +25,8 @@ import java.util.function.Consumer;
 public abstract class ItemAdditionalData extends BaseAdditionalData {
     public static final String KEY_DATA = "brick_data";
     //? if >= 1.20.6 {
-    public static final AdditionalDataType DATA_COMPONENT_TYPE = new AdditionalDataType(new CompoundTag());
-    //?}
+    /*public static final AdditionalDataType DATA_COMPONENT_TYPE = new AdditionalDataType(new CompoundTag());
+    *///?}
 
     public ItemAdditionalData(CompoundTag tag) {
         this.data = tag;
@@ -34,34 +34,34 @@ public abstract class ItemAdditionalData extends BaseAdditionalData {
 
     public static CompoundTag getData(ItemStack itemStack) {
         //? if >= 1.20.6 {
-        return itemStack.getOrDefault(DATA_COMPONENT_TYPE, new ItemAdditionalData(new CompoundTag()) {
+        /*return itemStack.getOrDefault(DATA_COMPONENT_TYPE, new ItemAdditionalData(new CompoundTag()) {
             @Override
             public void onDelete() {
 
             }
         }).data;
-        //?} else {
-        /*return itemStack.getOrCreateTag();
-        *///?}
+        *///?} else {
+        return itemStack.getOrCreateTag();
+        //?}
     }
 
     public static void modifyData(ItemStack itemStack, Consumer<CompoundTag> consumer) {
         CompoundTag tag = getData(itemStack);
         consumer.accept(tag);
         //? if >= 1.20.6 {
-        itemStack.getOrDefault(DATA_COMPONENT_TYPE, new ItemAdditionalData(new CompoundTag()) {
+        /*itemStack.getOrDefault(DATA_COMPONENT_TYPE, new ItemAdditionalData(new CompoundTag()) {
             @Override
             public void onDelete() {
 
             }
         }).data = tag;
-        //?} else {
-        /*itemStack.setTag(tag);
-        *///?}
+        *///?} else {
+        itemStack.setTag(tag);
+        //?}
     }
 
     //? if >= 1.20.6 {
-    static class AdditionalDataType implements DataComponentType<ItemAdditionalData> {
+    /*static class AdditionalDataType implements DataComponentType<ItemAdditionalData> {
         public static final Codec<ItemAdditionalData> CODEC = RecordCodecBuilder.create(instance -> // 给定一个实例
                 instance.group(
                         CompoundTag.CODEC.fieldOf("s").forGetter(new Function<ItemAdditionalData, CompoundTag>() {
@@ -111,5 +111,5 @@ public abstract class ItemAdditionalData extends BaseAdditionalData {
             };
         }
     }
-    //?}
+    *///?}
 }

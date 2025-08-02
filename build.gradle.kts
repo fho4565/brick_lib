@@ -1,7 +1,24 @@
+import org.gradle.api.tasks.Input
 import java.util.Optional
 import java.util.function.BiConsumer
 import java.util.function.Consumer
 import java.util.function.Predicate
+import kotlin.collections.ArrayList
+import kotlin.collections.List
+import kotlin.collections.arrayListOf
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.forEach
+import kotlin.collections.mapOf
+import kotlin.collections.withIndex
+import kotlin.text.indexOf
+import kotlin.text.isEmpty
+import kotlin.text.isNotEmpty
+import kotlin.text.lastIndexOf
+import kotlin.text.lowercase
+import kotlin.text.split
+import kotlin.text.startsWith
+import kotlin.text.substring
 
 // Baseline code. Minimal edits necessary.
 // TODO 确认此处添加的插件
@@ -14,12 +31,11 @@ plugins {
     id("me.modmuss50.mod-publish-plugin")
 }
 
-// Leave this alone unless adding more dependencies.
-// TODO acknowledge that you add dependency repositories here.
+// 除非添加更多依赖项，否则不要管它。
+// TODO 确认添加的仓库
 repositories {
     mavenLocal()
     mavenCentral()
-
     maven("https://maven.aliyun.com/repository/google")
     maven("https://maven.aliyun.com/repository/public")
     maven("https://maven.aliyun.com/repository/gradle-plugin")
@@ -30,7 +46,6 @@ repositories {
     maven("https://mirrors.imucraft.cn/neoforge/")
     maven("https://mirrors.qlu.edu.cn/bmclapi/")
     maven("https://lss233.littleservice.cn/repositories/minecraft")
-
     exclusiveContent {
         forRepository { maven("https://www.cursemaven.com") { name = "CurseForge" } }
         filter { includeGroup("curse.maven") }
@@ -42,7 +57,7 @@ repositories {
     maven("https://maven.neoforged.net/releases/")
     maven("https://maven.architectury.dev/")
     maven("https://modmaven.dev/")
-    //maven("https://panel.ryuutech.com/nexus/repository/maven-releases/")
+    maven("https://panel.ryuutech.com/nexus/repository/maven-releases/")
     maven("https://maven.minecraftforge.net/")
 }
 
@@ -158,7 +173,7 @@ class Env {
     val isApi = project.parent!!.name == "api"
     val type = if(isFabric) EnvType.FABRIC else if(isForge) EnvType.FORGE else EnvType.NEOFORGE
 
-    // TODO: if MC requires higher JVMs in future updates change this controller.
+    // TODO: 如果 MC 在未来的更新中需要更高的 JVM，请更改此控制器。
     val javaVer = if(atMost("1.16.5")) 8 else if(atMost("1.20.4")) 17 else 21
 
     val fabricLoaderVersion = versionProperty("deps.core.fabric.loader.version_range")
@@ -238,7 +253,7 @@ class APISource(val type: DepType, val modInfo: APIModInfo, val mavenLocation: S
 /**
  * APIs with hardcoded support for convenience. These are optional.
  */
-//TODO add any hardcoded apis here. Hardcoded APIs should be used in most if not all your versions.
+//TODO 在此处添加任何硬编码的 API。硬编码 API 应在大多数（如果不是全部）版本中使用。
 val apis = arrayListOf(
     APISource(DepType.API, APIModInfo(if(env.atMost("1.16.5")) "fabric" else "fabric-api","fabric-api"), "net.fabricmc.fabric-api:fabric-api",optionalVersionProperty("deps.api.fabric")) { src ->
         src.versionRange.isPresent && env.isFabric
@@ -299,15 +314,15 @@ class ModMixins {
     }
 }
 
-//TODO acknowledge this controller and the relevant API tokens if you intend to auto-publish (HIGHLY RECOMMENDED)
-//TODO acknowledge that with high version count Modrinth will probably rate limit you. If this is the case you should email them to ask for assistance.
+//TODO 如果您打算自动发布，请确认此控制器和相关 API 令牌（强烈推荐）
+//TODO 版本数量过多Modrinth可能会限制您的速率。如果是这种情况，您应该给他们发电子邮件寻求帮助。
 /**
- * Controls publishing. For publishing to work dryRunMode must be false.
- * Modrinth and Curseforge project tokens are publicly accessible, so it is safe to include them in files.
- * Do not include your API keys in your project!
+ * 控制发布的工作。要使发布正常工作，dryRunMode 必须为 false。
+ * Modrinth 和 Curseforge 项目令牌是公开访问的，因此将它们包含在文件中是安全的。
+ * 不要在项目中包含您的 API 密钥！
  *
- * The Modrinth API token should be stored in the MODRINTH_TOKEN environment variable.
- * The curseforge API token should be stored in the CURSEFORGE_TOKEN environment variable.
+ * Modrinth API 令牌应存储在 MODRINTH_TOKEN 环境变量中。
+ * curseforge API 令牌应存储在 CURSEFORGE_TOKEN 环境变量中。
  */
 class ModPublish {
     val mcTargets = arrayListOf<String>()
@@ -462,7 +477,7 @@ val modFabric = ModFabric()
 val modMixins = ModMixins()
 val dynamics = SpecialMultiversionedConstants()
 
-//TODO: change this if you want your upload version format to be different (this is a highly recommended format)
+//TODO: 如果您希望上传版本格式不同，请更改此格式（强烈建议使用这种格式）
 version = "${mod.version}+${env.mcVersion.min}+${env.loader}"
 group = property("group").toString()
 
@@ -479,7 +494,7 @@ apis.forEach{ src ->
     }
 }
 
-//TODO: Add more stonecutter consts here.
+//TODO: 在此处添加更多 stonecutter 常量。
 stonecutter.const("fabric",env.isFabric)
 stonecutter.const("forge",env.isForge)
 stonecutter.const("neoforge",env.isNeo)
@@ -512,7 +527,7 @@ base { archivesName.set(env.archivesBaseName) }
 
 dependencies {
     minecraft("com.mojang:minecraft:${env.mcVersion.min}")
-    // TODO do you really want to use yarn though? Like what convenience does it even give you smh?
+    // TODO 不过你真的想用yarn吗？比如它给你带来了什么便利？
     mappings(loom.officialMojangMappings())
 
     if(env.isFabric) {
@@ -550,18 +565,17 @@ dependencies {
 
 java {
     withSourcesJar()
-    //TODO update this is newer java is ever required.
+    //TODO 这是需要更新的 Java。
     val java = if(env.javaVer == 8) JavaVersion.VERSION_1_8 else if(env.javaVer == 17) JavaVersion.VERSION_17 else JavaVersion.VERSION_21
     targetCompatibility = java
     sourceCompatibility = java
 }
 
 /**
- * Replaces the normal copy task and post-processes the files.
- * Effectively renames datapack directories due to depluralization past 1.20.4.
- * TODO: acknowledge that you should not pluralize the directories listed in targets.
+ * 替换普通的复制任务并对文件进行后处理。
+ * 由于 1.20.4 之后的去复数化，有效地重命名了数据包目录。
+ * TODO：确认您不应在错误的版本使用复数名字的数据包类型（mojang让你学会了多个单词的附属形式，快谢谢mojang(）。
  */
-
 abstract class ProcessResourcesExtension : ProcessResources() {
     @get:Input
     val autoPluralize = arrayListOf(
@@ -629,11 +643,7 @@ tasks.processResources {
     }
 }
 
-task("organize"){
-    println("organize : name = ${project.name}")
-}
-
-//TODO: Enable auto-publishing.
+//TODO: 启用自动发布。
 /*publishMods {
     file = tasks.remapJar.get().archiveFile
     additionalFiles.from(tasks.remapSourcesJar.get().archiveFile)
@@ -701,10 +711,10 @@ task("organize"){
         }
     }
 }
-// TODO Disable if not uploading to a maven
+// TODO 如果不上传到 Maven，则禁用
 publishing {
     repositories {
-        // TODO this is an example of how I recommend you do this.
+        // TODO 我建议您怎么做的示例
         if(modPublish.mavenURL.isPresent) {
             maven {
                 url = uri(modPublish.mavenURL.get())

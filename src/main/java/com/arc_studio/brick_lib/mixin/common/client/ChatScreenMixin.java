@@ -32,16 +32,16 @@ public class ChatScreenMixin {
     }
 
     //? if >= 1.20.6 {
-    @Inject(method = "handleChatInput", at = @At("TAIL"))
+    /*@Inject(method = "handleChatInput", at = @At("TAIL"))
     public void afterClientSend(String message, boolean bl, CallbackInfo ci) {
         BrickEventBus.postEvent(new PlayerEvent.Chat.Send.Post(Minecraft.getInstance().player, message, message.startsWith("/")));
     }
-    //?} else {
-    /*@Inject(method = "handleChatInput", at = @At("TAIL"))
+    *///?} else {
+    @Inject(method = "handleChatInput", at = @At("TAIL"))
     public void afterClientSend(String string, boolean bl, CallbackInfoReturnable<Boolean> cir) {
         BrickEventBus.postEvent(new PlayerEvent.Chat.Send.Post(Minecraft.getInstance().player, string, string.startsWith("/")));
     }
-    *///?}
+    //?}
 
     @Redirect(method = "handleChatInput", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/ChatComponent;addRecentChat(Ljava/lang/String;)V"))
     public void onAddRecentMessage(ChatComponent instance, String message) {
