@@ -1,14 +1,15 @@
 package com.arc_studio.brick_lib.compatibility;
 
+
+//? if >= 1.20.6 {
+/*
 import com.google.common.collect.Multimap;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.IdMap;
-//? if >= 1.20.6 {
-/*import net.minecraft.core.component.DataComponentMap;
-*///?}
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -20,6 +21,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
+*///?}
+
 
 /**
  * 从1.20.1版本的兼容方法
