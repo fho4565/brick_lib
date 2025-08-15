@@ -20,7 +20,6 @@ import kotlin.text.split
 import kotlin.text.startsWith
 import kotlin.text.substring
 
-// Baseline code. Minimal edits necessary.
 // TODO 确认此处添加的插件
 plugins {
     `maven-publish`
@@ -57,7 +56,7 @@ repositories {
     maven("https://maven.neoforged.net/releases/")
     maven("https://maven.architectury.dev/")
     maven("https://modmaven.dev/")
-    maven("https://panel.ryuutech.com/nexus/repository/maven-releases/")
+    //maven("https://panel.ryuutech.com/nexus/repository/maven-releases/")
     maven("https://maven.minecraftforge.net/")
 }
 
@@ -512,7 +511,7 @@ loom {
     }
 
     decompilers {
-        get("vineflower").apply { // Adds names to lambdas - useful for mixins
+        get("vineflower").apply {
             options.put("mark-corresponding-synthetics", "1")
         }
     }
@@ -527,6 +526,7 @@ base { archivesName.set(env.archivesBaseName) }
 
 dependencies {
     minecraft("com.mojang:minecraft:${env.mcVersion.min}")
+
     // TODO 不过你真的想用yarn吗？比如它给你带来了什么便利？
     mappings(loom.officialMojangMappings())
 

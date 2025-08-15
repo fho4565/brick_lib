@@ -1,4 +1,4 @@
-package com.arc_studio.brick_lib.api.tools;
+package com.arc_studio.brick_lib.tools;
 
 import com.arc_studio.brick_lib.platform.Platform;
 import com.arc_studio.brick_lib.api.core.PlatformType;

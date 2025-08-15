@@ -1,6 +1,6 @@
 package com.arc_studio.brick_lib.api.core.providers.blockpos;
 
-import com.arc_studio.brick_lib.api.tools.WorldUtils;
+import com.arc_studio.brick_lib.tools.WorldUtils;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;

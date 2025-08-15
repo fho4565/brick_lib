@@ -7,10 +7,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.progress.ChunkProgressListener;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ServerLevelData;
 import org.spongepowered.asm.mixin.Final;
@@ -50,13 +48,13 @@ public abstract class MinecraftServerMixin {
     }
     *///?} else {
     //? if forge && =1.20.1 {
-    /*@Inject(method = "setInitialSpawn", locals = LocalCapture.CAPTURE_FAILSOFT, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/ServerLevelData;setSpawn(Lnet/minecraft/core/BlockPos;F)V", ordinal = 2, shift = At.Shift.AFTER))
+    @Inject(method = "setInitialSpawn", locals = LocalCapture.CAPTURE_FAILSOFT, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/ServerLevelData;setSpawn(Lnet/minecraft/core/BlockPos;F)V", ordinal = 2, shift = At.Shift.AFTER))
     private static void spawnf1201(ServerLevel serverLevel, ServerLevelData serverLevelData, boolean bl, boolean bl2, CallbackInfo ci) {
         LevelEvent.CreateSpawnPoint.Spawn event = new LevelEvent.CreateSpawnPoint.Spawn(serverLevel, new BlockPos(serverLevelData.getXSpawn(),serverLevelData.getYSpawn(),serverLevelData.getZSpawn()), 0.0F);
         BrickEventBus.postEvent(event);
         serverLevelData.setSpawn(event.getSpawnPos(), event.getSpawnAngle());
     }
-    *///?} else if neoforge && =1.20.4 {
+    //?} else if neoforge && =1.20.4 {
     /*@Inject(method = "setInitialSpawn", locals = LocalCapture.CAPTURE_FAILSOFT, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/ServerLevelData;setSpawn(Lnet/minecraft/core/BlockPos;F)V", ordinal = 2, shift = At.Shift.AFTER))
     private static void spawn01(ServerLevel serverLevel, ServerLevelData serverLevelData, boolean bl, boolean bl2, CallbackInfo ci) {
         LevelEvent.CreateSpawnPoint.Spawn events = new LevelEvent.CreateSpawnPoint.Spawn(serverLevel, new BlockPos(serverLevelData.getXSpawn(),serverLevelData.getYSpawn(),serverLevelData.getZSpawn()), 0.0F);

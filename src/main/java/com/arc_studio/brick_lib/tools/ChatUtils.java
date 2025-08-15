@@ -1,4 +1,4 @@
-package com.arc_studio.brick_lib.api.tools;
+package com.arc_studio.brick_lib.tools;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;

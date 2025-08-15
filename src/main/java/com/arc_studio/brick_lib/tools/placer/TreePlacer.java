@@ -5,7 +5,7 @@
  * (you may not receive this file in the LGPL v3 License)
  */
 
-package com.arc_studio.brick_lib.api.tools.placer;
+package com.arc_studio.brick_lib.tools.placer;
 
 import com.arc_studio.brick_lib.api.core.Direction4;
 import net.minecraft.core.BlockPos;

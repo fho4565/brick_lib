@@ -1,25 +1,26 @@
 package com.arc_studio.brick_lib.register;
 
 import com.arc_studio.brick_lib.BrickLib;
+import com.arc_studio.brick_lib.core.ArmorSuit;
+import com.arc_studio.brick_lib.core.global_pack.GlobalPack;
+import com.arc_studio.brick_lib.core.global_pack.files.GlobalPackFileType;
+
 import com.arc_studio.brick_lib.api.register.BrickRegistry;
 import com.arc_studio.brick_lib.api.register.VanillaRegistry;
+import com.arc_studio.brick_lib.api.json_function.JsonFunction;
 import com.arc_studio.brick_lib.render.ItemDecorationRender;
-import com.arc_studio.brick_lib.api.core.ArmorSuit;
 import com.arc_studio.brick_lib.api.network.type.PacketConfig;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.core.Registry;
 //? if >= 1.20.6 {
-/*import net.minecraft.core.component.DataComponentType;
+/*import net.minecraft.core.components.DataComponentType;
 *///?}
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -207,6 +208,21 @@ public class BrickRegistries {
      * 盔甲套装注册表
      * */
     public static final BrickRegistry<ArmorSuit> ARMOR_SUIT = create("armor_suit");
+
+    /**
+     * 全局包注册表
+     * */
+    public static final BrickRegistry<GlobalPack> GLOBAL_PACK = create("global_pack");
+
+    /**
+     * 全局包文件类型注册表
+     * */
+    public static final BrickRegistry<GlobalPackFileType> GLOBAL_PACK_FILE_TYPE = create("global_pack_file_type");
+
+    /**
+     * 全局包文件类型注册表
+     * */
+    public static final BrickRegistry<JsonFunction> JSON_FUNCTION = create("json_function");
 
 
     private static <T> BrickRegistry<T> create(String name) {

@@ -1,4 +1,4 @@
-package com.arc_studio.brick_lib.api.core.packs;
+package com.arc_studio.brick_lib.core.packs;
 
 import com.google.common.collect.Maps;
 import net.minecraft.world.level.block.*;

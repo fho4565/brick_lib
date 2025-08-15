@@ -1,7 +1,7 @@
 package com.arc_studio.brick_lib.api.data;
 
-import com.arc_studio.brick_lib.api.tools.Constants;
-import com.arc_studio.brick_lib.api.tools.NBTUtils;
+import com.arc_studio.brick_lib.tools.Constants;
+import com.arc_studio.brick_lib.tools.NBTUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 

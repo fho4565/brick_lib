@@ -1,11 +1,12 @@
 package com.arc_studio.brick_lib.api.network.type;
 
+
 import com.arc_studio.brick_lib.BrickLib;
 import com.arc_studio.brick_lib.api.network.PacketContent;
 import com.arc_studio.brick_lib.api.network.context.C2SNetworkContext;
 //? if >=1.20.4 {
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-//?} else {
+/*import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+*///?} else {
 //?}
 
 import net.minecraft.resources.ResourceLocation;

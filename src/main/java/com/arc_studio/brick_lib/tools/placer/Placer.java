@@ -1,9 +1,8 @@
-package com.arc_studio.brick_lib.api.tools.placer;
+package com.arc_studio.brick_lib.tools.placer;
 
 import com.arc_studio.brick_lib.BrickLib;
 import com.arc_studio.brick_lib.api.core.SingleBlockWithNbt;
 import com.arc_studio.brick_lib.api.core.interfaces.data.ICompoundTagSerializer;
-import com.arc_studio.brick_lib.api.tools.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -658,7 +657,7 @@ public class Placer implements ICompoundTagSerializer {
     }
 
     @Override
-    public void deserialize(CompoundTag nbt) {
+    public boolean deserialize(CompoundTag nbt) {
         LinkedList<PlaceAction> steps = new LinkedList<>();
         ListTag list = nbt.getList("steps", 10);
         for (int i = 0; i < list.size(); i++) {
@@ -667,6 +666,7 @@ public class Placer implements ICompoundTagSerializer {
         this.steps.clear();
         this.steps.addAll(steps);
         this.formerDirection = FormerDirection.valueOf(nbt.getString("former"));
+        return true;
     }
 
 

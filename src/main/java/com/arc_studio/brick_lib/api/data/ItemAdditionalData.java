@@ -10,8 +10,8 @@ import net.minecraft.nbt.NbtOps;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.jetbrains.annotations.Nullable;
-import net.minecraft.core.component.DataComponentType;
-import java.util.function.Function;
+import net.minecraft.core.components.DataComponentType;
+import java.util.functions.Function;
 
 *///?}
 import net.minecraft.world.item.ItemStack;

@@ -1,7 +1,8 @@
 package com.arc_studio.brick_lib.events.server.entity.living.player;
 
-import com.arc_studio.brick_lib.api.core.ArmorSuit;
+
 import com.arc_studio.brick_lib.api.event.BaseEvent;
+import com.arc_studio.brick_lib.core.ArmorSuit;
 
 import java.util.HashSet;
 

@@ -1,5 +1,6 @@
 package com.arc_studio.brick_lib.api.network.type;
 
+
 import com.arc_studio.brick_lib.BrickLib;
 import com.arc_studio.brick_lib.api.network.PacketContent;
 import com.arc_studio.brick_lib.api.network.context.C2SNetworkContext;

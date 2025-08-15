@@ -34,7 +34,7 @@ public class CommandsMixin {
     }
 
     //? if >= 1.20.6 {
-    /*@Inject(method = "performCommand", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/commands/Commands;executeCommandInContext(Lnet/minecraft/commands/CommandSourceStack;Ljava/util/function/Consumer;)V"), cancellable = true)
+    /*@Inject(method = "performCommand", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/commands/Commands;executeCommandInContext(Lnet/minecraft/commands/CommandSourceStack;Ljava/util/functions/Consumer;)V"), cancellable = true)
     public void onExecute(ParseResults<CommandSourceStack> parseResults, String command, CallbackInfo ci) {
         if (BrickEventBus.postEvent(new CommandEvent.PreExecute(parseResults))) {
             ci.cancel();
@@ -42,19 +42,19 @@ public class CommandsMixin {
     }
     *///?} else {
     //? if =1.20.4 {
-    @Inject(method = "performCommand", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/commands/Commands;executeCommandInContext(Lnet/minecraft/commands/CommandSourceStack;Ljava/util/function/Consumer;)V"), cancellable = true)
+    /*@Inject(method = "performCommand", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/commands/Commands;executeCommandInContext(Lnet/minecraft/commands/CommandSourceStack;Ljava/util/functions/Consumer;)V"), cancellable = true)
     public void onExecute(ParseResults<CommandSourceStack> parseResults, String command, CallbackInfo ci) {
         if (BrickEventBus.postEvent(new CommandEvent.PreExecute(parseResults))) {
             ci.cancel();
         }
     }
-    //?} else {
-    /*@Inject(method = "performCommand", remap = false, at = @At(value = "INVOKE", target = "Lcom/mojang/brigadier/CommandDispatcher;execute(Lcom/mojang/brigadier/ParseResults;)I"), cancellable = true)
+    *///?} else {
+    @Inject(method = "performCommand", remap = false, at = @At(value = "INVOKE", target = "Lcom/mojang/brigadier/CommandDispatcher;execute(Lcom/mojang/brigadier/ParseResults;)I"), cancellable = true)
     public void onExecute(ParseResults<CommandSourceStack> parseResults, String string, CallbackInfoReturnable<Integer> cir) {
         if (BrickEventBus.postEvent(new CommandEvent.PreExecute(parseResults))) {
             cir.cancel();
         }
     }
-    *///?}
+    //?}
     //?}
 }

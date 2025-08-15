@@ -68,7 +68,3 @@ extensions.configure<StonecutterSettings> {
 }
 
 rootProject.name = "brick_lib"
-
-
-
-

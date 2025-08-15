@@ -1,8 +1,7 @@
-package com.arc_studio.brick_lib.api.tools;
+package com.arc_studio.brick_lib.tools;
 
 import com.arc_studio.brick_lib.BrickLib;
 import com.arc_studio.brick_lib.platform.Platform;
-import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -17,7 +16,7 @@ import net.minecraft.world.item.alchemy.Potion;
 
 //? if >= 1.20.6 {
 /*import net.minecraft.world.item.alchemy.PotionContents;
-import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.components.DataComponents;
 *///?} else {
 import net.minecraft.world.item.alchemy.PotionUtils;
 //?}

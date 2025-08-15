@@ -1,10 +1,9 @@
 package com.arc_studio.brick_lib.mixin.common.server;
 
-import com.arc_studio.brick_lib.api.tools.Constants;
+import com.arc_studio.brick_lib.tools.Constants;
 import com.arc_studio.brick_lib.api.event.BrickEventBus;
 import com.arc_studio.brick_lib.events.server.server.ServerEvent;
 import net.minecraft.network.Connection;
-import net.minecraft.network.ConnectionProtocol;
 import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
 import net.minecraft.server.network.ServerHandshakePacketListenerImpl;
 import org.spongepowered.asm.mixin.Final;
@@ -21,7 +20,7 @@ public class ServerHandshakePacketListenerImplMixin {
     @Inject(method = "handleIntention", at = @At("HEAD"))
     public void handle(ClientIntentionPacket packet, CallbackInfo ci) {
         //? if >= 1.20.4 {
-        BrickEventBus.postEvent(new ServerEvent.LogIn(Constants.currentServer(),
+        /*BrickEventBus.postEvent(new ServerEvent.LogIn(Constants.currentServer(),
                 packet.protocolVersion(),
                 packet.hostName(),
                 packet.port(),
@@ -32,14 +31,14 @@ public class ServerHandshakePacketListenerImplMixin {
                     default -> null;
                 }
                 ));
-        //?} else {
-        /*BrickEventBus.postEvent(new ServerEvent.LogIn(Constants.currentServer(),
+        *///?} else {
+        BrickEventBus.postEvent(new ServerEvent.LogIn(Constants.currentServer(),
                 packet.getProtocolVersion(),
                 packet.getHostName(),
                 packet.getPort(),
                 this.connection,
                 packet.getIntention()
         ));
-        *///?}
+        //?}
     }
 }

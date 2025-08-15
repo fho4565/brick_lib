@@ -1,4 +1,4 @@
-package com.arc_studio.brick_lib.api.tools;
+package com.arc_studio.brick_lib.tools;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.*;

@@ -1,4 +1,4 @@
-package com.arc_studio.brick_lib.api.tools;
+package com.arc_studio.brick_lib.tools;
 
 // WorldUtils 工具类，提供了大量与世界(Level)相关的便捷操作方法
 // 包括方块、实体、声音、战利品、命令等常用操作
@@ -11,14 +11,15 @@ import com.arc_studio.brick_lib.api.core.interfaces.consumer.BlockPosConsumer;
 import com.arc_studio.brick_lib.api.core.interfaces.consumer.BlockStateConsumer;
 import com.arc_studio.brick_lib.api.core.interfaces.consumer.SingleBlockConsumer;
 import com.arc_studio.brick_lib.api.core.interfaces.consumer.SingleBlockWithNbtConsumer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -28,6 +29,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -103,15 +105,15 @@ public class WorldUtils {
             return 0;
         }
         //? if >= 1.20.4 {
-        stack.getServer().getCommands().performPrefixedCommand(stack, command);
+        /*stack.getServer().getCommands().performPrefixedCommand(stack, command);
         final int[] result = new int[1];
         stack.withCallback((success, r) -> {
             result[0] = r;
         });
         return result[0];
-        //?} else {
-        /*return stack.getServer().getCommands().performPrefixedCommand(stack, command);
-        *///?}
+        *///?} else {
+        return stack.getServer().getCommands().performPrefixedCommand(stack, command);
+        //?}
     }
 
     /**
@@ -127,7 +129,7 @@ public class WorldUtils {
             return 0;
         }
         //? if >= 1.20.4 {
-        if (mute) {
+        /*if (mute) {
             stack.getServer().getCommands().performPrefixedCommand(stack.withSuppressedOutput(), command);
         }else{
             stack.getServer().getCommands().performPrefixedCommand(stack, command);
@@ -137,12 +139,12 @@ public class WorldUtils {
             result[0] = r;
         });
         return result[0];
-        //?} else {
-        /*if (mute) {
+        *///?} else {
+        if (mute) {
             return stack.getServer().getCommands().performPrefixedCommand(stack.withSuppressedOutput(), command);
         }
         return stack.getServer().getCommands().performPrefixedCommand(stack, command);
-        *///?}
+        //?}
     }
 
     /**
@@ -492,20 +494,20 @@ public class WorldUtils {
         Scoreboard scoreboard = server.getScoreboard();
         //? if >= 1.20.4 {
         
-        if (scoreboard.getPlayerScoreInfo(ScoreHolder.forNameOnly(entityName), objectiveName) == null) {
+        /*if (scoreboard.getPlayerScoreInfo(ScoreHolder.forNameOnly(entityName), objectiveName) == null) {
             return 0;
         } else {
             ScoreAccess score = scoreboard.getOrCreatePlayerScore(ScoreHolder.forNameOnly(entityName), objectiveName);
             return score.get();
         }
-        //?} else {
-        /*if (!scoreboard.hasPlayerScore(entityName, objectiveName)) {
+        *///?} else {
+        if (!scoreboard.hasPlayerScore(entityName, objectiveName)) {
             return 0;
         } else {
             Score score = scoreboard.getOrCreatePlayerScore(entityName, objectiveName);
             return score.getScore();
         }
-        *///?}
+        //?}
     }
 
     /**
@@ -648,35 +650,76 @@ public class WorldUtils {
     }
 
     /**
-     * 在指定位置播放声音（默认音量1，音高1）
+     * 在指定位置播放声音
+     * @param levelAccessor 世界对象
+     * @param blockPos      坐标
+     * @param soundEvent    声音事件
+     * @param soundSource   声音源
+     * @param volume        音量
+     * @param pitch         音高
      */
-    public static void playSound(LevelAccessor levelAccessor, double x, double y, double z, SoundEvent soundEvent, SoundSource soundSource) {
+    public static void playSound(LevelAccessor levelAccessor, BlockPos blockPos, SoundEvent soundEvent, SoundSource soundSource, float volume, float pitch) {
         if (levelAccessor instanceof Level level) {
             if (!level.isClientSide()) {
-                level.playSound(null, BlockPos.containing(x, y, z), soundEvent, soundSource, 1, 1);
+                level.playSound(null, blockPos, soundEvent, soundSource, volume, pitch);
             } else {
-                level.playLocalSound(x, y, z, soundEvent, soundSource, 1, 1, false);
+                level.playLocalSound(blockPos, soundEvent, soundSource, volume, pitch, false);
             }
         }
     }
 
     /**
+     * 在指定位置播放声音（默认音量1，音高1）
+     */
+    public static void playSound(LevelAccessor levelAccessor, double x, double y, double z, SoundEvent soundEvent, SoundSource soundSource) {
+        playSound(levelAccessor,x,y,z,soundEvent,soundSource,1, 1);
+    }
+
+    /**
+     * 在指定位置播放声音（默认音量1，音高1）
+     */
+    public static void playSound(LevelAccessor levelAccessor, BlockPos blockPos, SoundEvent soundEvent, SoundSource soundSource) {
+        playSound(levelAccessor,blockPos,soundEvent,soundSource,1, 1);
+    }
+
+    /**
      * 仅为指定玩家播放声音
-     *
-     * @param serverPlayer 玩家
+     * @param player 玩家
      * @param soundEvent   声音事件
      * @param soundSource  声音源
      */
-    public static void playSoundForPlayer(ServerPlayer serverPlayer, SoundEvent soundEvent, SoundSource soundSource) {
-        serverPlayer.connection.send(new ClientboundSoundPacket(Holder.direct(soundEvent),
-                soundSource,
-                serverPlayer.getX(),
-                serverPlayer.getY(),
-                serverPlayer.getZ(),
-                1,
-                1,
-                serverPlayer.level().getRandom().nextLong()));
+    public static void playSoundForPlayer(Player player, SoundEvent soundEvent, SoundSource soundSource, float volume, float pitch) {
+        if(player instanceof ServerPlayer serverPlayer){
+            SideExecutor.runOnServer(() -> serverPlayer.connection.send(new ClientboundSoundPacket(Holder.direct(soundEvent),
+                    soundSource,
+                    serverPlayer.getX(),
+                    serverPlayer.getY(),
+                    serverPlayer.getZ(),
+                    volume,
+                    pitch,
+                    serverPlayer.level().getRandom().nextLong())
+            ));
+        } else if (player instanceof LocalPlayer localPlayer) {
+            SideExecutor.runOnClient(() -> {
+                ClientLevel clientLevel = Minecraft.getInstance().level;
+                if (clientLevel != null) {
+                    clientLevel.playSeededSound(localPlayer,
+                            localPlayer.getX(), localPlayer.getY(), localPlayer.getZ(),
+                            soundEvent, soundSource,
+                            volume, pitch, clientLevel.random.nextLong());
+                }
+            });
+        }
+    }
 
+    /**
+     * 仅为指定玩家播放声音（默认音量1，音高1）
+     * @param player 玩家
+     * @param soundEvent   声音事件
+     * @param soundSource  声音源
+     */
+    public static void playSoundForPlayer(Player player, SoundEvent soundEvent, SoundSource soundSource) {
+        playSoundForPlayer(player,soundEvent,soundSource,1,1);
     }
 
     /**

@@ -3,7 +3,7 @@ package com.arc_studio.brick_lib.platform;
 
 
 //? if (forge) || oldnf {
-/*import com.arc_studio.brick_lib.BrickLib;
+import com.arc_studio.brick_lib.BrickLib;
 import com.arc_studio.brick_lib.api.network.PacketContent;
 import com.arc_studio.brick_lib.api.network.context.C2SNetworkContext;
 import com.arc_studio.brick_lib.api.network.context.S2CNetworkContext;
@@ -16,23 +16,17 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.network.Channel;
-import net.minecraftforge.network.ChannelBuilder;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.SimpleChannel;
-
-import java.util.concurrent.atomic.AtomicInteger;
-/^//? if forge && < 1.20.4 {
-/^¹import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
+
+import java.util.concurrent.atomic.AtomicInteger;
+//? if forge && < 1.20.4 {
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.simple.SimpleChannel;
-¹^///?}
+//?}
 
 //? if forge && >=1.20.4 {
-/^¹import net.minecraftforge.eventbus.api.SubscribeEvent;
+/*import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.network.NetworkDirection;
@@ -42,49 +36,49 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.SimpleChannel;
 import net.minecraftforge.network.*;
-¹^///?}
+*///?}
 
 //? if neoforge {
-import net.neoforged.bus.api.SubscribeEvent;
+/*import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.events.lifecycle.FMLCommonSetupEvent;
-//?}
+*///?}
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 
-^/*///?}
+//?}
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class ForgePlatform {
     //? if (forge) || oldnf {
-    /*protected static final String PROTOCOL_VERSION = "0";
+    protected static final String PROTOCOL_VERSION = "0";
     public static final SimpleChannel c2sChannel = //? if < 1.20.4 {
-    /^NetworkRegistry.newSimpleChannel(
+    NetworkRegistry.newSimpleChannel(
             new ResourceLocation(BrickLib.MOD_ID, "c2s"),
             () -> PROTOCOL_VERSION,
             PROTOCOL_VERSION::equals,
             PROTOCOL_VERSION::equals
     );
-    ^///?} else {
-    ChannelBuilder.named(BrickLib.createBrickRL("c2s"))
+    //?} else {
+    /*ChannelBuilder.named(BrickLib.createBrickRL("c2s"))
             .networkProtocolVersion(1)
             .serverAcceptedVersions(Channel.VersionTest.exact(1))
             .clientAcceptedVersions(Channel.VersionTest.exact(1))
             .simpleChannel();
-    //?}
+    *///?}
     public static final SimpleChannel s2cChannel = //? if <1.20.4 {
-    /^NetworkRegistry.newSimpleChannel(
+    NetworkRegistry.newSimpleChannel(
             new ResourceLocation(BrickLib.MOD_ID, "s2c"),
             () -> PROTOCOL_VERSION,
             PROTOCOL_VERSION::equals,
             PROTOCOL_VERSION::equals
     );
-    ^///?} else {
-            ChannelBuilder.named(BrickLib.createBrickRL("s2c"))
+    //?} else {
+            /*ChannelBuilder.named(BrickLib.createBrickRL("s2c"))
                     .networkProtocolVersion(1)
                     .serverAcceptedVersions(Channel.VersionTest.exact(1))
                     .clientAcceptedVersions(Channel.VersionTest.exact(1))
                     .simpleChannel();
-    //?}
+    *///?}
     protected static final AtomicInteger c2sID = new AtomicInteger(0);
     protected static final AtomicInteger s2cID = new AtomicInteger(0);
 
@@ -97,10 +91,10 @@ public class ForgePlatform {
                         .decoder(buf -> c2S.decoder().apply(new PacketContent((FriendlyByteBuf) buf)));
                 if (c2S.netHandle()) {
                     builder.consumerNetworkThread((msg, contextSupplier) -> {
-                        c2S.packetHandler().accept(msg, new C2SNetworkContext(/^? <1.20.4 {^/ /^contextSupplier.get().getSender() ^//^?} else {^/contextSupplier.getSender()/^?}^/));
+                        c2S.packetHandler().accept(msg, new C2SNetworkContext(/*? <1.20.4 {*/ contextSupplier.get().getSender() /*?} else {*//*contextSupplier.getSender()*//*?}*/));
                     });
                 } else {
-                    builder.consumerMainThread((msg, contextSupplier) -> c2S.packetHandler().accept(msg, new C2SNetworkContext(/^? <1.20.4 {^/ /^contextSupplier.get().getSender() ^//^?} else {^/contextSupplier.getSender()/^?}^/)));
+                    builder.consumerMainThread((msg, contextSupplier) -> c2S.packetHandler().accept(msg, new C2SNetworkContext(/*? <1.20.4 {*/ contextSupplier.get().getSender() /*?} else {*//*contextSupplier.getSender()*//*?}*/)));
                 }
                 builder.add();
             } else if (packetConfig instanceof PacketConfig.S2C s2C) {
@@ -138,15 +132,15 @@ public class ForgePlatform {
                         .decoder(buf -> sac.decoder().apply(new PacketContent((FriendlyByteBuf) buf)));
                 if (sac.netHandle()) {
                     c2sBuilder.consumerNetworkThread((msg, contextSupplier) -> {
-                        sac.serverHandler().accept(msg, new C2SNetworkContext(/^? <1.20.4 {^/ /^contextSupplier.get().getSender() ^//^?} else {^/contextSupplier.getSender()/^?}^/));
+                        sac.serverHandler().accept(msg, new C2SNetworkContext(/*? <1.20.4 {*/ contextSupplier.get().getSender() /*?} else {*//*contextSupplier.getSender()*//*?}*/));
                     });
                 } else {
-                    c2sBuilder.consumerMainThread((msg, contextSupplier) -> sac.serverHandler().accept(msg, new C2SNetworkContext(/^? <1.20.4 {^/ /^contextSupplier.get().getSender() ^//^?} else {^/contextSupplier.getSender()/^?}^/)));
+                    c2sBuilder.consumerMainThread((msg, contextSupplier) -> sac.serverHandler().accept(msg, new C2SNetworkContext(/*? <1.20.4 {*/ contextSupplier.get().getSender() /*?} else {*//*contextSupplier.getSender()*//*?}*/)));
                 }
                 c2sBuilder.add();
             }
 
         });
     }
-    *///?}
+    //?}
 }

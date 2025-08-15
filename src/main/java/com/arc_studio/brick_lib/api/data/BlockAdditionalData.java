@@ -1,9 +1,9 @@
 package com.arc_studio.brick_lib.api.data;
 
 import com.arc_studio.brick_lib.BrickLib;
-import com.arc_studio.brick_lib.api.tools.Constants;
+import com.arc_studio.brick_lib.tools.Constants;
 import com.arc_studio.brick_lib.api.core.SingleBlock;
-import com.arc_studio.brick_lib.api.tools.NBTUtils;
+import com.arc_studio.brick_lib.tools.NBTUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.*;
 import net.minecraft.resources.ResourceKey;

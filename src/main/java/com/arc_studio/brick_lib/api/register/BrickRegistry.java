@@ -14,8 +14,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class BrickRegistry<T> extends RegistryType<T> implements Iterable<T> {
-    HashMap<ResourceLocation, Supplier<T>> map = new HashMap<>();
-    HashMap<ResourceLocation, Supplier<T>> toReg = new HashMap<>();
+    protected HashMap<ResourceLocation, Supplier<T>> map = new HashMap<>();
+    protected HashMap<ResourceLocation, Supplier<T>> toReg = new HashMap<>();
 
     private final ResourceKey<? extends Registry<T>> key;
 

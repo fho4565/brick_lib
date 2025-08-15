@@ -1,13 +1,13 @@
 package com.arc_studio.brick_lib.api.network;
 
-import com.arc_studio.brick_lib.api.tools.Constants;
-import com.arc_studio.brick_lib.platform.Platform;
-import com.arc_studio.brick_lib.api.event.BrickEventBus;
-import com.arc_studio.brick_lib.events.server.NetworkMessageEvent;
 import com.arc_studio.brick_lib.api.network.type.C2SPacket;
 import com.arc_studio.brick_lib.api.network.type.ICHandlePacket;
 import com.arc_studio.brick_lib.api.network.type.ISHandlePacket;
 import com.arc_studio.brick_lib.api.network.type.S2CPacket;
+import com.arc_studio.brick_lib.tools.Constants;
+import com.arc_studio.brick_lib.platform.Platform;
+import com.arc_studio.brick_lib.api.event.BrickEventBus;
+import com.arc_studio.brick_lib.events.server.NetworkMessageEvent;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.List;

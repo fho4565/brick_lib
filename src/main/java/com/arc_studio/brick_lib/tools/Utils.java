@@ -1,5 +1,6 @@
-package com.arc_studio.brick_lib.api.tools;
+package com.arc_studio.brick_lib.tools;
 
+import com.arc_studio.brick_lib.core.global_pack.GlobalPacks;
 import com.arc_studio.brick_lib.platform.Platform;
 import net.minecraft.resources.ResourceLocation;
 
@@ -16,6 +17,7 @@ public class Utils {
      * <p color = "red">此方法必须被调用，且必须在模组入口点或者构造方法的最后调用！</p>
      * */
     public static void brickFinalize(){
+        GlobalPacks.read();
         Platform.brickFinalizeRegistry();
     }
 }

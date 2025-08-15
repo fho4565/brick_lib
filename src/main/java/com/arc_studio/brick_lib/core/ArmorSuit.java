@@ -1,9 +1,8 @@
-package com.arc_studio.brick_lib.api.core;
+package com.arc_studio.brick_lib.core;
 
 import com.arc_studio.brick_lib.BrickLib;
-import com.arc_studio.brick_lib.api.tools.ItemUtils;
-import com.arc_studio.brick_lib.api.core.packs.MaterialPack;
-import com.arc_studio.brick_lib.api.event.BrickEventBus;
+import com.arc_studio.brick_lib.core.packs.MaterialPack;
+import com.arc_studio.brick_lib.tools.ItemUtils;
 import com.arc_studio.brick_lib.events.server.entity.living.player.ArmorSuitEvent;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
@@ -81,17 +80,17 @@ public class ArmorSuit {
         if (!enabled) return;
         if (isComplete(player)) {
             if (!contains(player)) {
-                if (!BrickEventBus.postEvent(new ArmorSuitEvent.Complete(player, this))) {
+                if (!com.arc_studio.brick_lib.api.event.BrickEventBus.postEvent(new ArmorSuitEvent.Complete(player, this))) {
                     onArmorSuitCompleted(player);
                 }
                 players.add(player.getUUID());
             }
-            if (!BrickEventBus.postEvent(new ArmorSuitEvent.Tick(player, this))) {
+            if (!com.arc_studio.brick_lib.api.event.BrickEventBus.postEvent(new ArmorSuitEvent.Tick(player, this))) {
                 onArmorSuitTick(player);
             }
         } else {
             if (contains(player)) {
-                if (!BrickEventBus.postEvent(new ArmorSuitEvent.Unset(player, this))) {
+                if (!com.arc_studio.brick_lib.api.event.BrickEventBus.postEvent(new ArmorSuitEvent.Unset(player, this))) {
                     onArmorSuitUnset(player);
 
                 }

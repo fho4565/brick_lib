@@ -6,7 +6,6 @@ import com.arc_studio.brick_lib.events.server.entity.living.player.PlayerClickCo
 import com.arc_studio.brick_lib.events.server.entity.living.player.PlayerEvent;
 import com.arc_studio.brick_lib.events.server.world.LevelEvent;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.ReceivingLevelScreen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
@@ -83,20 +82,20 @@ public abstract class MinecraftMixin {
     }
 
     //? if =1.20.4 {
-    @Inject(method = "clearClientLevel", at = @At("HEAD"))
+    /*@Inject(method = "clearClientLevel", at = @At("HEAD"))
     public void levelUnload1204(CallbackInfo ci) {
         if (this.level != null) {
             BrickEventBus.postEvent(new LevelEvent.Unload(this.level));
         }
     }
-    //?} else {
-    /*@Inject(method = "clearLevel(Lnet/minecraft/client/gui/screens/Screen;)V", at = @At("HEAD"))
+    *///?} else {
+    @Inject(method = "clearLevel(Lnet/minecraft/client/gui/screens/Screen;)V", at = @At("HEAD"))
     public void levelUnload1201(CallbackInfo ci) {
         if (this.level != null) {
             BrickEventBus.postEvent(new LevelEvent.Unload(this.level));
         }
     }
-    *///?}
+    //?}
     //?}
 
     @Inject(at = @At("HEAD"), method = "tick")

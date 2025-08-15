@@ -1,6 +1,6 @@
 package com.arc_studio.brick_lib.register;
 
-import com.arc_studio.brick_lib.api.tools.Constants;
+import com.arc_studio.brick_lib.tools.Constants;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import org.jetbrains.annotations.ApiStatus;

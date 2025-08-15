@@ -1,8 +1,8 @@
-package com.arc_studio.brick_lib.api.tools.placer;
+package com.arc_studio.brick_lib.tools.placer;
 
 import com.arc_studio.brick_lib.BrickLib;
-import com.arc_studio.brick_lib.api.tools.Constants;
-import com.arc_studio.brick_lib.api.tools.WorldUtils;
+import com.arc_studio.brick_lib.tools.Constants;
+import com.arc_studio.brick_lib.tools.WorldUtils;
 import com.arc_studio.brick_lib.compatibility.ForgeCompatibility;
 import com.arc_studio.brick_lib.api.core.SingleBlockWithNbt;
 import com.arc_studio.brick_lib.register.Placers;
