@@ -34,7 +34,6 @@ plugins {
 // TODO 确认添加的仓库
 repositories {
     mavenLocal()
-    mavenCentral()
     maven("https://maven.aliyun.com/repository/google")
     maven("https://maven.aliyun.com/repository/public")
     maven("https://maven.aliyun.com/repository/gradle-plugin")
@@ -53,11 +52,13 @@ repositories {
         forRepository { maven("https://api.modrinth.com/maven") { name = "Modrinth" } }
         filter { includeGroup("maven.modrinth") }
     }
+    maven("https://maven.parchmentmc.org")
     maven("https://maven.neoforged.net/releases/")
     maven("https://maven.architectury.dev/")
     maven("https://modmaven.dev/")
     //maven("https://panel.ryuutech.com/nexus/repository/maven-releases/")
     maven("https://maven.minecraftforge.net/")
+    mavenCentral()
 }
 
 fun bool(str: String) : Boolean {
@@ -160,6 +161,11 @@ enum class EnvType {
  * Stores core dependency and environment information.
  */
 class Env {
+    val parchmentVersions = mapOf(
+        "1.20.1" to "2023.09.03",
+        "1.20.4" to "2024.04.14",
+        "1.20.6" to "2024.06.16"
+    );
     val archivesBaseName = property("archives_base_name").toString()
 
     val mcVersion = versionProperty("deps.core.mc.version_range")
@@ -527,14 +533,20 @@ base { archivesName.set(env.archivesBaseName) }
 dependencies {
     minecraft("com.mojang:minecraft:${env.mcVersion.min}")
 
-    // TODO 不过你真的想用yarn吗？比如它给你带来了什么便利？
-    mappings(loom.officialMojangMappings())
+    mappings(loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${env.mcVersion.min}:${env.parchmentVersions[env.mcVersion.min]}@zip")
+    })
 
     if(env.isFabric) {
         modImplementation("net.fabricmc:fabric-loader:${env.fabricLoaderVersion.min}")
     }
     if(env.isForge){
         "forge"("net.minecraftforge:forge:${env.forgeMavenVersion.min}")
+        if (env.mcVersion.min>="1.18.2"){
+            annotationProcessor("io.github.llamalad7:mixinextras-common:0.5.0")?.let { compileOnly(it) }
+            include("io.github.llamalad7:mixinextras-forge:0.5.0")?.let { implementation(it) }
+        }
     }
     if(env.isNeo){
         "neoForge"("net.neoforged:neoforge:${env.neoforgeVersion.min}")

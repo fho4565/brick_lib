@@ -6,6 +6,7 @@ import com.arc_studio.brick_lib.events.server.entity.living.player.PlayerClickCo
 import com.arc_studio.brick_lib.events.server.entity.living.player.PlayerEvent;
 import com.arc_studio.brick_lib.events.server.world.LevelEvent;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.ReceivingLevelScreen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;

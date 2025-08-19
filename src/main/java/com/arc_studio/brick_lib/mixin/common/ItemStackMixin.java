@@ -2,8 +2,8 @@ package com.arc_studio.brick_lib.mixin.common;
 
 import com.arc_studio.brick_lib.api.data.ItemAdditionalData;
 //? if >=1.20.6 {
-/*import net.minecraft.core.components.DataComponentMap;
-import net.minecraft.core.components.PatchedDataComponentMap;
+/*import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.PatchedDataComponentMap;
 *///?}
 
 import net.minecraft.nbt.CompoundTag;

@@ -13,6 +13,7 @@ import com.arc_studio.brick_lib.api.data.LevelAdditionalData;
 import com.arc_studio.brick_lib.api.data.WorldAdditionalData;
 import com.arc_studio.brick_lib.api.event.BrickEventBus;
 import com.arc_studio.brick_lib.api.register.BrickRegisterManager;
+import com.arc_studio.brick_lib.events.client.HudEvent;
 import com.arc_studio.brick_lib.tools.Constants;
 import com.arc_studio.brick_lib.tools.ItemUtils;
 import com.arc_studio.brick_lib.tools.SideExecutor;
@@ -27,23 +28,32 @@ import com.arc_studio.brick_lib.item.ICooldownItem;
 import com.arc_studio.brick_lib.platform.Platform;
 import com.arc_studio.brick_lib.register.BrickRegistries;
 import com.google.gson.JsonElement;
+import com.llamalad7.mixinextras.MixinExtrasBootstrap;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.Commands;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.network.Connection;
 import net.minecraft.network.ConnectionProtocol;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 
+import java.awt.*;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -61,6 +71,7 @@ public final class BrickLib {
     };
 
     public static void init() {
+        MixinExtrasBootstrap.init();
         Constants.initGeneral();
         BrickLib.LOGGER.info("You are using Brick Lib version {}", BRICK_LIB_VERSION);
         preLoad();
@@ -105,6 +116,31 @@ public final class BrickLib {
             //ChatUtils.sendMessageToPlayer(event.getEntity(), "You are playing %s %s-%s".formatted(Platform.isServer() ? "server":"client",Platform.platform().getName(),Platform.gameVersion()));
         });
 
+        BrickEventBus.registerListener(HudEvent.VanillaRender.ExperienceBar.class,event -> {
+            event.cancelVanillaRender();
+            LocalPlayer player = Minecraft.getInstance().player;
+            if (player != null) {
+                final int currentExpPoint = Mth.floor(player.experienceProgress * player.getXpNeededForNextLevel());
+                event.guiGraphics().drawString(Minecraft.getInstance().font,
+                        Component.literal("Exp Level:").withStyle(ChatFormatting.AQUA)
+                                .append(Component.literal(String.valueOf(player.experienceLevel))
+                                        .withStyle(ChatFormatting.GOLD))
+                                .append(Component.literal("   Exp Point:")
+                                        .withStyle(ChatFormatting.AQUA))
+                                .append(Component.literal(String.valueOf(currentExpPoint))
+                                        .withStyle(ChatFormatting.GOLD))
+                                .append(Component.literal("   Needed for next level:")
+                                        .withStyle(ChatFormatting.AQUA))
+                                .append(Component.literal(String.valueOf(player.getXpNeededForNextLevel() - currentExpPoint))
+                                        .withStyle(ChatFormatting.GOLD))
+                        ,
+                        event.barX(),
+                        event.barY()-1,
+                        Color.RED.getRGB()
+                );
+            }
+        });
+
         BrickRegisterManager.register(BrickRegistries.COMMAND, BrickLib.createBrickRL("network_list_command"), () ->
                 Commands.literal("net_list")
                         .executes(context -> {
@@ -115,6 +151,13 @@ public final class BrickLib {
                                             .forEach(System.out::println);
                                 }
                             });
+                            return 1;
+                        })
+        );
+        BrickRegisterManager.register(BrickRegistries.COMMAND, BrickLib.createBrickRL("test00"), () ->
+                Commands.literal("test00")
+                        .executes(context -> {
+
                             return 1;
                         })
         );
@@ -150,6 +193,76 @@ public final class BrickLib {
                                 })
                         )
         );
+        BrickRegisterManager.register(BrickRegistries.COMMAND,createBrickRL("color"),()-> {
+                    return Commands.literal("color")
+                            .then(Commands.literal("int2rgb")
+                                    .then(Commands.argument("int", IntegerArgumentType.integer())
+                                            .executes(context -> {
+                                                int i = IntegerArgumentType.getInteger(context, "int");
+                                                Color color = new Color(i);
+                                                int r = color.getRed();
+                                                int g = color.getGreen();
+                                                int b = color.getBlue();
+                                                int a = color.getAlpha();
+                                                context.getSource().sendSuccess(() ->
+                                                        Component.literal("""
+                                                                ARGB of %d :\s
+                                                                 r= %d
+                                                                 g= %d
+                                                                 b= %d
+                                                                 a= %d""".formatted(i, r, g, b, a)), false);
+                                                context.getSource().sendSuccess(() ->
+                                                        Component.literal("Example Text").withStyle(Style.EMPTY.withColor(i)), false);
+                                                return 1;
+                                            })
+                                    )
+                            )
+                            .then(Commands.literal("rgb2int")
+                                    .then(Commands.argument("r", IntegerArgumentType.integer())
+                                            .then(Commands.argument("g", IntegerArgumentType.integer())
+                                                    .then(Commands.argument("b", IntegerArgumentType.integer())
+                                                            .executes(context -> {
+                                                                int r = IntegerArgumentType.getInteger(context, "r");
+                                                                int g = IntegerArgumentType.getInteger(context, "g");
+                                                                int b = IntegerArgumentType.getInteger(context, "b");
+                                                                Color color = new Color(r, g, b);
+                                                                int colorInt = color.getRGB();
+                                                                context.getSource().sendSuccess(() ->
+                                                                        Component.literal("Integer of (%d,%d,%d,255) : %d".formatted(r, g, b, colorInt)), false);
+                                                                context.getSource().sendSuccess(() ->
+                                                                        Component.literal("Example Text").withStyle(Style.EMPTY.withColor(colorInt)), false);
+                                                                return colorInt;
+                                                            })
+                                                            .then(Commands.argument("a", IntegerArgumentType.integer())
+                                                                    .executes(context -> {
+                                                                        int r = IntegerArgumentType.getInteger(context, "r");
+                                                                        int g = IntegerArgumentType.getInteger(context, "g");
+                                                                        int b = IntegerArgumentType.getInteger(context, "b");
+                                                                        int a = IntegerArgumentType.getInteger(context, "a");
+                                                                        Color color = new Color(r, g, b, a);
+                                                                        int colorInt = color.getRGB();
+                                                                        context.getSource().sendSuccess(() ->
+                                                                                Component.literal("Integer of (%d,%d,%d,%d) : %d".formatted(r, g, b, a, colorInt)), false);
+                                                                        context.getSource().sendSuccess(() ->
+                                                                                Component.literal("Example Text").withStyle(Style.EMPTY.withColor(colorInt)), false);
+                                                                        return colorInt;
+                                                                    })
+                                                            )
+                                                    )
+                                            )
+                                    )
+                            );
+                });
+        BrickEventBus.registerListener(ServerEvent.LogIn.class,event -> {
+            System.out.println("event.getHostName() = " + event.getHostName());
+            Connection connection = event.getConnection();
+            if (connection != null) {
+                InetSocketAddress address = (InetSocketAddress) connection.getRemoteAddress();
+                String ipAddress = address.getAddress().getHostAddress();
+                int port = address.getPort();
+                System.out.println("Remote IP: " + ipAddress + ", Port: " + port);
+            }
+        });
         BrickEventBus.registerListener(NetworkMessageEvent.ClientReceive.class, event -> {
             if (event.getId().equals("bl")) {
                 System.out.println(event.getMessage());

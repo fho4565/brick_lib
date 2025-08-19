@@ -4,7 +4,6 @@ import com.google.gson.*;
 import com.google.gson.JsonObject;
 import org.apache.commons.lang3.math.NumberUtils;
 
-import javax.json.stream.JsonParsingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -36,7 +35,7 @@ public class InstructionExecutor {
     public static Object execute(String json) {
         try {
             return execute(JsonParser.parseString(json));
-        } catch (JsonSyntaxException | JsonParsingException e) {
+        } catch (JsonSyntaxException e) {
             throw new JsonSyntaxException(e);
         }
     }

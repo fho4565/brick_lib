@@ -31,6 +31,6 @@ public class ItemType extends GlobalPackFileType {
 
     @Override
     public JsonObject createEmpty() {
-        return CODEC.encodeStart(JsonOps.INSTANCE,new ItemType().setStackSize(1)).get().orThrow().getAsJsonObject();
+        return CODEC.encodeStart(JsonOps.INSTANCE,new ItemType().setStackSize(1)).result().orElseThrow().getAsJsonObject();
     }
 }

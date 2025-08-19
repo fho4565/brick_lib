@@ -2,14 +2,14 @@ package com.arc_studio.brick_lib.compatibility;
 
 
 //? if >= 1.20.6 {
-/*
-import com.google.common.collect.Multimap;
+
+/*import com.google.common.collect.Multimap;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.IdMap;
-import net.minecraft.core.components.DataComponentMap;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -20,7 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.functions.Consumer;
+import java.util.function.Consumer;
 *///?}
 
 

@@ -2,6 +2,7 @@ package com.arc_studio.brick_lib.tools;
 
 import com.arc_studio.brick_lib.BrickLib;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
 
 import java.io.ByteArrayInputStream;

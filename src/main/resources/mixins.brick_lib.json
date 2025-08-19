@@ -22,7 +22,9 @@
     "client.ChatComponentMixin",
     "client.ChatScreenMixin",
     "client.ClientHandshakePacketListenerImplMixin",
+    "client.GuiExpBarMixin",
     "client.GuiGraphicsMixin",
+    "client.GuiEffectsMixin",
     "player.MultiPlayerGameModeMixin",
     "server.IntegratedServerMixin"
   ],

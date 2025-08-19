@@ -3,16 +3,18 @@ package com.arc_studio.brick_lib.core.global_pack.files;
 import com.arc_studio.brick_lib.BrickLib;
 
 import com.arc_studio.brick_lib.api.core.interfaces.data.ISerializable;
+import com.arc_studio.brick_lib.tools.Codecs;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 import java.util.Objects;
 
 public final class PackMcMetaFile implements ISerializable<JsonObject> {
-    private MutableComponent description = Component.empty();
+    private Component description = Component.empty();
 
     public PackMcMetaFile() {
     }
@@ -28,14 +30,26 @@ public final class PackMcMetaFile implements ISerializable<JsonObject> {
     @Override
     public JsonObject serialize() {
         JsonObject object = new JsonObject();
-        object.add("description", Component.Serializer.toJsonTree(description));
+        object.add("description", Codecs.COMPONENT.encodeStart(JsonOps.INSTANCE,description)
+                //? if >= 1.20.6 {
+                /*.getOrThrow()*/
+                //?} else {
+                        .get().orThrow()
+                //?}
+        );
         return object;
     }
 
     @Override
     public boolean deserialize(JsonObject object) {
         try {
-            this.description = Component.Serializer.fromJson(object.get("description"));
+            this.description = Codecs.COMPONENT.decode(JsonOps.INSTANCE,object.get("description"))
+                    //? if >= 1.20.6 {
+                    /*.getOrThrow()*/
+                    //?} else {
+                    .get().orThrow()
+                    //?}
+                    .getFirst();
             return true;
         } catch (JsonSyntaxException e) {
             BrickLib.LOGGER.error(e.toString());

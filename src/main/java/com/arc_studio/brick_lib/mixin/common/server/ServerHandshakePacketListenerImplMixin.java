@@ -4,6 +4,7 @@ import com.arc_studio.brick_lib.tools.Constants;
 import com.arc_studio.brick_lib.api.event.BrickEventBus;
 import com.arc_studio.brick_lib.events.server.server.ServerEvent;
 import net.minecraft.network.Connection;
+import net.minecraft.network.ConnectionProtocol;
 import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
 import net.minecraft.server.network.ServerHandshakePacketListenerImpl;
 import org.spongepowered.asm.mixin.Final;

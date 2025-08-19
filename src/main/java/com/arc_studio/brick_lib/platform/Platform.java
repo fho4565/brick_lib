@@ -1,12 +1,13 @@
 package com.arc_studio.brick_lib.platform;
 
+import com.arc_studio.brick_lib.BrickLib;
 import com.arc_studio.brick_lib.api.core.Version;
+import com.arc_studio.brick_lib.api.network.PacketContent;
+import com.arc_studio.brick_lib.api.network.type.*;
 import com.arc_studio.brick_lib.tools.Constants;
 import com.arc_studio.brick_lib.api.core.PlatformType;
 import com.arc_studio.brick_lib.api.network.context.C2SNetworkContext;
 import com.arc_studio.brick_lib.api.network.context.S2CNetworkContext;
-import com.arc_studio.brick_lib.api.network.type.ICHandlePacket;
-import com.arc_studio.brick_lib.api.network.type.ISHandlePacket;
 import com.arc_studio.brick_lib.api.register.BrickRegisterManager;
 //? if fabric {
 /*import com.arc_studio.brick_lib.register.BrickRegistries;
@@ -35,6 +36,7 @@ import net.fabricmc.loader.api.FabricLoader;
 
 
 import com.arc_studio.brick_lib.tools.SideExecutor;
+import io.netty.util.AttributeKey;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Registry;
 import net.minecraft.network.Connection;
@@ -47,6 +49,7 @@ import com.arc_studio.brick_lib.compatibility.V1201;
 *///?}
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraft.world.item.ItemStack;
@@ -73,10 +76,10 @@ import net.neoforged.neoforge.network.registration.NetworkPayloadSetup;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforgespi.language.ModFileScanData;
 //? if <1.20.4 {
-/^import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod.EventBusSubscriber;
 import net.neoforged.fml.ModList;
-^///?} else if <1.20.6 {
+//?} else if <1.20.6 {
 
 //?} else {
 /^import net.neoforged.fml.common.EventBusSubscriber;
@@ -91,6 +94,8 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.nio.file.Path;
 
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -581,21 +586,21 @@ public class Platform {
         }
         if (protocol != null) {
             //? if =1.20.4 {
-            HashSet<ResourceLocation> set = new HashSet<>();
+            /^HashSet<ResourceLocation> set = new HashSet<>();
             set.addAll(payloadSetup.play().keySet());
             set.addAll(payloadSetup.configuration().keySet());
             return set;
-            //?} else {
-            /^return payloadSetup.getChannels(protocol).keySet();
-            ^///?}
+            ^///?} else {
+            return payloadSetup.getChannels(protocol).keySet();
+            //?}
         } else{
             HashSet<ResourceLocation> set = new HashSet<>();
             //? if =1.20.4 {
-            set.addAll(payloadSetup.play().keySet());
+            /^set.addAll(payloadSetup.play().keySet());
             set.addAll(payloadSetup.configuration().keySet());
-            //?} else {
-            /^payloadSetup.channels().values().stream().map(Map::keySet).forEach(set::addAll);
-            ^///?}
+            ^///?} else {
+            payloadSetup.channels().values().stream().map(Map::keySet).forEach(set::addAll);
+            //?}
             return set;
         }
         *///?} else {

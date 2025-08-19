@@ -12,12 +12,13 @@ import com.arc_studio.brick_lib.render.ItemDecorationRender;
 import com.arc_studio.brick_lib.api.network.type.PacketConfig;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.core.Registry;
 //? if >= 1.20.6 {
-/*import net.minecraft.core.components.DataComponentType;
+/*import net.minecraft.core.component.DataComponentType;
 *///?}
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
