@@ -1,8 +1,7 @@
 package com.arc_studio.brick_lib.api.network;
 
+import com.arc_studio.brick_lib.api.network.type.*;
 import com.arc_studio.brick_lib.api.network.type.C2SPacket;
-import com.arc_studio.brick_lib.api.network.type.ICHandlePacket;
-import com.arc_studio.brick_lib.api.network.type.ISHandlePacket;
 import com.arc_studio.brick_lib.api.network.type.S2CPacket;
 import com.arc_studio.brick_lib.tools.Constants;
 import com.arc_studio.brick_lib.platform.Platform;

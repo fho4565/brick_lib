@@ -40,7 +40,7 @@ public abstract class EntityAdditionalData extends BaseAdditionalData {
         }
     }
     public static void save() throws IOException {
-        String path = Constants.brickLibFolder()+ File.separator + "entity.dat";
+        String path = Constants.brickLibWorldFolder() + File.separator + "entity.dat";
         File file = new File(path);
         if (!file.exists()) {
             file.createNewFile();
@@ -58,7 +58,7 @@ public abstract class EntityAdditionalData extends BaseAdditionalData {
         NBTUtils.write(root,file);
     }
     public static void load() throws IOException {
-        String path = Constants.brickLibFolder()+ File.separator + "entity.dat";
+        String path = Constants.brickLibWorldFolder() + File.separator + "entity.dat";
         File file = new File(path);
         if (!file.exists()) {
             file.createNewFile();

@@ -139,6 +139,10 @@ public class BrickRegistry<T> extends RegistryType<T> implements Iterable<T> {
         return register(new ResourceLocation(name), value.get());
     }
 
+    public T register(ResourceLocation resourceLocation, Supplier<T> value) {
+        return register(resourceLocation, value.get());
+    }
+
     public T register(String name, T value) {
         return register(new ResourceLocation(name), value);
     }

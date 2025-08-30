@@ -6,8 +6,8 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.network.chat.Component;
 //? if >= 1.20.6 {
-/*import net.minecraft.network.chat.ComponentSerialization;*/
-//?}
+/*import net.minecraft.network.chat.ComponentSerialization;
+*///?}
 
 import static net.minecraft.util.ExtraCodecs.JSON;
 

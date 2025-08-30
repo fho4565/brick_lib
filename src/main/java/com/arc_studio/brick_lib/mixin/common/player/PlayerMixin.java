@@ -9,8 +9,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.EntityHitResult;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -27,12 +29,20 @@ public class PlayerMixin {
     }
     @Inject(method = "tick",at = @At("HEAD"))
     public void onPlayerTickStart(CallbackInfo ci) {
-        Player player = (Player) (Object) this;
-        BrickEventBus.postEvent(new PlayerEvent.Tick.Pre(player));
+        BrickEventBus.postEvent(new PlayerEvent.Tick.Pre(getThis()));
     }
     @Inject(method = "tick",at = @At("TAIL"))
     public void onPlayerTickEnd(CallbackInfo ci) {
-        Player player = (Player) (Object) this;
-        BrickEventBus.postEvent(new PlayerEvent.Tick.Post(player));
+        BrickEventBus.postEvent(new PlayerEvent.Tick.Post(getThis()));
+    }
+
+    @ModifyArg(method = "disableShield", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemCooldowns;addCooldown(Lnet/minecraft/world/item/Item;I)V"),index = 1)
+    public int modifyPlayerShieldCd(int ticks) {
+        return 20;
+    }
+
+    @Unique
+    private Player getThis(){
+        return (Player) (Object) this;
     }
 }

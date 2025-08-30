@@ -2,8 +2,10 @@
 /*package com.arc_studio.brick_lib.entrypoints;
 
 import com.arc_studio.brick_lib.BrickLib;
+import com.arc_studio.brick_lib.platform.NeoForgePlatform;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.NeoForge;
 
 /^*
  * NeoForge模组的入口点

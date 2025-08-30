@@ -134,7 +134,7 @@ public class ComponentUtils {
         MutableComponent components = Component.empty();
         for (int i = 0; i < chars.length; i++) {
             char charComponent = chars[i];
-            components.append(Component.literal(String.valueOf(charComponent)).withStyle(Style.EMPTY.withColor(color.get(i))));
+            components.append(Component.literal(String.valueOf(charComponent)).withStyle(Style.EMPTY.withColor(color.get(Math.min(i,chars.length-1)))));
         }
         return components;
     }

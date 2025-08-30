@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -23,6 +24,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ServerPlayerGameMode.class)
 public abstract class ServerPlayerGameModeMixin {
@@ -42,7 +44,7 @@ public abstract class ServerPlayerGameModeMixin {
     @Inject(method = "destroyBlock", at = @At("HEAD"), cancellable = true)
     public void onBlockBreakPre(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         if(!triggeredDestory){
-            if (BrickEventBus.postEvent(new PlayerEvent.BreakBlock.Finish.Pre(player,pos,level.getBlockState(pos)))) {
+            if (BrickEventBus.postEventServer(new PlayerEvent.BreakBlock.Finish.Pre(player,pos,level.getBlockState(pos)))) {
                 this.player.connection.send(new ClientboundBlockUpdatePacket(level, pos));
                 if (level.getBlockState(pos).hasBlockEntity()) {
                     BlockEntity blockEntity = level.getBlockEntity(pos);
@@ -63,6 +65,7 @@ public abstract class ServerPlayerGameModeMixin {
 
     @Inject(method = "useItemOn", at = @At("HEAD"), cancellable = true)
     public void rightClickBlock(ServerPlayer player, Level level, ItemStack stack, InteractionHand hand, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir) {
+        System.out.println("ServerPlayerGameModeMixin.rightClickBlock,level.isClientSide = " + level.isClientSide);
         if (BrickEventBus.postEvent(new PlayerEvent.RightClick(player, PlayerClickContext.clickBlock(player,hand,hitResult)))) {
             cir.setReturnValue(InteractionResult.PASS);
             cir.cancel();
@@ -71,22 +74,22 @@ public abstract class ServerPlayerGameModeMixin {
 
     @Inject(method = "useItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;use(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResultHolder;"), cancellable = true)
     public void rightClickItem(ServerPlayer player, Level level, ItemStack stack, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+        /*System.out.println("ServerPlayerGameModeMixin.rightClickItem,level.isClientSide = " + level.isClientSide);
         if (BrickEventBus.postEvent(new PlayerEvent.UseItem.Start(player,stack,hand))) {
             cir.setReturnValue(InteractionResult.PASS);
             cir.cancel();
-        }
+        }*/
     }
-    @Inject(method = "useItem", at = @At(value = "RETURN",ordinal = 2), cancellable = true)
-    public void useItem(ServerPlayer player, Level level, ItemStack stack, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
-        if (BrickEventBus.postEvent(new PlayerEvent.UseItem.Start(player,stack,hand))) {
-            cir.setReturnValue(InteractionResult.PASS);
-            cir.cancel();
-        }
+
+    @Inject(method = "useItem", at = @At(value = "RETURN",ordinal = 3))
+    public void useItemStop(ServerPlayer player, Level level, ItemStack stack, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+        /*System.out.println("ServerPlayerGameModeMixin.useItemStop");
+        BrickEventBus.postEvent(new PlayerEvent.UseItem.Stop(player,stack,hand,0));*/
     }
 
 
     @Inject(at = @At("RETURN"),slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayerGameMode;isCreative()Z")), method = "destroyBlock")
     private void onBlockBreakAfter(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-        BrickEventBus.postEvent(new PlayerEvent.BreakBlock.Finish.Post(player, pos,level.getBlockState(pos)));
+        BrickEventBus.postEventServer(new PlayerEvent.BreakBlock.Finish.Post(player, pos,level.getBlockState(pos)));
     }
 }

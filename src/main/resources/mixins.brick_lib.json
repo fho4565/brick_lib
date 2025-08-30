@@ -6,7 +6,10 @@
   "mixins": [
     "CommandsMixin",
     "ItemStackMixin",
+    "LivingEntityMixin",
+    "ReloadableResourceManagerMixin",
     "ServerLevelMixin",
+    "player.MobMixin",
     "player.PlayerMixin",
     "player.ServerPlayerGameModeMixin",
     "player.ServerPlayerMixin",
@@ -22,9 +25,10 @@
     "client.ChatComponentMixin",
     "client.ChatScreenMixin",
     "client.ClientHandshakePacketListenerImplMixin",
+    "client.ClientPacketListenerMixin",
+    "client.GuiEffectsMixin",
     "client.GuiExpBarMixin",
     "client.GuiGraphicsMixin",
-    "client.GuiEffectsMixin",
     "player.MultiPlayerGameModeMixin",
     "server.IntegratedServerMixin"
   ],

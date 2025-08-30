@@ -14,6 +14,8 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.multiplayer.ClientSuggestionProvider;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.core.Registry;
@@ -87,6 +89,8 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraft.world.level.storage.loot.providers.nbt.LootNbtProviderType;
 import net.minecraft.world.level.storage.loot.providers.number.LootNumberProviderType;
 import net.minecraft.world.level.storage.loot.providers.score.LootScoreProviderType;
+
+import java.util.function.Function;
 
 /**
  * Brick Lib注册表
@@ -204,7 +208,11 @@ public class BrickRegistries {
     /**
      * 命令注册表
      * */
-    public static final BrickRegistry<LiteralArgumentBuilder<CommandSourceStack>> COMMAND = create("command");
+    public static final BrickRegistry<Function<CommandBuildContext,LiteralArgumentBuilder<CommandSourceStack>>> COMMAND = create("command");
+    /**
+     * 客户端命令注册表
+     * */
+    public static final BrickRegistry<Function<CommandBuildContext,LiteralArgumentBuilder<ClientSuggestionProvider>>> CLIENT_COMMAND = create("client_command");
     /**
      * 盔甲套装注册表
      * */

@@ -1,12 +1,17 @@
 package com.arc_studio.brick_lib.mixin.common;
 
 import com.arc_studio.brick_lib.api.event.BrickEventBus;
+import com.arc_studio.brick_lib.config.ConfigTracker;
+import com.arc_studio.brick_lib.config.ModConfig;
 import com.arc_studio.brick_lib.events.client.ClientTickEvent;
 import com.arc_studio.brick_lib.events.server.entity.living.player.PlayerClickContext;
 import com.arc_studio.brick_lib.events.server.entity.living.player.PlayerEvent;
 import com.arc_studio.brick_lib.events.server.world.LevelEvent;
+import com.arc_studio.brick_lib.tools.Constants;
+import com.arc_studio.brick_lib.tools.SideExecutor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ReceivingLevelScreen;
+import net.minecraft.client.main.GameConfig;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
@@ -46,7 +51,6 @@ public abstract class MinecraftMixin {
             }
         }
     }
-
 
     @Inject(method = "startUseItem", locals = LocalCapture.CAPTURE_FAILSOFT, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;useItemOn(Lnet/minecraft/client/player/LocalPlayer;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/phys/BlockHitResult;)Lnet/minecraft/world/InteractionResult;"), cancellable = true)
     public void rightClickBlock(CallbackInfo ci, InteractionHand[] var1, int var2, int var3, InteractionHand interactionHand) {

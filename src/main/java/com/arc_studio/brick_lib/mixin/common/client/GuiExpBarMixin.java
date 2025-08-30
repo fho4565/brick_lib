@@ -1,7 +1,7 @@
 package com.arc_studio.brick_lib.mixin.common.client;
 
 import com.arc_studio.brick_lib.api.event.BrickEventBus;
-import com.arc_studio.brick_lib.events.client.HudEvent;
+import com.arc_studio.brick_lib.events.client.RenderEvent;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Gui.class)
 public abstract class GuiExpBarMixin {
     @Unique
-    ThreadLocal<HudEvent.VanillaRender.ExperienceBar> brick_lib$expEvent = new ThreadLocal<>();
+    ThreadLocal<RenderEvent.HudEvent.VanillaRender.ExperienceBar> brick_lib$expEvent = new ThreadLocal<>();
 
     @Shadow public abstract Font getFont();
 
@@ -39,8 +39,8 @@ public abstract class GuiExpBarMixin {
             String levelStr = String.valueOf(minecraft.player.experienceLevel);
             int textX = (this.screenWidth - getFont().width(levelStr)) / 2;
             int textY = screenHeight - 31 - 4;
-            HudEvent.VanillaRender.ExperienceBar event = new HudEvent.VanillaRender.ExperienceBar(g,barX,barY,progressWidth,levelStr,textX,textY);
-            if (BrickEventBus.postEvent(event)) {
+            RenderEvent.HudEvent.VanillaRender.ExperienceBar event = new RenderEvent.HudEvent.VanillaRender.ExperienceBar(g,barX,barY,progressWidth,levelStr,textX,textY);
+            if (BrickEventBus.postEventClient(event)) {
                 ci.cancel();
             } else {
                 if (event.isVanillaRenderCanceled()) {
@@ -163,7 +163,7 @@ public abstract class GuiExpBarMixin {
             String levelStr = String.valueOf(minecraft.player.experienceLevel);
             int textX = (g.guiWidth() - getFont().width(levelStr)) / 2;
             int textY = g.guiHeight() - 31 - 4;
-            HudEvent.VanillaRender.ExperienceBar event = new HudEvent.VanillaRender.ExperienceBar(g,barX,barY,progressWidth,levelStr,textX,textY);
+            RenderEvent.HudEvent.VanillaRender.ExperienceBar event = new RenderEvent.HudEvent.VanillaRender.ExperienceBar(g,barX,barY,progressWidth,levelStr,textX,textY);
             if (BrickEventBus.postEvent(event)) {
                 ci.cancel();
             } else {

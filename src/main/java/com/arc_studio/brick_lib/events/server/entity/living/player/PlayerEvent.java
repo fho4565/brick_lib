@@ -1,6 +1,7 @@
 package com.arc_studio.brick_lib.events.server.entity.living.player;
 
 import com.arc_studio.brick_lib.api.event.ICancelableEvent;
+import com.arc_studio.brick_lib.api.event.IClientOnlyEvent;
 import com.arc_studio.brick_lib.api.event.IResultEvent;
 import com.arc_studio.brick_lib.events.server.entity.living.LivingEntityEvent;
 import net.minecraft.advancements.AdvancementProgress;
@@ -181,7 +182,7 @@ public abstract class PlayerEvent extends LivingEntityEvent {
             return blockState;
         }
 
-        public static class Start extends BreakBlock implements IResultEvent {
+        public static class Start extends BreakBlock implements IResultEvent,ICancelableEvent,IClientOnlyEvent {
             public Direction getFace() {
                 return face;
             }
@@ -191,6 +192,26 @@ public abstract class PlayerEvent extends LivingEntityEvent {
             public Start(Player player, BlockPos blockPos, BlockState blockState, Direction face) {
                 super(player, blockPos, blockState);
                 this.face = face;
+            }
+        }
+
+        public static class Breaking extends BreakBlock {
+            public Direction getFace() {
+                return face;
+            }
+
+            Direction face;
+
+            private final float destroyProgress;
+
+            public Breaking(Player player, BlockPos blockPos, BlockState blockState, Direction face, float destroyProgress) {
+                super(player, blockPos, blockState);
+                this.face = face;
+                this.destroyProgress = destroyProgress;
+            }
+
+            public float destroyProgress() {
+                return destroyProgress;
             }
         }
 
@@ -222,65 +243,6 @@ public abstract class PlayerEvent extends LivingEntityEvent {
                 public Post(Player player, BlockPos blockPos, BlockState blockState) {
                     super(player, blockPos, blockState);
                 }
-            }
-        }
-    }
-
-    @ApiStatus.Experimental
-    public static abstract class UseItem extends PlayerEvent implements IResultEvent{
-        private final ItemStack usedItemStack;
-        private final InteractionHand hand;
-
-        public UseItem(Player player, ItemStack usedItemStack, InteractionHand hand) {
-            super(player);
-            this.usedItemStack = usedItemStack;
-            this.hand = hand;
-        }
-
-        public ItemStack getUsedItemStack() {
-            return usedItemStack;
-        }
-
-        public InteractionHand getHand() {
-            return hand;
-        }
-
-        public static class Start extends UseItem {
-            public Start(Player player, ItemStack usedItemStack,InteractionHand hand) {
-                super(player, usedItemStack,hand);
-            }
-        }
-
-        public static class Using extends UseItem {
-            private final int useTicks;
-
-            public Using(Player player, ItemStack usedItemStack,InteractionHand hand, int useTicks) {
-                super(player, usedItemStack,hand);
-                this.useTicks = useTicks;
-            }
-
-            public int getUseTicks() {
-                return useTicks;
-            }
-        }
-
-        public static class Stop extends UseItem {
-            private final int usedTicks;
-
-            public Stop(Player player, ItemStack usedItemStack,InteractionHand hand, int usedTicks) {
-                super(player, usedItemStack,hand);
-                this.usedTicks = usedTicks;
-            }
-
-            public int getUsedTicks() {
-                return usedTicks;
-            }
-        }
-
-        public static class Finish extends UseItem {
-
-            public Finish(Player player, ItemStack usedItemStack, InteractionHand hand) {
-                super(player, usedItemStack, hand);
             }
         }
     }
@@ -645,7 +607,6 @@ public abstract class PlayerEvent extends LivingEntityEvent {
         }
     }
 
-
     /**
      * 玩家加入服务器的事件，分为"加入前"和"加入后"两个具体事件
      * */
@@ -811,7 +772,7 @@ public abstract class PlayerEvent extends LivingEntityEvent {
         /**
          * 当客户端发送消息或命令时触发，分为Pre(准备发送)和Post(已经发送)
          * */
-        public static class Send extends Chat {
+        public static class Send extends Chat implements IClientOnlyEvent {
             public Send(Player player, String message, String originalMessage,boolean isCommand) {
                 super(player, message, originalMessage,isCommand);
             }
@@ -860,13 +821,83 @@ public abstract class PlayerEvent extends LivingEntityEvent {
         /**
          * 当聊天界面尝试保存一个历史记录时触发
          * */
-        public static class AddToRecent extends Chat implements ICancelableEvent {
+        public static class AddToRecent extends Chat implements ICancelableEvent, IClientOnlyEvent {
             public AddToRecent(Player player, String message, String originalMessage,boolean isCommand) {
                 super(player, message, originalMessage,isCommand);
             }
 
             public void setMessage(String message) {
                 this.message = message;
+            }
+        }
+    }
+
+    @ApiStatus.Experimental
+    public abstract static class UseItem extends PlayerEvent implements IResultEvent {
+        private final ItemStack usedItemStack;
+        private final InteractionHand hand;
+
+        public UseItem(Player player, ItemStack usedItemStack, InteractionHand hand) {
+            super(player);
+            this.usedItemStack = usedItemStack;
+            this.hand = hand;
+        }
+
+        public ItemStack getUsedItemStack() {
+            return usedItemStack;
+        }
+
+        public InteractionHand getHand() {
+            return hand;
+        }
+
+        public static class Start extends UseItem implements ICancelableEvent {
+            public Start(Player player, ItemStack usedItemStack, InteractionHand hand) {
+                super(player, usedItemStack, hand);
+            }
+        }
+
+        public static class Using extends UseItem {
+            private final int useTicks;
+
+            public Using(Player player, ItemStack usedItemStack, InteractionHand hand, int useTicks) {
+                super(player, usedItemStack, hand);
+                this.useTicks = useTicks;
+            }
+
+            public int getUseTicks() {
+                return useTicks;
+            }
+        }
+
+        public static class Stop extends UseItem {
+            private final int usedTicks;
+
+            public Stop(Player player, ItemStack usedItemStack, InteractionHand hand, int usedTicks) {
+                super(player, usedItemStack, hand);
+                this.usedTicks = usedTicks;
+            }
+
+            public int getUsedTicks() {
+                return usedTicks;
+            }
+        }
+
+        public static class Finish extends UseItem {
+            ItemStack finish;
+
+            public Finish(Player player, ItemStack usedItemStack, InteractionHand hand) {
+                super(player, usedItemStack, hand);
+                this.finish = usedItemStack;
+            }
+
+            public Finish(Player player, ItemStack usedItemStack,ItemStack finish, InteractionHand hand) {
+                super(player, usedItemStack, hand);
+                this.finish = finish;
+            }
+
+            public ItemStack getFinish() {
+                return finish;
             }
         }
     }

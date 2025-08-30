@@ -1,8 +1,11 @@
 package com.arc_studio.brick_lib.tools;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.player.Player;
+
+import java.util.function.Supplier;
 
 public class ChatUtils {
     /**
@@ -42,5 +45,15 @@ public class ChatUtils {
         if(server != null) {
             server.getPlayerList().getPlayers().forEach(player -> player.sendSystemMessage(message));
         }
+    }
+
+    public static void clientMessage(Component component,boolean narrate){
+        SideExecutor.runOnClient(() -> () -> {
+            Minecraft client = Minecraft.getInstance();
+            client.gui.getChat().addMessage(component);
+            if(narrate){
+                client.getNarrator().sayNow(component);
+            }
+        });
     }
 }

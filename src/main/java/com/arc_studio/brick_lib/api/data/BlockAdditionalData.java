@@ -73,7 +73,7 @@ public abstract class BlockAdditionalData extends BaseAdditionalData {
     }
 
     public static void save() {
-        String path = Constants.brickLibFolder() + File.separator + "block.dat";
+        String path = Constants.brickLibWorldFolder() + File.separator + "block.dat";
         File file = new File(path);
         if (!file.exists()) {
             try {
@@ -109,7 +109,7 @@ public abstract class BlockAdditionalData extends BaseAdditionalData {
     }
 
     public static void load() throws IOException {
-        String path = Constants.brickLibFolder() + File.separator + "block.dat";
+        String path = Constants.brickLibWorldFolder() + File.separator + "block.dat";
         File file = new File(path);
         if (!file.exists()) {
             file.createNewFile();

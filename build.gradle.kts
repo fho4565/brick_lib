@@ -40,9 +40,13 @@ repositories {
     maven("https://repo.huaweicloud.com/repository/maven/")
     maven("https://mirrors.cloud.tencent.com/nexus/repository/maven-public/")
     maven("https://mirrors.163.com/maven/repository/maven-public/")
+    maven("https://maven.parchmentmc.org")
+    maven("https://maven.neoforged.net/releases/")
+    maven("https://maven.architectury.dev/")
+    maven("https://modmaven.dev/")
     maven("https://mirrors.imucraft.cn")
     maven("https://mirrors.imucraft.cn/neoforge/")
-    maven("https://mirrors.qlu.edu.cn/bmclapi/")
+    //maven("https://mirrors.qlu.edu.cn/bmclapi/")
     maven("https://lss233.littleservice.cn/repositories/minecraft")
     exclusiveContent {
         forRepository { maven("https://www.cursemaven.com") { name = "CurseForge" } }
@@ -52,10 +56,6 @@ repositories {
         forRepository { maven("https://api.modrinth.com/maven") { name = "Modrinth" } }
         filter { includeGroup("maven.modrinth") }
     }
-    maven("https://maven.parchmentmc.org")
-    maven("https://maven.neoforged.net/releases/")
-    maven("https://maven.architectury.dev/")
-    maven("https://modmaven.dev/")
     //maven("https://panel.ryuutech.com/nexus/repository/maven-releases/")
     maven("https://maven.minecraftforge.net/")
     mavenCentral()
@@ -540,6 +540,8 @@ dependencies {
 
     if(env.isFabric) {
         modImplementation("net.fabricmc:fabric-loader:${env.fabricLoaderVersion.min}")
+        implementation("com.electronwill.night-config:toml:3.6.7")
+        implementation("com.electronwill.night-config:core:3.6.7")
     }
     if(env.isForge){
         "forge"("net.minecraftforge:forge:${env.forgeMavenVersion.min}")

@@ -23,7 +23,7 @@ public class GuiGraphicsMixin {
 
     @Inject(method = "renderItemDecorations(Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;IILjava/lang/String;)V", at = @At("HEAD"), cancellable = true)
     public void renderDeco(Font font, ItemStack stack, int x, int y, String text, CallbackInfo ci) {
-        if (BrickEventBus.postEvent(new RenderEvent.RenderItemDecoration(this.pose, stack, font, x, y, text))) {
+        if (BrickEventBus.postEventClient(new RenderEvent.RenderItemDecoration(this.pose, stack, font, x, y, text))) {
             ci.cancel();
         } else {
             GuiGraphics guiGraphics = (GuiGraphics) (Object) this;

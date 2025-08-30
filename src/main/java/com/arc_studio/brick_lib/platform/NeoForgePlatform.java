@@ -6,14 +6,15 @@ package com.arc_studio.brick_lib.platform;
 import com.arc_studio.brick_lib.api.network.PacketContent;
 import com.arc_studio.brick_lib.api.network.context.C2SNetworkContext;
 import com.arc_studio.brick_lib.api.network.context.S2CNetworkContext;
-import com.arc_studio.brick_lib.api.network.type.C2SPacket;
-import com.arc_studio.brick_lib.api.network.type.PacketConfig;
-import com.arc_studio.brick_lib.api.network.type.S2CPacket;
-import com.arc_studio.brick_lib.api.network.type.SACPacket;
+import com.arc_studio.brick_lib.api.network.type.*;
+import com.arc_studio.brick_lib.network.DemoReplyPacket;
 import com.arc_studio.brick_lib.register.BrickRegistries;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ConfigurationTask;
 import net.neoforged.bus.api.EventPriority;
 
 //? if < 1.20.4 {
@@ -21,26 +22,44 @@ import net.neoforged.bus.api.EventPriority;
 /^import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.network.configuration.ICustomConfigurationTask;
+import net.neoforged.neoforge.network.configuration.SyncConfig;
+import net.neoforged.neoforge.network.event.OnGameConfigurationEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
 import net.neoforged.neoforge.network.handlers.ClientPayloadHandler;
 import net.neoforged.neoforge.network.handlers.ServerPayloadHandler;
 import net.neoforged.neoforge.network.handling.IPlayPayloadHandler;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.payload.ConfigFilePayload;
 import net.neoforged.neoforge.network.registration.IDirectionAwarePayloadHandlerBuilder;
 import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
 import net.neoforged.neoforge.network.handling.IPlayPayloadHandler;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.List;
+import java.util.function.Consumer;
+
 ^///?} else {
 /^import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.network.configuration.ICustomConfigurationTask;
+import net.neoforged.neoforge.network.event.RegisterConfigurationTasksEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.minecraft.network.codec.StreamCodec;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.neoforged.neoforge.network.registration.HandlerThread;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.List;
+import java.util.function.Consumer;
+
 ^///?}
 //? if < 1.20.6 {
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -62,12 +81,9 @@ public class NeoForgePlatform {
             } else if (packetConfig instanceof PacketConfig.S2C s2C) {
                 s2c(registrar, s2C);
             } else if (packetConfig instanceof PacketConfig.SAC sac) {
-                System.out.println("=====================================================");
-                System.out.println("NeoForgePlatform.onCommonSetup");
-                System.out.println(sac.c2sID());
-                System.out.println(sac.s2cID());
-                System.out.println("sac.type() = " + sac.type());
                 sac(registrar, sac);
+            } else if (packetConfig instanceof PacketConfig.Login s2C) {
+                login(registrar, s2C);
             }
         });
 
@@ -178,6 +194,109 @@ public class NeoForgePlatform {
             );
             //?}
     }
+
+    private static <T extends LoginPacket> void login(/^¹? >=1.20.6 {¹^/ /^¹PayloadRegistrar ¹^//^¹?} else {¹^/IPayloadRegistrar/^¹?}¹^/ registrar, PacketConfig.Login<T> login) {
+        //? if > 1.20.4 {
+        /^¹StreamCodec<FriendlyByteBuf, T> codec = StreamCodec.of(
+                (buf, packet) -> login.encoder().accept(packet, new PacketContent(buf)),
+                buf -> login.decoder().apply(new PacketContent(buf)));
+        CustomPacketPayload.Type<T> type = new CustomPacketPayload.Type<>(login.id());
+        registrar.configurationToClient(
+                type,
+                codec,
+                (arg, iPayloadContext) -> login.clientHandler().accept(arg, new S2CNetworkContext())
+        );
+        ¹^///?} else {
+        registrar.common(login.id(),
+                buf -> login.decoder().apply(new PacketContent(buf)),
+                (arg, playPayloadContext) -> {
+                    playPayloadContext.workHandler().submitAsync(()->{
+                        login.clientHandler().accept(arg, new S2CNetworkContext());
+                    }).exceptionally(throwable -> {
+                        BrickLib.LOGGER.error(throwable.getMessage());
+                        return null;
+                    });
+                });
+        //?}
+    }
+
+    //? if < 1.20.6 {
+    @SubscribeEvent
+    public static void onOnGameConfiguration(OnGameConfigurationEvent event) {
+        for (ResourceLocation resourceLocation : BrickRegistries.NETWORK_PACKET.keySet()) {
+            PacketConfig config = BrickRegistries.NETWORK_PACKET.get(resourceLocation);
+            if(config != null){
+                if (event.getListener().isConnected(config.id())) {
+                    if (config instanceof PacketConfig.Login login) {
+                        if(!DemoReplyPacket.class.isAssignableFrom(login.type())) {
+                            System.out.println(config.id() + " connected");
+                            event.register(new MyICustomConfigurationTask(login, event));
+                        }
+                    }
+                }
+            }
+        }
+    }
+    //?} else {
+    /^¹@SubscribeEvent
+    public static void onRegisterConfigurationTasks(RegisterConfigurationTasksEvent event) {
+        for (ResourceLocation resourceLocation : BrickRegistries.NETWORK_PACKET.keySet()) {
+            PacketConfig config = BrickRegistries.NETWORK_PACKET.get(resourceLocation);
+            if(config != null){
+                if (event.getListener().hasChannel(config.id())) {
+                    if (config instanceof PacketConfig.Login login) {
+                        if(!DemoReplyPacket.class.isAssignableFrom(login.type())) {
+                            System.out.println(config.id() + " connected");
+                            event.register(new MyICustomConfigurationTask(login, event));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    ¹^///?}
+
+    private static class MyICustomConfigurationTask implements ICustomConfigurationTask {
+        private final PacketConfig.Login config;
+        private final
+        //? if < 1.20.6 {
+        OnGameConfigurationEvent
+        //?} else {
+                /^¹RegisterConfigurationTasksEvent
+                ¹^///?}
+                event;
+
+        public MyICustomConfigurationTask(PacketConfig.Login config,
+                                          //? if < 1.20.6 {
+                OnGameConfigurationEvent
+                                          //?} else {
+                                          /^¹RegisterConfigurationTasksEvent
+                                                  ¹^///?}
+                                          event) {
+            this.config = config;
+            this.event = event;
+        }
+
+        @Override
+        public void run(Consumer<CustomPacketPayload> consumer) {
+            System.out.println("MyICustomConfigurationTask.run");
+            List<Pair<String, ? extends LoginPacket>> list =
+                    (List<Pair<String, ? extends LoginPacket>>) config.packetGenerator().apply(false);
+            list.forEach(stringPair -> {
+                System.out.println("stringPair.getRight() = " + stringPair.getRight());
+                consumer.accept(stringPair.getRight());
+            });
+            event.getListener().finishCurrentTask(type());
+        }
+
+        @Override
+        public Type type() {
+            return new Type(BrickLib.createBrickRL("brick_login_packet"));
+        }
+    }
+
+
     ^///?}
 }
 */

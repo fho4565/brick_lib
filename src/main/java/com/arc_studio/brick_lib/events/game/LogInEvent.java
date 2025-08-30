@@ -1,6 +1,7 @@
 package com.arc_studio.brick_lib.events.game;
 
 import com.arc_studio.brick_lib.api.event.BaseEvent;
+import com.arc_studio.brick_lib.api.event.IClientOnlyEvent;
 import net.minecraft.network.Connection;
 
 public class LogInEvent extends BaseEvent {
@@ -10,7 +11,7 @@ public class LogInEvent extends BaseEvent {
         this.connection = connection;
     }
 
-    public static class ClientSuccess extends LogInEvent{
+    public static class ClientSuccess extends LogInEvent implements IClientOnlyEvent {
 
         public ClientSuccess(Connection connection) {
             super(connection);

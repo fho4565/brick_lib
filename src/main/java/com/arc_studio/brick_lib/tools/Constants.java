@@ -22,10 +22,13 @@ public class Constants {
     private static boolean initiatedGeneral = false;
     private static boolean initiatedWorld = false;
     private static Path versionFolderPath;
+    private static Path globalConfigFolderPath;
+    private static Path defaultConfigFolderPath;
     private static Path brickLibWorldFolder;
     private static Path versionDataFolder;
     private static Path globalPackPath;
     private static Path worldFolder;
+    private static Path serverConfigFolder;
     private static Path brickLibPlacersFolder;
     private static MinecraftServer currentServer;
     private static boolean isInDevelopEnvironment = false;
@@ -41,9 +44,9 @@ public class Constants {
     }
 
     /**
-     * 获取BrickLib模组数据存放的文件夹
-     */
-    public static Path brickLibFolder() {
+     * 获取Brick Lib在世界文件夹根目录的数据文件夹
+     * */
+    public static Path brickLibWorldFolder() {
         return brickLibWorldFolder;
     }
 
@@ -105,6 +108,8 @@ public class Constants {
             platform = Platform.platform();
             isInDevelopEnvironment = Platform.isDev();
             versionFolderPath = Platform.versionPath();
+            globalConfigFolderPath = versionFolderPath.resolve("config");
+            defaultConfigFolderPath = versionFolderPath.resolve("defaultconfigs");
             versionDataFolder = versionFolderPath.resolve("brickLib");
             globalPackPath = versionDataFolder.resolve("globalpacks");
             initiatedGeneral = true;
@@ -118,6 +123,7 @@ public class Constants {
             worldFolder = currentServer.getWorldPath(LevelResource.ROOT).toAbsolutePath();
             brickLibWorldFolder = Constants.worldFolder().resolve("brickLib");
             brickLibPlacersFolder = brickLibWorldFolder.resolve("placers");
+            serverConfigFolder = worldFolder.resolve("serverconfig");
             File dir = brickLibWorldFolder.toFile();
             if (!dir.exists()) {
                 if (!dir.mkdirs()) {
@@ -151,6 +157,7 @@ public class Constants {
         brickLibWorldFolder = null;
         brickLibPlacersFolder = null;
         currentServer = null;
+        serverConfigFolder = null;
         initiatedWorld = false;
     }
 
@@ -175,10 +182,15 @@ public class Constants {
         return globalPackPath;
     }
 
-    /**
-     * 获取Brick Lib在世界文件夹根目录的数据文件夹
-     * */
-    public static Path brickLibWorldFolder() {
-        return brickLibWorldFolder;
+    public static Path globalConfigFolderPath() {
+        return globalConfigFolderPath;
+    }
+
+    public static Path serverConfigFolder() {
+        return serverConfigFolder;
+    }
+
+    public static Path defaultConfigFolderPath() {
+        return defaultConfigFolderPath;
     }
 }

@@ -1,10 +1,10 @@
 package com.arc_studio.brick_lib.api.network;
 
 import com.arc_studio.brick_lib.api.event.BrickEventBus;
+import com.arc_studio.brick_lib.api.network.type.SACPacket;
 import com.arc_studio.brick_lib.events.server.NetworkMessageEvent;
 import com.arc_studio.brick_lib.api.network.context.C2SNetworkContext;
 import com.arc_studio.brick_lib.api.network.context.S2CNetworkContext;
-import com.arc_studio.brick_lib.api.network.type.SACPacket;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal

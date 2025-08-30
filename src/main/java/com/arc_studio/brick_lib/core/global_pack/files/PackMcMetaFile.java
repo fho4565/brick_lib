@@ -32,8 +32,8 @@ public final class PackMcMetaFile implements ISerializable<JsonObject> {
         JsonObject object = new JsonObject();
         object.add("description", Codecs.COMPONENT.encodeStart(JsonOps.INSTANCE,description)
                 //? if >= 1.20.6 {
-                /*.getOrThrow()*/
-                //?} else {
+                /*.getOrThrow()
+                *///?} else {
                         .get().orThrow()
                 //?}
         );
@@ -45,8 +45,8 @@ public final class PackMcMetaFile implements ISerializable<JsonObject> {
         try {
             this.description = Codecs.COMPONENT.decode(JsonOps.INSTANCE,object.get("description"))
                     //? if >= 1.20.6 {
-                    /*.getOrThrow()*/
-                    //?} else {
+                    /*.getOrThrow()
+                    *///?} else {
                     .get().orThrow()
                     //?}
                     .getFirst();

@@ -43,7 +43,8 @@ interface IHandleablePacket
     /*@Override
     *///?}
     default ResourceLocation id() {
-        return BrickLib.createBrickRL("empty");
+        return BrickLib.createBrickRL(this.getClass().getName().replace(".", "_").toLowerCase());
+
     }
 
 }
