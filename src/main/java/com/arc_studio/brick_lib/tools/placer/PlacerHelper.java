@@ -3,15 +3,16 @@ package com.arc_studio.brick_lib.tools.placer;
 import com.arc_studio.brick_lib.BrickLib;
 import com.arc_studio.brick_lib.tools.Constants;
 import com.arc_studio.brick_lib.tools.WorldUtils;
-import com.arc_studio.brick_lib.compatibility.ForgeCompatibility;
 import com.arc_studio.brick_lib.api.core.SingleBlockWithNbt;
 import com.arc_studio.brick_lib.register.Placers;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -188,14 +189,23 @@ public class PlacerHelper {
             }
 
             levelAccessor.setBlock(offset, action.singleBlock().blockState(), 2);
-            BlockEntity getEntity = ForgeCompatibility.getExistingBlockEntity(levelAccessor,offset);
-            if (getEntity != null) {
+            Optional<BlockEntity> getEntity;
+            if (levelAccessor instanceof Level level1) {
+                if (level1.hasChunk(SectionPos.blockToSectionCoord(offset.getX()), SectionPos.blockToSectionCoord(offset.getZ()))) {
+                    getEntity = Optional.ofNullable(level1.getChunk(offset).getBlockEntity(offset));
+                } else{
+                    getEntity = Optional.empty();
+                }
+            }else{
+                getEntity = Optional.ofNullable(levelAccessor.getBlockEntity(offset));
+            }
+            getEntity.ifPresent(blockEntity -> {
                 //? if >= 1.20.6 {
                 /*getEntity.loadWithComponents(action.singleBlock().nbt(), Constants.currentServer().registryAccess());
-                *///?} else {
-                getEntity.load(action.singleBlock().nbt());
+                 *///?} else {
+                blockEntity.load(action.singleBlock().nbt());
                 //?}
-            }
+            });
         } catch (CommandSyntaxException e) {
             BrickLib.LOGGER.error("Failed to parse line: {}", e.toString());
         }

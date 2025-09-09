@@ -4,7 +4,6 @@ package com.arc_studio.brick_lib.tools;
 // 包括方块、实体、声音、战利品、命令等常用操作
 // 适用于 Minecraft Mod 开发中对世界内容的批量处理、范围查询、掉落、声音播放等场景
 
-import com.arc_studio.brick_lib.compatibility.ForgeCompatibility;
 import com.arc_studio.brick_lib.api.core.SingleBlock;
 import com.arc_studio.brick_lib.api.core.SingleBlockWithNbt;
 import com.arc_studio.brick_lib.api.core.interfaces.consumer.BlockPosConsumer;
@@ -18,10 +17,9 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -413,7 +411,16 @@ public class WorldUtils {
             for (int y = y1; y <= y2; y++) {
                 for (int z = z1; z <= z2; z++) {
                     BlockPos blockPos = BlockPos.containing(x, y, z);
-                    Optional<BlockEntity> blockEntity = Optional.ofNullable(ForgeCompatibility.getExistingBlockEntity(level, blockPos));
+                    Optional<BlockEntity> blockEntity;
+                    if (level instanceof Level level1) {
+                        if (level1.hasChunk(SectionPos.blockToSectionCoord(blockPos.getX()), SectionPos.blockToSectionCoord(blockPos.getZ()))) {
+                            blockEntity = Optional.ofNullable(level1.getChunk(blockPos).getBlockEntity(blockPos));
+                        } else{
+                            blockEntity = Optional.empty();
+                        }
+                    }else{
+                        blockEntity = Optional.ofNullable(level.getBlockEntity(blockPos));
+                    }
                     blockEntity.ifPresentOrElse(blockEntity1 -> consumer.accept(SingleBlockWithNbt.of(blockPos, level.getBlockState(blockPos), blockEntity1.saveWithFullMetadata(
                             //? if >= 1.20.6 {
                             /*Constants.currentServer().registryAccess()
