@@ -1,8 +1,6 @@
 package com.arc_studio.brick_lib.register;
 
 import com.arc_studio.brick_lib.BrickLib;
-import com.arc_studio.brick_lib.CommandEntitySelector;
-import com.arc_studio.brick_lib.CommandSelectorOption;
 import com.arc_studio.brick_lib.core.ArmorSuit;
 import com.arc_studio.brick_lib.core.global_pack.GlobalPack;
 import com.arc_studio.brick_lib.core.global_pack.files.GlobalPackFileType;
@@ -14,7 +12,6 @@ import com.arc_studio.brick_lib.render.ItemDecorationRender;
 import com.arc_studio.brick_lib.api.network.type.PacketConfig;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.commands.CommandBuildContext;

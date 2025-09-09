@@ -28,6 +28,8 @@ import com.arc_studio.brick_lib.network.DemoReplyPacket;
 import com.arc_studio.brick_lib.network.LoginPacketDemo;
 import com.arc_studio.brick_lib.platform.Platform;
 import com.arc_studio.brick_lib.register.BrickRegistries;
+import com.arc_studio.brick_lib.register.CommandEntitySelector;
+import com.arc_studio.brick_lib.register.CommandSelectorOption;
 import com.arc_studio.brick_lib.tools.*;
 import com.google.gson.*;
 import com.llamalad7.mixinextras.MixinExtrasBootstrap;
@@ -70,7 +72,6 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public final class BrickLib {
@@ -107,17 +108,17 @@ public final class BrickLib {
         BrickRegisterManager.register(BrickRegistries.CLIENT_COMMAND,createBrickRL("client_command_config"),
                 () ->buildContext -> {
                     LiteralArgumentBuilder<ClientSuggestionProvider> builder = ClientCommands.literal("client_cfg");
-                    for (ModConfig.Type type : ConfigTracker.INSTANCE.configSets().keySet()) {
+                    for (ModConfig.Type type : ConfigTracker.configSets().keySet()) {
                         builder.then(ClientCommands.literal(type.name().toLowerCase())
                                 .then(ClientCommands.argument("cfg",StringArgumentType.string())
                                         .suggests((context, builder1) -> {
-                                            ConfigTracker.INSTANCE.configSets().get(type).forEach(s -> builder1.suggest(s.getFileName()));
+                                            ConfigTracker.configSets().get(type).forEach(s -> builder1.suggest(s.getFileName()));
                                             return builder1.buildFuture();
                                         })
                                         .executes(context -> {
                                             MutableObject<Integer> r = new MutableObject<>();
                                             final String cfgName = StringArgumentType.getString(context, "cfg");
-                                            ConfigTracker.INSTANCE.configSets().get(type)
+                                            ConfigTracker.configSets().get(type)
                                                     .stream().filter(c-> cfgName
                                                             .equals(c.getFileName())).findFirst().ifPresentOrElse(config -> {
                                                                 System.out.println(config.getFileName()+" comments :");
@@ -151,7 +152,7 @@ public final class BrickLib {
                         ConfigSyncPacket::serverHandle,
                         ConfigSyncPacket::clientHandle,
                         isLocal1 -> {
-                            Map<String, byte[]> configData = ConfigTracker.INSTANCE.configSets().get(ModConfig.Type.SERVER).stream().collect(Collectors.toMap(ModConfig::getFileName, mc -> {
+                            Map<String, byte[]> configData = ConfigTracker.configSets().get(ModConfig.Type.SERVER).stream().collect(Collectors.toMap(ModConfig::getFileName, mc -> {
                                 try {
                                     if (Platform.isClient() || mc.getConfigData() == null) {
                                         System.out.println("ConfigSyncPacket.generatePackets = NULL");
@@ -487,7 +488,7 @@ public final class BrickLib {
         BrickEventBus.registerListener(ServerEvent.Stopping.class, event -> System.out.println("BrickLib server stopping"));
         BrickEventBus.registerListener(ServerEvent.Stopped.class, event -> {
             System.out.println("BrickLib server stopped");
-            ConfigTracker.INSTANCE.unloadConfigs(ModConfig.Type.SERVER, getServerConfigPath(event.server()));
+            ConfigTracker.unloadConfigs(ModConfig.Type.SERVER, getServerConfigPath(event.server()));
         });
         BrickEventBus.registerListener(PlayerEvent.RightClick.class, event -> {
             System.out.println("Right Click is Client : " + event.getEntity().level().isClientSide);
@@ -556,10 +557,10 @@ public final class BrickLib {
             }
         });
         BrickEventBus.registerListener(ServerEvent.AboutToStart.class, event -> {
-            ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.SERVER, getServerConfigPath(event.server()));
+            ConfigTracker.loadConfigs(ModConfig.Type.SERVER, getServerConfigPath(event.server()));
         });
         BrickEventBus.registerListenerClient(LogInEvent.ClientSuccess.class,event -> {
-            ConfigTracker.INSTANCE.loadDefaultServerConfigs();
+            ConfigTracker.loadDefaultServerConfigs();
         });
     }
 
