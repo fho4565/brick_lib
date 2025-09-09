@@ -1,10 +1,14 @@
 package com.arc_studio.brick_lib.api.register;
 
+import com.arc_studio.brick_lib.BrickLib;
+import com.arc_studio.brick_lib.tools.Utils;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -14,6 +18,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class BrickRegistry<T> extends RegistryType<T> implements Iterable<T> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BrickRegistry.class);
     protected HashMap<ResourceLocation, Supplier<T>> map = new HashMap<>();
     protected HashMap<ResourceLocation, Supplier<T>> toReg = new HashMap<>();
 
@@ -113,10 +118,6 @@ public class BrickRegistry<T> extends RegistryType<T> implements Iterable<T> {
         return map.values().stream().map(Supplier::get).collect(Collectors.toSet());
     }
 
-    public Set<T> toRegValues() {
-        return toReg.values().stream().map(Supplier::get).collect(Collectors.toSet());
-    }
-
     public void foreachAndClear(BiConsumer<ResourceLocation, T> consumer) {
         toReg.forEach((rl, supplier) -> consumer.accept(rl, supplier.get()));
         toReg.clear();
@@ -136,7 +137,7 @@ public class BrickRegistry<T> extends RegistryType<T> implements Iterable<T> {
     }
 
     public T register(String name, Supplier<T> value) {
-        return register(new ResourceLocation(name), value.get());
+        return register(Utils.ofResourceLocation("minecraft",name), value.get());
     }
 
     public T register(ResourceLocation resourceLocation, Supplier<T> value) {
@@ -144,7 +145,7 @@ public class BrickRegistry<T> extends RegistryType<T> implements Iterable<T> {
     }
 
     public T register(String name, T value) {
-        return register(new ResourceLocation(name), value);
+        return register(Utils.ofResourceLocation("minecraft",name), value);
     }
 
     public T register(ResourceLocation name, T value) {
@@ -152,8 +153,12 @@ public class BrickRegistry<T> extends RegistryType<T> implements Iterable<T> {
     }
 
     public T register(ResourceKey<T> key, T value) {
-        map.put(key.location(), () -> value);
-        toReg.put(key.location(), () -> value);
+        if (map.containsKey(key.location())) {
+            LOGGER.error("Duplicated key {} in registry {}",key,this.key);
+        } else {
+            map.put(key.location(), () -> value);
+            toReg.put(key.location(), () -> value);
+        }
         return value;
     }
 

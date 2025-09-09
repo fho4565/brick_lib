@@ -10,13 +10,9 @@ import com.arc_studio.brick_lib.api.event.BrickEventBus;
 import com.arc_studio.brick_lib.api.network.BrickNetwork;
 import com.arc_studio.brick_lib.api.network.BuiltInPacket;
 import com.arc_studio.brick_lib.api.network.type.PacketConfig;
-import com.arc_studio.brick_lib.api.network.type.LoginPacket;
 import com.arc_studio.brick_lib.api.register.BrickRegisterManager;
 import com.arc_studio.brick_lib.client.command.ClientCommands;
-import com.arc_studio.brick_lib.config.BrickConfigSpec;
-import com.arc_studio.brick_lib.config.ConfigManager;
-import com.arc_studio.brick_lib.config.ConfigTracker;
-import com.arc_studio.brick_lib.config.ModConfig;
+import com.arc_studio.brick_lib.config.*;
 import com.arc_studio.brick_lib.core.global_pack.GlobalPack;
 import com.arc_studio.brick_lib.core.global_pack.GlobalPacks;
 import com.arc_studio.brick_lib.events.client.ClientTickEvent;
@@ -33,18 +29,21 @@ import com.arc_studio.brick_lib.network.LoginPacketDemo;
 import com.arc_studio.brick_lib.platform.Platform;
 import com.arc_studio.brick_lib.register.BrickRegistries;
 import com.arc_studio.brick_lib.tools.*;
-import com.google.gson.JsonElement;
+import com.google.gson.*;
 import com.llamalad7.mixinextras.MixinExtrasBootstrap;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.logging.LogUtils;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.Commands;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.Connection;
 import net.minecraft.network.ConnectionProtocol;
 import net.minecraft.network.chat.Component;
@@ -52,9 +51,13 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import org.apache.commons.lang3.mutable.MutableObject;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
@@ -64,11 +67,11 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public final class BrickLib {
     public static final Logger LOGGER = LogUtils.getLogger();
@@ -89,8 +92,84 @@ public final class BrickLib {
         test();
         Utils.brickFinalize();
     }
+    static HashMap<String, Block> map = new HashMap<>(
+            Map.of(
+                    "grass_block", Blocks.GRASS_BLOCK,
+                    "stone", Blocks.STONE,
+                    "redstone_block", Blocks.REDSTONE_BLOCK,
+                    "bedrock", Blocks.BEDROCK
+            )
+    );
 
     private static void test() {
+        BrickEventBus.registerListener(ServerEvent.AboutToStart.class, event -> System.out.println("Server About to start"));
+        BrickEventBus.registerListener(ServerEvent.LoadData.class, event -> System.out.println("Server Load data"));
+        BrickRegisterManager.register(BrickRegistries.CLIENT_COMMAND,createBrickRL("client_command_config"),
+                () ->buildContext -> {
+                    LiteralArgumentBuilder<ClientSuggestionProvider> builder = ClientCommands.literal("client_cfg");
+                    for (ModConfig.Type type : ConfigTracker.INSTANCE.configSets().keySet()) {
+                        builder.then(ClientCommands.literal(type.name().toLowerCase())
+                                .then(ClientCommands.argument("cfg",StringArgumentType.string())
+                                        .suggests((context, builder1) -> {
+                                            ConfigTracker.INSTANCE.configSets().get(type).forEach(s -> builder1.suggest(s.getFileName()));
+                                            return builder1.buildFuture();
+                                        })
+                                        .executes(context -> {
+                                            MutableObject<Integer> r = new MutableObject<>();
+                                            final String cfgName = StringArgumentType.getString(context, "cfg");
+                                            ConfigTracker.INSTANCE.configSets().get(type)
+                                                    .stream().filter(c-> cfgName
+                                                            .equals(c.getFileName())).findFirst().ifPresentOrElse(config -> {
+                                                                System.out.println(config.getFileName()+" comments :");
+                                                                config.getConfigData().commentMap().forEach((s, s2) -> {
+                                                                    System.out.println("s = "+s+" , s2 = "+s2);
+                                                                });
+
+                                                                System.out.println(config.getFileName()+" values :");
+                                                                config.getConfigData().valueMap().forEach((k, v) -> {
+                                                                    System.out.println("k = "+k+" , v = "+v);
+                                                                });
+                                                                r.setValue(1);
+                                                            }, () -> {
+                                                        System.out.println("No config named "+cfgName+" found in "+type.name().toLowerCase());
+                                                        r.setValue(0);
+                                                    });
+
+                                            return r.getValue();
+                                        })
+                                )
+                        );
+                    }
+                    return builder;
+                });
+        BrickRegistries.NETWORK_PACKET.register(BrickLib.createBrickRL("config_sync_packet"),() ->
+                new PacketConfig.Login<>(
+                        ConfigSyncPacket.class,
+                        ConfigSyncPacket::encoder,
+                        ConfigSyncPacket::new,
+                        ConfigSyncPacket::new,
+                        ConfigSyncPacket::serverHandle,
+                        ConfigSyncPacket::clientHandle,
+                        isLocal1 -> {
+                            Map<String, byte[]> configData = ConfigTracker.INSTANCE.configSets().get(ModConfig.Type.SERVER).stream().collect(Collectors.toMap(ModConfig::getFileName, mc -> {
+                                try {
+                                    if (Platform.isClient() || mc.getConfigData() == null) {
+                                        System.out.println("ConfigSyncPacket.generatePackets = NULL");
+                                    }else{
+                                        System.out.println("ConfigSyncPacket.generatePackets = YES");
+                                    }
+                                    return Platform.isClient() || mc.getConfigData() == null ? new byte[0] : Files.readAllBytes(mc.getFullPath());
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }));
+                            return configData.entrySet().stream().map(e-> {
+                                System.out.println("ConfigSyncPacket.generatePackets Name = config_" + e.getKey());
+                                return Pair.of("config_" + e.getKey(), new ConfigSyncPacket(e.getKey(), e.getValue()));
+                            }).collect(Collectors.toList());
+                        }
+                )
+        );
         BrickRegistries.NETWORK_PACKET.register(BrickLib.createBrickRL("demo_login_packet"),() ->
                 new PacketConfig.Login<>(
                         LoginPacketDemo.class,
@@ -100,7 +179,7 @@ public final class BrickLib {
                         LoginPacketDemo::serverHandle,
                         LoginPacketDemo::clientHandle,
                         isLocal -> {
-                            ArrayList<Pair<String, ? extends LoginPacket>> list = new ArrayList<>();
+                            ArrayList<Pair<String, LoginPacketDemo>> list = new ArrayList<>();
                             for (int i = 0; i < 10; i++) {
                                 list.add(Pair.of(String.valueOf(i),new LoginPacketDemo(String.valueOf(i))));
                             }
@@ -125,7 +204,7 @@ public final class BrickLib {
         builder.comment("Brick Lib Config");
         builder.comment("very man string");
         builder.define("str","man");
-        ConfigManager.registerConfig(ModConfig.Type.COMMON, builder.build(),MOD_ID);
+        ConfigManager.registerConfig(ModConfig.Type.SERVER, builder.build(),MOD_ID);
         System.out.println("BrickLib.test");
         SideExecutor.runOnClient(() -> {
             KeyMapping man = new KeyMapping("man", GLFW.GLFW_KEY_J, "man");
@@ -157,6 +236,21 @@ public final class BrickLib {
                                 })
                         )
         );
+        BrickRegisterManager.register(BrickRegistries.COMMAND_ENTITY_SELECTORS,
+                BrickLib.createBrickRL("man_selector"),
+                ()->new CommandEntitySelector("pig", Component.literal("find pigs"), entity -> entity.getType() == EntityType.PIG)
+        );
+        BrickRegisterManager.register(BrickRegistries.COMMAND_ENTITY_SELECTOR_OPTIONS,createBrickRL("manba"),() ->
+                new CommandSelectorOption("man", entitySelectorParser -> {
+            String key = entitySelectorParser.getReader().readUnquotedString();
+            entitySelectorParser.addPredicate(entity -> {
+                if (map.containsKey(key)) {
+                    return entity.level().getBlockState(entity.blockPosition().below()).is(map.get(key));
+                } else {
+                    return false;
+                }
+            });
+        }, entitySelectorParser -> true, Component.literal("man option")));
         BrickEventBus.registerListener(PlayerEvent.PlayerJoin.Post.class, event -> {
             SideExecutor.runOnClient(() -> () ->
                     System.out.println("Platform.gameVersion() = " +
@@ -215,13 +309,44 @@ public final class BrickLib {
         BrickRegisterManager.register(BrickRegistries.COMMAND, BrickLib.createBrickRL("test01"), () ->
                 buildContext -> Commands.literal("test01")
                         .executes(context -> {
-                            final ItemType type = new ItemType();
-                            type.setStackSize(16);
-                            System.out.println("Tag = " + ItemType.CODEC.encodeStart(NbtOps.INSTANCE, type).result().orElseThrow());
-                            final DataResult<JsonElement> result = ItemType.CODEC.encodeStart(JsonOps.INSTANCE, type);
-                            result.error().ifPresent(jsonElementPartialResult -> System.out.println("message() = " + jsonElementPartialResult.message()));
-                            System.out.println("Json.false = " + result.result().orElseThrow());
-                            System.out.println("Json.true = " + ItemType.CODEC.encodeStart(JsonOps.COMPRESSED, type).result().orElseThrow());
+                            try {
+                                Codec<Pair<Integer,Integer>> codec = Codecs.intervalCodec(Codec.INT, "l", "r",
+                                        (l, r) -> DataResult.success(Pair.of(l, r))
+                                        , Pair::getLeft, Pair::getRight);
+                                System.out.println("codec.encodeStart(JsonOps.INSTANCE,Pair.of(1,8)).get().orThrow() = " + codec.encodeStart(JsonOps.INSTANCE, Pair.of(1, 8))
+                                        //? if >= 1.20.6 {
+                                        /*.getOrThrow()
+                                        *///?} else {
+                                        .get().orThrow()
+                                        //?}
+                                );
+                                System.out.println("codec.decode(JsonOps.INSTANCE, JsonParser.parseString(\"[1, 10]\")) = " + codec.decode(JsonOps.INSTANCE, JsonParser.parseString("[1, 10]"))
+                                        //? if >= 1.20.6 {
+                                        /*.getOrThrow()
+                                        *///?} else {
+                                        .get().orThrow()
+                                        //?}
+                                );
+                                System.out.println("codec.decode(JsonOps.INSTANCE, JsonParser.parseString(\"5\")) = " + codec.decode(JsonOps.INSTANCE, JsonParser.parseString("5"))
+                                                //? if >= 1.20.6 {
+                                                /*.getOrThrow()
+                                        *///?} else {
+                                        .get().orThrow()
+                                        //?}
+                                );
+                                final JsonObject object = new JsonObject();
+                                object.addProperty("l",2);
+                                object.addProperty("r",5);
+                                System.out.println("codec.decode(JsonOps.INSTANCE, JsonParser.parseString(\"{\"l\": 1, \"r\": 10}\")) = " + codec.decode(JsonOps.INSTANCE, JsonParser.parseString(object.toString()))
+                                                //? if >= 1.20.6 {
+                                                /*.getOrThrow()
+                                        *///?} else {
+                                        .get().orThrow()
+                                        //?}
+                                );
+                            } catch (RuntimeException e) {
+                                e.printStackTrace();
+                            }
                             return 1;
                         })
         );
@@ -340,7 +465,7 @@ public final class BrickLib {
             String command = event.getResults().getReader().getString();
             System.out.println("command = " + command);
             if (command.contains("man")) {
-                event.cancel();
+                //event.cancel();
                 System.out.println("Manba out!");
             }
         });
@@ -431,7 +556,6 @@ public final class BrickLib {
             }
         });
         BrickEventBus.registerListener(ServerEvent.AboutToStart.class, event -> {
-            System.out.println("BrickLib server about to start");
             ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.SERVER, getServerConfigPath(event.server()));
         });
         BrickEventBus.registerListenerClient(LogInEvent.ClientSuccess.class,event -> {
@@ -439,9 +563,8 @@ public final class BrickLib {
         });
     }
 
-    private static Path getServerConfigPath(final MinecraftServer server)
-    {
-        final Path serverConfig = Constants.serverConfigFolder();
+    private static Path getServerConfigPath(final MinecraftServer server) {
+        Path serverConfig = Constants.serverConfigFolder();
         if (!Files.isDirectory(serverConfig)) {
             try {
                 Files.createDirectories(serverConfig);
@@ -453,7 +576,7 @@ public final class BrickLib {
     }
 
     public static ResourceLocation createBrickRL(String path) {
-        return new ResourceLocation(MOD_ID, path);
+        return Utils.ofResourceLocation(MOD_ID, path);
     }
 }
 

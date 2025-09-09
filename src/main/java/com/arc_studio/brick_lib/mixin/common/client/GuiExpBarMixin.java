@@ -261,10 +261,10 @@ public abstract class GuiExpBarMixin {
     }
 
     @ModifyVariable(method = "renderExperienceLevel",at = @At("STORE"),name = //? if fabric {
-    "string"
-    //?} else {
-            /^"s"
-            ^///?}
+    /^"string"
+    ^///?} else {
+            "s"
+            //?}
     )
     public String modifyText(String s){
         return brick_lib$expEvent.get().levelText();

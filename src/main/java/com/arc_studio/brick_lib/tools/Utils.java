@@ -2,6 +2,7 @@ package com.arc_studio.brick_lib.tools;
 
 import com.arc_studio.brick_lib.core.global_pack.GlobalPacks;
 import com.arc_studio.brick_lib.platform.Platform;
+import io.netty.util.NettyRuntime;
 import net.minecraft.resources.ResourceLocation;
 
 public class Utils {
@@ -9,7 +10,11 @@ public class Utils {
      * 创建一个资源位置对象
      * */
     public static ResourceLocation ofResourceLocation(String namespace, String path) {
+        //? if >= 1.21 {
+        /*return ResourceLocation.fromNamespaceAndPath(namespace,path);
+        *///?} else {
         return new ResourceLocation(namespace,path);
+        //?}
     }
 
     /**

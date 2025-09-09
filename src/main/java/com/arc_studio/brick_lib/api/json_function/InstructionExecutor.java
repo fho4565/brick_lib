@@ -2,6 +2,7 @@ package com.arc_studio.brick_lib.api.json_function;
 
 import com.google.gson.*;
 import com.google.gson.JsonObject;
+import com.google.gson.internal.LazilyParsedNumber;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.math.BigDecimal;
@@ -133,8 +134,10 @@ public class InstructionExecutor {
                             processed.add(bi);
                         } else if (number instanceof BigDecimal bd) {
                             processed.add(bd);
+                        } else if (number instanceof LazilyParsedNumber bd) {
+                            processed.add(bd.doubleValue());
                         } else {
-                            throw new UnsupportedOperationException("Unknown number type "+number);
+                            throw new UnsupportedOperationException("Unknown number type "+number+" class : "+number.getClass());
                         }
                     } else {
                         throw new IllegalArgumentException("Unknown json primitive type");

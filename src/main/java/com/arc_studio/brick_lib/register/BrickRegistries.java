@@ -1,6 +1,8 @@
 package com.arc_studio.brick_lib.register;
 
 import com.arc_studio.brick_lib.BrickLib;
+import com.arc_studio.brick_lib.CommandEntitySelector;
+import com.arc_studio.brick_lib.CommandSelectorOption;
 import com.arc_studio.brick_lib.core.ArmorSuit;
 import com.arc_studio.brick_lib.core.global_pack.GlobalPack;
 import com.arc_studio.brick_lib.core.global_pack.files.GlobalPackFileType;
@@ -106,10 +108,18 @@ public class BrickRegistries {
     public static final VanillaRegistry<SoundEvent> SOUND_EVENT = new VanillaRegistry<>(BuiltInRegistries.SOUND_EVENT);
     public static final VanillaRegistry<Fluid> FLUID = new VanillaRegistry<>(BuiltInRegistries.FLUID);
     public static final VanillaRegistry<MobEffect> MOB_EFFECT = new VanillaRegistry<>(BuiltInRegistries.MOB_EFFECT);
+    //? if >= 1.21 {
+    /*public static final BrickRegistry<Enchantment> ENCHANTMENT = new BrickRegistry<>(Registries.ENCHANTMENT);
+    *///?} else {
     public static final VanillaRegistry<Enchantment> ENCHANTMENT = new VanillaRegistry<>(BuiltInRegistries.ENCHANTMENT);
+    //?}
     public static final VanillaRegistry<Potion> POTION = new VanillaRegistry<>(BuiltInRegistries.POTION);
     public static final VanillaRegistry<ParticleType<?>> PARTICLE_TYPE = new VanillaRegistry<>(BuiltInRegistries.PARTICLE_TYPE);
-    public static final VanillaRegistry<PaintingVariant> PAINTING_VARIANT = new VanillaRegistry<>(BuiltInRegistries.PAINTING_VARIANT);
+//? if >= 1.21 {
+    /*public static final BrickRegistry<PaintingVariant> PAINTING_VARIANT = new BrickRegistry<>(Registries.PAINTING_VARIANT);
+*///?} else {
+public static final VanillaRegistry<PaintingVariant> PAINTING_VARIANT = new VanillaRegistry<>(BuiltInRegistries.PAINTING_VARIANT);
+    //?}
     public static final VanillaRegistry<ResourceLocation> CUSTOM_STAT = new VanillaRegistry<>(BuiltInRegistries.CUSTOM_STAT);
     //? if <= 1.20.4 {
     public static final VanillaRegistry<ChunkStatus> CHUNK_STATUS = new VanillaRegistry<>(BuiltInRegistries.CHUNK_STATUS);
@@ -160,12 +170,11 @@ public class BrickRegistries {
     public static final VanillaRegistry<TreeDecoratorType<?>> TREE_DECORATOR_TYPE = new VanillaRegistry<>(BuiltInRegistries.TREE_DECORATOR_TYPE);
     public static final VanillaRegistry<FeatureSizeType<?>> FEATURE_SIZE_TYPE = new VanillaRegistry<>(BuiltInRegistries.FEATURE_SIZE_TYPE);
     //? if <= 1.20.4 {
-    
-        public static final VanillaRegistry<Codec<? extends BiomeSource>> BIOME_SOURCE = new VanillaRegistry<>(BuiltInRegistries.BIOME_SOURCE);
-        public static final VanillaRegistry<Codec<? extends ChunkGenerator>> CHUNK_GENERATOR = new VanillaRegistry<>(BuiltInRegistries.CHUNK_GENERATOR);
-        public static final VanillaRegistry<Codec<? extends SurfaceRules.ConditionSource>> MATERIAL_CONDITION = new VanillaRegistry<>(BuiltInRegistries.MATERIAL_CONDITION);
-        public static final VanillaRegistry<Codec<? extends SurfaceRules.RuleSource>> MATERIAL_RULE = new VanillaRegistry<>(BuiltInRegistries.MATERIAL_RULE);
-        public static final VanillaRegistry<Codec<? extends DensityFunction>> DENSITY_FUNCTION_TYPE = new VanillaRegistry<>(BuiltInRegistries.DENSITY_FUNCTION_TYPE);
+    public static final VanillaRegistry<Codec<? extends BiomeSource>> BIOME_SOURCE = new VanillaRegistry<>(BuiltInRegistries.BIOME_SOURCE);
+    public static final VanillaRegistry<Codec<? extends ChunkGenerator>> CHUNK_GENERATOR = new VanillaRegistry<>(BuiltInRegistries.CHUNK_GENERATOR);
+    public static final VanillaRegistry<Codec<? extends SurfaceRules.ConditionSource>> MATERIAL_CONDITION = new VanillaRegistry<>(BuiltInRegistries.MATERIAL_CONDITION);
+    public static final VanillaRegistry<Codec<? extends SurfaceRules.RuleSource>> MATERIAL_RULE = new VanillaRegistry<>(BuiltInRegistries.MATERIAL_RULE);
+    public static final VanillaRegistry<Codec<? extends DensityFunction>> DENSITY_FUNCTION_TYPE = new VanillaRegistry<>(BuiltInRegistries.DENSITY_FUNCTION_TYPE);
     //?} else {
     /*public static final VanillaRegistry<MapCodec<? extends BiomeSource>> BIOME_SOURCE = new VanillaRegistry<>(BuiltInRegistries.BIOME_SOURCE);
     public static final VanillaRegistry<MapCodec<? extends ChunkGenerator>> CHUNK_GENERATOR = new VanillaRegistry<>(BuiltInRegistries.CHUNK_GENERATOR);
@@ -183,7 +192,11 @@ public class BrickRegistries {
     /*public static final BrickRegistry<BannerPattern> BANNER_PATTERN = create("banner_pattern");
     *///?}
     public static final VanillaRegistry<Instrument> INSTRUMENT = new VanillaRegistry<>(BuiltInRegistries.INSTRUMENT);
+    //? if >= 1.21 {
+    /*public static final BrickRegistry<String> DECORATED_POT_PATTERNS = new BrickRegistry<>(ResourceKey.createRegistryKey(BrickLib.createBrickRL("decorated_pot_patterns")));
+    *///?} else {
     public static final VanillaRegistry<String> DECORATED_POT_PATTERNS = new VanillaRegistry<>(BuiltInRegistries.DECORATED_POT_PATTERNS);
+    //?}
     public static final VanillaRegistry<CreativeModeTab> CREATIVE_MODE_TAB = new VanillaRegistry<>(BuiltInRegistries.CREATIVE_MODE_TAB);
     //? if >= 1.20.6 {
     /*public static final VanillaRegistry<DataComponentType<?>> DATA_COMPONENT_TYPE = new VanillaRegistry<>(BuiltInRegistries.DATA_COMPONENT_TYPE);
@@ -191,7 +204,7 @@ public class BrickRegistries {
     public static final BrickRegistry<Object> DATA_COMPONENT_TYPE = create("data_component_type");
     //?}
 
-    ///////////////////////////Brick Lib额外注册表
+    ///////////////////////////Brick Lib额外注册表s
     /**
      * 键位注册表
      * */
@@ -229,9 +242,17 @@ public class BrickRegistries {
     public static final BrickRegistry<GlobalPackFileType> GLOBAL_PACK_FILE_TYPE = create("global_pack_file_type");
 
     /**
-     * 全局包文件类型注册表
+     * JSON函数注册表
      * */
     public static final BrickRegistry<JsonFunction> JSON_FUNCTION = create("json_function");
+    /**
+     * 目标选择器变量注册表
+     * */
+    public static final BrickRegistry<CommandEntitySelector> COMMAND_ENTITY_SELECTORS = create("command_entity_selector");
+    /**
+     * 目标选择器参数注册表
+     * */
+    public static final BrickRegistry<CommandSelectorOption> COMMAND_ENTITY_SELECTOR_OPTIONS = create("command_entity_selector_option");
 
 
     private static <T> BrickRegistry<T> create(String name) {

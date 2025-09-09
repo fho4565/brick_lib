@@ -44,9 +44,9 @@ repositories {
     maven("https://maven.neoforged.net/releases/")
     maven("https://maven.architectury.dev/")
     maven("https://modmaven.dev/")
-    maven("https://mirrors.imucraft.cn")
+    /*maven("https://mirrors.imucraft.cn")
     maven("https://mirrors.imucraft.cn/neoforge/")
-    //maven("https://mirrors.qlu.edu.cn/bmclapi/")
+    maven("https://mirrors.qlu.edu.cn/bmclapi/")*/
     maven("https://lss233.littleservice.cn/repositories/minecraft")
     exclusiveContent {
         forRepository { maven("https://www.cursemaven.com") { name = "CurseForge" } }
@@ -162,9 +162,25 @@ enum class EnvType {
  */
 class Env {
     val parchmentVersions = mapOf(
-        "1.20.1" to "2023.09.03",
+        "1.21.8" to "2025.07.20",
+        "1.21.7" to "2025.07.18",
+        "1.21.6" to "2025.06.29",
+        "1.21.5" to "2025.06.15",
+        "1.21.4" to "2025.03.23",
+        "1.21.3" to "2024.12.07",
+        "1.21.1" to "2024.11.17",
+        "1.21" to "2024.11.10",
+        "1.20.6" to "2024.06.16",
         "1.20.4" to "2024.04.14",
-        "1.20.6" to "2024.06.16"
+        "1.20.3" to "2023.12.31",
+        "1.20.2" to "2023.12.10",
+        "1.20.1" to "2023.09.03",
+        "1.19.4" to "2023.06.26",
+        "1.19.3" to "2023.06.25",
+        "1.19.2" to "2022.11.27",
+        "1.18.2" to "2022.11.06",
+        "1.17.1" to "2021.12.12",
+        "1.16.5" to "2022.03.06"
     );
     val archivesBaseName = property("archives_base_name").toString()
 

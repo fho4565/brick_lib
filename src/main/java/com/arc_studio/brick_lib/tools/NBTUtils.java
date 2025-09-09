@@ -23,10 +23,28 @@ public class NBTUtils {
             return null;
         }
     }
+    public static byte[] compressToBytes(CompoundTag tag) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try {
+            NbtIo.writeCompressed(tag, byteArrayOutputStream);
+            return byteArrayOutputStream.toByteArray();
+        } catch (IOException e) {
+            BrickLib.LOGGER.error(e.toString());
+            return null;
+        }
+    }
 
     public static CompoundTag decompress(String str) {
         try {
             return NbtIo.readCompressed(new ByteArrayInputStream(str.getBytes())/*? >=1.20.4 {*/ /*, NbtAccounter.unlimitedHeap() *//*?} else {*//*?}*/);
+        } catch (IOException e) {
+            BrickLib.LOGGER.error(e.toString());
+            return null;
+        }
+    }
+    public static CompoundTag decompress(byte[] bytes) {
+        try {
+            return NbtIo.readCompressed(new ByteArrayInputStream(bytes)/*? >=1.20.4 {*/ /*, NbtAccounter.unlimitedHeap() *//*?} else {*//*?}*/);
         } catch (IOException e) {
             BrickLib.LOGGER.error(e.toString());
             return null;

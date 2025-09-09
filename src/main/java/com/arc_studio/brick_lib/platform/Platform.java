@@ -1,35 +1,30 @@
 package com.arc_studio.brick_lib.platform;
 
 import com.arc_studio.brick_lib.BrickLib;
+import com.arc_studio.brick_lib.api.core.SideType;
 import com.arc_studio.brick_lib.api.core.Version;
 import com.arc_studio.brick_lib.api.network.PacketContent;
 import com.arc_studio.brick_lib.api.network.type.*;
 import com.arc_studio.brick_lib.tools.Constants;
-import com.arc_studio.brick_lib.api.core.PlatformType;
 import com.arc_studio.brick_lib.api.network.context.C2SNetworkContext;
 import com.arc_studio.brick_lib.api.network.context.S2CNetworkContext;
 import com.arc_studio.brick_lib.api.register.BrickRegisterManager;
 //? if fabric {
 /*import com.arc_studio.brick_lib.register.BrickRegistries;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
 import net.fabricmc.api.EnvType;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.client.networking.v1.ClientLoginConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientLoginNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.*;
-import net.fabricmc.fabric.impl.networking.NetworkingImpl;
 import net.fabricmc.loader.api.ModContainer;
 //? if >= 1.20.6 {
 /^import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -85,15 +80,15 @@ import net.neoforged.neoforge.network.registration.NetworkPayloadSetup;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforgespi.language.ModFileScanData;
 //? if <1.20.4 {
-import net.neoforged.bus.api.SubscribeEvent;
+/^import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod.EventBusSubscriber;
 import net.neoforged.fml.ModList;
-//?} else if <1.20.6 {
+^///?} else if <1.20.6 {
 
 //?} else {
-/^import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.ModContainer;
-^///?}
+//?}
 *///?}
 
 
@@ -120,10 +115,10 @@ import java.util.function.Consumer;
 //?}
 //? if neoforge {
 /*//? if < 1.20.6 {
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
- //?} else {
-/^@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
-^///?}
+/^@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+ ^///?} else {
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+//?}
 *///?}
 public class Platform {
     //? if !fabric {
@@ -278,14 +273,21 @@ public class Platform {
         //?}
     }
 
-    public static PlatformType platform() {
+    public static SideType platform() {
+        SideType type = new SideType();
         //? if fabric {
-        /*return PlatformType.FABRIC;
+        /*type.setFabric();
         *///?} else if forge {
-        return PlatformType.FORGE;
+        type.setForge();
         //?} else if neoforge {
-        /*return PlatformType.NEO_FORGE;
+        /*type.setNeoForge();;
         *///?}
+        if (isClient()){
+            type.setClient();
+        }else if (isServer()){
+            type.setServer();
+        }
+        return type;
     }
 
     public static Version gameVersion(){
@@ -377,8 +379,8 @@ public class Platform {
     public static void sendToPlayer(ICHandlePacket packet, Iterable<ServerPlayer> serverPlayers) {
         //? if fabric {
         
-        /*ResourceLocation id = Optional.ofNullable(packet.id()).orElseGet(() -> new ResourceLocation(BrickLib.MOD_ID, packet.getClass().getName().replace(".", "_").toLowerCase() + "_s2c"));
-        
+        /*ResourceLocation id = Optional.ofNullable(packet.id()).orElseGet(() -> BrickLib.createBrickRL(packet.getClass().getName().replace(".", "_").toLowerCase() + "_s2c"));
+
         *///?}
         for (ServerPlayer serverPlayer : serverPlayers) {
             //? if fabric {
@@ -391,10 +393,10 @@ public class Platform {
             ForgePlatform.s2cPlayChannel.send(/*? <1.20.4 {*/ PacketDistributor.PLAYER.with(() -> serverPlayer), packet /*?} else {*//*packet,PacketDistributor.PLAYER.with(serverPlayer)*//*?}*/);
             //?} else if neoforge {
             /*//? if <=1.20.4 {
-            PacketDistributor.PLAYER.with(serverPlayer).send(packet);
-            //?} else {
-            /^PacketDistributor.sendToPlayer(serverPlayer,packet);
-            ^///?}
+            /^PacketDistributor.PLAYER.with(serverPlayer).send(packet);
+            ^///?} else {
+            PacketDistributor.sendToPlayer(serverPlayer,packet);
+            //?}
             *///?}
         }
     }
@@ -417,11 +419,11 @@ public class Platform {
         ForgePlatform.c2sPlayChannel/*? <1.20.4 {*/ .sendToServer(packet) /*?} else {*//*.send(packet,PacketDistributor.SERVER.noArg())*//*?}*/;
         //?} else if neoforge {
         /*//? if <=1.20.4 {
-        PacketDistributor.SERVER.noArg().send(packet);
-        //?} else {
-        /^System.out.println("About to send "+packet.id());
+        /^PacketDistributor.SERVER.noArg().send(packet);
+        ^///?} else {
+        System.out.println("About to send "+packet.id());
         PacketDistributor.sendToServer(packet);
-        ^///?}
+        //?}
         *///?}
     }
 
@@ -491,13 +493,17 @@ public class Platform {
             else if (packetConfig instanceof PacketConfig.Login s2CLogin) {
                 List<Pair<String, ? extends LoginPacket>> apply0 = (List<Pair<String, ? extends LoginPacket>>) s2CLogin.packetGenerator().apply(false);
                 apply0.forEach(stringPair -> {
-                    ClientLoginNetworking.registerGlobalReceiver(BrickLib.createBrickRL(stringPair.getLeft()),
-                            (client, handler1, buf, listenerAdder) -> {
-                                Object applied = s2CLogin.s2cDecoder().apply(new PacketContent(buf));
-                                client.execute(() -> s2CLogin.clientHandler().accept(applied, new S2CNetworkContext()));
-                                return CompletableFuture.completedFuture(PacketByteBufs.create());
-                            });
-                    ServerLoginNetworking.registerGlobalReceiver(BrickLib.createBrickRL(stringPair.getLeft()),
+                    final String path = stringPair.getLeft();
+                    System.out.println("REG BrickLib.createBrickRL(path) = " + BrickLib.createBrickRL(path));
+                    SideExecutor.runOnClient(()->()->{
+                        ClientLoginNetworking.registerGlobalReceiver(BrickLib.createBrickRL(path),
+                                (client, handler1, buf, listenerAdder) -> {
+                                    Object applied = s2CLogin.s2cDecoder().apply(new PacketContent(buf));
+                                    client.execute(() -> s2CLogin.clientHandler().accept(applied, new S2CNetworkContext()));
+                                    return CompletableFuture.completedFuture(PacketByteBufs.create());
+                                });
+                    });
+                    ServerLoginNetworking.registerGlobalReceiver(BrickLib.createBrickRL(path),
                             (server, handler, understood, buf, synchronizer, responseSender) -> {
                                 if (!understood) {
                                     return;
@@ -509,6 +515,7 @@ public class Platform {
                 ServerLoginConnectionEvents.QUERY_START.register((handler, server, sender, synchronizer) -> {
                     List<Pair<String, ? extends LoginPacket>> apply = (List<Pair<String, ? extends LoginPacket>>) s2CLogin.packetGenerator().apply(false);
                     apply.forEach(stringPair -> {
+                        System.out.println("SEND stringPair.getLeft() = " + stringPair.getLeft());
                         sender.sendPacket(BrickLib.createBrickRL(stringPair.getLeft()), stringPair.getRight().getEncodedPacketContent(new PacketContent()).friendlyByteBuf());
                     });
                 });
@@ -573,14 +580,17 @@ public class Platform {
         });
     }
     private static <T extends LoginPacket> void login(PacketConfig.Login<T> s2CLogin) {
-        List<Pair<String, ? extends LoginPacket>> apply0 = s2CLogin.packetGenerator().apply(false);
+        System.out.println("Platform.login");
+        List<Pair<String, T>> apply0 = s2CLogin.packetGenerator().apply(false);
         apply0.forEach(stringPair -> {
-            ClientLoginNetworking.registerGlobalReceiver(s2CLogin.s2cID(),
-                    (client, handler1, buf, listenerAdder) -> {
-                        T applied = s2CLogin.s2cDecoder().apply(new PacketContent(buf));
-                        client.execute(() -> s2CLogin.clientHandler().accept(applied, new S2CNetworkContext()));
-                        return CompletableFuture.completedFuture(PacketByteBufs.create());
-                    });
+            SideExecutor.runOnClient(()->()->{
+                ClientLoginNetworking.registerGlobalReceiver(s2CLogin.s2cID(),
+                        (client, handler1, buf, listenerAdder) -> {
+                            T applied = s2CLogin.s2cDecoder().apply(new PacketContent(buf));
+                            client.execute(() -> s2CLogin.clientHandler().accept(applied, new S2CNetworkContext()));
+                            return CompletableFuture.completedFuture(PacketByteBufs.create());
+                        });
+            });
             ServerLoginNetworking.registerGlobalReceiver(s2CLogin.c2sID(),
                     (server, handler, understood, buf, synchronizer, responseSender) -> {
                         if (!understood) {
@@ -591,7 +601,7 @@ public class Platform {
                     });
         });
         ServerLoginConnectionEvents.QUERY_START.register((handler, server, sender, synchronizer) -> {
-            List<Pair<String, ? extends LoginPacket>> apply = s2CLogin.packetGenerator().apply(false);
+            List<Pair<String, T>> apply = s2CLogin.packetGenerator().apply(false);
             apply.forEach(stringPair -> {
                 sender.sendPacket(s2CLogin.s2cID(), stringPair.getRight().getEncodedPacketContent(new PacketContent()).friendlyByteBuf());
             });
@@ -613,19 +623,21 @@ public class Platform {
             }
         };
         PayloadTypeRegistry.playC2S().register(c2sT, codec);
+        PayloadTypeRegistry.playS2C().register(s2cT, codec);
+        SideExecutor.runOnClient(()->()->{
+            ClientPlayNetworking.registerGlobalReceiver(s2cT, (payload, context) -> {
+                if (sAC.clientNetHandle()) {
+                    sAC.clientHandler().accept(payload, new S2CNetworkContext());
+                } else {
+                    context.client().execute(() -> sAC.clientHandler().accept(payload, new S2CNetworkContext()));
+                }
+            });
+        });
         ServerPlayNetworking.registerGlobalReceiver(c2sT, (payload, context) -> {
             if (sAC.serverNetHandle()) {
                 sAC.serverHandler().accept(payload, new C2SNetworkContext(context.player()));
             } else {
                 context.player().getServer().execute(() -> sAC.serverHandler().accept(payload, new C2SNetworkContext(context.player())));
-            }
-        });
-        PayloadTypeRegistry.playS2C().register(s2cT, codec);
-        ClientPlayNetworking.registerGlobalReceiver(s2cT, (payload, context) -> {
-            if (sAC.clientNetHandle()) {
-                sAC.clientHandler().accept(payload, new S2CNetworkContext());
-            } else {
-                context.client().execute(() -> sAC.clientHandler().accept(payload, new S2CNetworkContext()));
             }
         });
     }

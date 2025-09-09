@@ -29,7 +29,13 @@ public class GuiGraphicsMixin {
             GuiGraphics guiGraphics = (GuiGraphics) (Object) this;
             BrickRegistries.ITEM_DECORATION.values().forEach(decoration -> {
                 if (decoration.getItem() == null || decoration.getItem().asItem().equals(stack.getItem())) {
-                    decoration.render(guiGraphics, stack, font, x, y, Minecraft.getInstance().getFrameTime());
+                    decoration.render(guiGraphics, stack, font, x, y, Minecraft.getInstance()
+                            //? if >= 1.21 {
+                            /*.getTimer().getGameTimeDeltaPartialTick(true)
+                            *///?} else {
+                                    .getFrameTime()
+                            //?}
+                    );
                 }
             });
         }

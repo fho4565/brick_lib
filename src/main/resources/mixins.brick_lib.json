@@ -5,6 +5,8 @@
   "compatibilityLevel": "JAVA_${java_ver}",
   "mixins": [
     "CommandsMixin",
+    "EntitySelectorOptionsMixin",
+    "EntitySelectorParserMixin",
     "ItemStackMixin",
     "LivingEntityMixin",
     "ReloadableResourceManagerMixin",

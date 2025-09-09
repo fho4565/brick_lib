@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 ^///?} else {
-/^import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.network.configuration.ICustomConfigurationTask;
 import net.neoforged.neoforge.network.event.RegisterConfigurationTasksEvent;
@@ -60,21 +60,21 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.List;
 import java.util.function.Consumer;
 
-^///?}
+//?}
 //? if < 1.20.6 {
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-//?} else {
-/^@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
-^///?}
+/^@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+^///?} else {
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+//?}
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class NeoForgePlatform {
     //? if neoforge {
     /^@SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onCommonSetup(
-            /^¹? >1.20.4 {¹^/ /^¹RegisterPayloadHandlersEvent ¹^//^¹?} else {¹^/RegisterPayloadHandlerEvent/^¹?}¹^/
+            /^¹? >1.20.4 {¹^/ RegisterPayloadHandlersEvent /^¹?} else {¹^//^¹RegisterPayloadHandlerEvent¹^//^¹?}¹^/
                     events) {
-        /^¹? >1.20.4 {¹^/ /^¹PayloadRegistrar ¹^//^¹?} else {¹^/
-        IPayloadRegistrar/^¹?}¹^/ registrar = events.registrar(BrickLib.MOD_ID);
+        /^¹? >1.20.4 {¹^/ PayloadRegistrar /^¹?} else {¹^/
+        /^¹IPayloadRegistrar¹^//^¹?}¹^/ registrar = events.registrar(BrickLib.MOD_ID);
         BrickRegistries.NETWORK_PACKET.foreachValueAndClear(packetConfig -> {
             if (packetConfig instanceof PacketConfig.C2S c2S) {
                 c2s(registrar, c2S);
@@ -89,9 +89,9 @@ public class NeoForgePlatform {
 
     }
 
-    private static <T extends C2SPacket> void c2s(/^¹? >=1.20.6 {¹^/ /^¹PayloadRegistrar ¹^//^¹?} else {¹^/IPayloadRegistrar/^¹?}¹^/ registrar, PacketConfig.C2S<T> c2S) {
+    private static <T extends C2SPacket> void c2s(/^¹? >=1.20.6 {¹^/ PayloadRegistrar /^¹?} else {¹^//^¹IPayloadRegistrar¹^//^¹?}¹^/ registrar, PacketConfig.C2S<T> c2S) {
         //? if > 1.20.4 {
-        /^¹StreamCodec<RegistryFriendlyByteBuf, T> codec = StreamCodec.of(
+        StreamCodec<RegistryFriendlyByteBuf, T> codec = StreamCodec.of(
                 (buf, packet) -> c2S.encoder().accept(packet, new PacketContent(buf)),
                 buf -> c2S.decoder().apply(new PacketContent(buf)));
         CustomPacketPayload.Type<T> type = new CustomPacketPayload.Type<>(c2S.id());
@@ -102,8 +102,8 @@ public class NeoForgePlatform {
                     c2S.packetHandler().accept(packet, new C2SNetworkContext((ServerPlayer) context.player()));
                 }
         );
-        ¹^///?} else {
-        registrar.play(c2S.id(),
+        //?} else {
+        /^¹registrar.play(c2S.id(),
                 buf -> c2S.decoder().apply(new PacketContent(buf)),
                 (arg, playPayloadContext) -> {
                     if (c2S.netHandle()) {
@@ -117,12 +117,12 @@ public class NeoForgePlatform {
                         });
                     }
                 });
-        //?}
+        ¹^///?}
     }
 
-    private static <T extends S2CPacket> void s2c(/^¹? >=1.20.6 {¹^/ /^¹PayloadRegistrar ¹^//^¹?} else {¹^/IPayloadRegistrar/^¹?}¹^/ registrar, PacketConfig.S2C<T> s2C) {
+    private static <T extends S2CPacket> void s2c(/^¹? >=1.20.6 {¹^/ PayloadRegistrar /^¹?} else {¹^//^¹IPayloadRegistrar¹^//^¹?}¹^/ registrar, PacketConfig.S2C<T> s2C) {
         //? if > 1.20.4 {
-        /^¹StreamCodec<RegistryFriendlyByteBuf, T> codec = StreamCodec.of(
+        StreamCodec<RegistryFriendlyByteBuf, T> codec = StreamCodec.of(
                 (buf, packet) -> s2C.encoder().accept(packet, new PacketContent(buf)),
                 buf -> s2C.decoder().apply(new PacketContent(buf)));
         CustomPacketPayload.Type<T> type = new CustomPacketPayload.Type<>(s2C.id());
@@ -133,8 +133,8 @@ public class NeoForgePlatform {
                     s2C.packetHandler().accept(packet, new S2CNetworkContext());
                 }
         );
-        ¹^///?} else {
-        registrar.play(s2C.id(),
+        //?} else {
+        /^¹registrar.play(s2C.id(),
                 buf -> s2C.decoder().apply(new PacketContent(buf)),
                 (arg, playPayloadContext) -> {
                     if (s2C.netHandle()) {
@@ -148,12 +148,12 @@ public class NeoForgePlatform {
                         });
                     }
                 });
-        //?}
+        ¹^///?}
     }
 
-    private static <T extends SACPacket> void sac(/^¹? >=1.20.6 {¹^/ /^¹PayloadRegistrar ¹^//^¹?} else {¹^/IPayloadRegistrar/^¹?}¹^/ registrar, PacketConfig.SAC<T> sAC) {
+    private static <T extends SACPacket> void sac(/^¹? >=1.20.6 {¹^/ PayloadRegistrar /^¹?} else {¹^//^¹IPayloadRegistrar¹^//^¹?}¹^/ registrar, PacketConfig.SAC<T> sAC) {
         //? if > 1.20.4 {
-        /^¹StreamCodec<RegistryFriendlyByteBuf, T> codec = StreamCodec.of(
+        StreamCodec<RegistryFriendlyByteBuf, T> codec = StreamCodec.of(
                 (buf, packet) -> sAC.encoder().accept(packet, new PacketContent(buf)),
                 buf -> sAC.decoder().apply(new PacketContent(buf)));
         CustomPacketPayload.Type<T> sacT = new CustomPacketPayload.Type<>(sAC.s2cID());
@@ -165,8 +165,8 @@ public class NeoForgePlatform {
                         (packet, context) -> sAC.serverHandler().accept(packet, new C2SNetworkContext((ServerPlayer) context.player()))
                 )
         );
-        ¹^///?} else {
-            registrar.play(sAC.id(),
+        //?} else {
+            /^¹registrar.play(sAC.id(),
                     buf -> sAC.decoder().apply(new PacketContent(buf)),
                     handler -> handler
                             .client((arg, playPayloadContext) -> {
@@ -192,12 +192,12 @@ public class NeoForgePlatform {
                                 }
                             })
             );
-            //?}
+            ¹^///?}
     }
 
-    private static <T extends LoginPacket> void login(/^¹? >=1.20.6 {¹^/ /^¹PayloadRegistrar ¹^//^¹?} else {¹^/IPayloadRegistrar/^¹?}¹^/ registrar, PacketConfig.Login<T> login) {
+    private static <T extends LoginPacket> void login(/^¹? >=1.20.6 {¹^/ PayloadRegistrar /^¹?} else {¹^//^¹IPayloadRegistrar¹^//^¹?}¹^/ registrar, PacketConfig.Login<T> login) {
         //? if > 1.20.4 {
-        /^¹StreamCodec<FriendlyByteBuf, T> codec = StreamCodec.of(
+        StreamCodec<FriendlyByteBuf, T> codec = StreamCodec.of(
                 (buf, packet) -> login.encoder().accept(packet, new PacketContent(buf)),
                 buf -> login.decoder().apply(new PacketContent(buf)));
         CustomPacketPayload.Type<T> type = new CustomPacketPayload.Type<>(login.id());
@@ -206,8 +206,8 @@ public class NeoForgePlatform {
                 codec,
                 (arg, iPayloadContext) -> login.clientHandler().accept(arg, new S2CNetworkContext())
         );
-        ¹^///?} else {
-        registrar.common(login.id(),
+        //?} else {
+        /^¹registrar.common(login.id(),
                 buf -> login.decoder().apply(new PacketContent(buf)),
                 (arg, playPayloadContext) -> {
                     playPayloadContext.workHandler().submitAsync(()->{
@@ -217,11 +217,12 @@ public class NeoForgePlatform {
                         return null;
                     });
                 });
+        ¹^/
         //?}
     }
 
     //? if < 1.20.6 {
-    @SubscribeEvent
+    /^¹@SubscribeEvent
     public static void onOnGameConfiguration(OnGameConfigurationEvent event) {
         for (ResourceLocation resourceLocation : BrickRegistries.NETWORK_PACKET.keySet()) {
             PacketConfig config = BrickRegistries.NETWORK_PACKET.get(resourceLocation);
@@ -237,8 +238,8 @@ public class NeoForgePlatform {
             }
         }
     }
-    //?} else {
-    /^¹@SubscribeEvent
+    ¹^///?} else {
+    @SubscribeEvent
     public static void onRegisterConfigurationTasks(RegisterConfigurationTasksEvent event) {
         for (ResourceLocation resourceLocation : BrickRegistries.NETWORK_PACKET.keySet()) {
             PacketConfig config = BrickRegistries.NETWORK_PACKET.get(resourceLocation);
@@ -255,24 +256,24 @@ public class NeoForgePlatform {
         }
     }
 
-    ¹^///?}
+    //?}
 
     private static class MyICustomConfigurationTask implements ICustomConfigurationTask {
         private final PacketConfig.Login config;
         private final
         //? if < 1.20.6 {
-        OnGameConfigurationEvent
-        //?} else {
-                /^¹RegisterConfigurationTasksEvent
-                ¹^///?}
+        /^¹OnGameConfigurationEvent
+        ¹^///?} else {
+                RegisterConfigurationTasksEvent
+                //?}
                 event;
 
         public MyICustomConfigurationTask(PacketConfig.Login config,
                                           //? if < 1.20.6 {
-                OnGameConfigurationEvent
-                                          //?} else {
-                                          /^¹RegisterConfigurationTasksEvent
-                                                  ¹^///?}
+                /^¹OnGameConfigurationEvent
+                                          ¹^///?} else {
+                                          RegisterConfigurationTasksEvent
+                                                  //?}
                                           event) {
             this.config = config;
             this.event = event;
@@ -280,11 +281,9 @@ public class NeoForgePlatform {
 
         @Override
         public void run(Consumer<CustomPacketPayload> consumer) {
-            System.out.println("MyICustomConfigurationTask.run");
             List<Pair<String, ? extends LoginPacket>> list =
                     (List<Pair<String, ? extends LoginPacket>>) config.packetGenerator().apply(false);
             list.forEach(stringPair -> {
-                System.out.println("stringPair.getRight() = " + stringPair.getRight());
                 consumer.accept(stringPair.getRight());
             });
             event.getListener().finishCurrentTask(type());

@@ -1,13 +1,14 @@
 package com.arc_studio.brick_lib.events.server.server;
 
 import com.arc_studio.brick_lib.api.event.BaseEvent;
+import com.arc_studio.brick_lib.api.event.IServerOnlyEvent;
 import net.minecraft.network.Connection;
 import net.minecraft.network.ConnectionProtocol;
 import net.minecraft.server.MinecraftServer;
 
 import java.util.function.BooleanSupplier;
 
-public class ServerEvent extends BaseEvent {
+public class ServerEvent extends BaseEvent implements IServerOnlyEvent {
     private final MinecraftServer server;
 
     public ServerEvent(MinecraftServer server) {

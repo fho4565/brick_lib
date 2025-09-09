@@ -68,7 +68,7 @@ public abstract class PacketConfig {
             this.encoder = encoder;
             this.decoder = decoder;
             this.packetHandler = packetHandler;
-            id = new ResourceLocation(BrickLib.MOD_ID, type.getName().replace(".", "_").toLowerCase() + "_s2c");
+            id = BrickLib.createBrickRL(type.getName().replace(".", "_").toLowerCase() + "_s2c");
         }
 
         /** @return 数据包类型类对象 */
@@ -121,7 +121,7 @@ public abstract class PacketConfig {
             this.encoder = encoder;
             this.decoder = decoder;
             this.packetHandler = packetHandler;
-            id = new ResourceLocation(BrickLib.MOD_ID, type.getName().replace(".", "_").toLowerCase() + "_c2s");
+            id = BrickLib.createBrickRL(type.getName().replace(".", "_").toLowerCase() + "_c2s");
         }
 
         /** @return 数据包类型类对象 */
@@ -192,9 +192,9 @@ public abstract class PacketConfig {
             this.serverHandler = serverHandler;
             this.clientHandler = clientHandler;
             String string = type.getName().replace(".", "_").toLowerCase();
-            s2cID = new ResourceLocation(BrickLib.MOD_ID, string);
-            c2sID = new ResourceLocation(BrickLib.MOD_ID, string);
-            id = new ResourceLocation(BrickLib.MOD_ID, string);
+            s2cID = BrickLib.createBrickRL(string);
+            c2sID = BrickLib.createBrickRL(string);
+            id = BrickLib.createBrickRL(string);
             this.serverNetHandle = serverNetHandle;
             this.clientNetHandle = clientNetHandle;
         }
@@ -261,11 +261,11 @@ public abstract class PacketConfig {
         /** 客户端侧处理器 */
         BiConsumer<T, S2CNetworkContext> clientHandler;
 
-        public Function<Boolean, List<Pair<String, ? extends LoginPacket>>> packetGenerator() {
+        public Function<Boolean, List<Pair<String, T>>> packetGenerator() {
             return packetGenerator;
         }
 
-        Function<Boolean, List<Pair<String,? extends LoginPacket>>> packetGenerator;
+        Function<Boolean, List<Pair<String,T>>> packetGenerator;
 
         /** 服务端到客户端的资源标识 */
         ResourceLocation s2cID;
@@ -288,7 +288,7 @@ public abstract class PacketConfig {
                      Function<PacketContent, T> s2cDecoder,
                      BiConsumer<T, C2SNetworkContext> serverHandler,
                      BiConsumer<T, S2CNetworkContext> clientHandler,
-                     Function<Boolean, List<Pair<String,? extends LoginPacket>>> packetGenerator) {
+                     Function<Boolean, List<Pair<String,T>>> packetGenerator) {
             super();
             this.type = type;
             this.encoder = encoder;
@@ -298,9 +298,9 @@ public abstract class PacketConfig {
             this.clientHandler = clientHandler;
             this.packetGenerator = packetGenerator;
             String string = type.getName().replace(".", "_").toLowerCase();
-            s2cID = new ResourceLocation(BrickLib.MOD_ID, string);
-            c2sID = new ResourceLocation(BrickLib.MOD_ID, string);
-            id = new ResourceLocation(BrickLib.MOD_ID, string);
+            s2cID = BrickLib.createBrickRL(string);
+            c2sID = BrickLib.createBrickRL(string);
+            id = BrickLib.createBrickRL(string);
         }
 
         public ResourceLocation s2cID() {

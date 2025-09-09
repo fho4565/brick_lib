@@ -2,7 +2,7 @@ package com.arc_studio.brick_lib.tools;
 
 
 import com.arc_studio.brick_lib.BrickLib;
-import com.arc_studio.brick_lib.api.core.PlatformType;
+import com.arc_studio.brick_lib.api.core.SideType;
 import com.arc_studio.brick_lib.api.event.BrickEventBus;
 import com.arc_studio.brick_lib.api.event.EventListener;
 import com.arc_studio.brick_lib.events.server.server.ServerEvent;
@@ -32,7 +32,7 @@ public class Constants {
     private static Path brickLibPlacersFolder;
     private static MinecraftServer currentServer;
     private static boolean isInDevelopEnvironment = false;
-    private static PlatformType platform;
+    private static SideType platform;
 
     /**
      * <p>获取当前游戏版本文件夹，在模组初始化时调用</p>
@@ -102,7 +102,7 @@ public class Constants {
     @ApiStatus.Internal
     public static void initGeneral() {
         if(!initiatedGeneral) {
-            BrickEventBus.registerListener(ServerEvent.LoadData.class, EventListener.create(EventListener.Priority.HIGHEST, event -> installWorldVariables(event.server())), BrickLib.createBrickRL("server_event_load_data"));
+            BrickEventBus.registerListener(ServerEvent.AboutToStart.class, EventListener.create(EventListener.Priority.HIGHEST, event -> installWorldVariables(event.server())), BrickLib.createBrickRL("server_event_load_data"));
             BrickEventBus.registerListener(ServerEvent.Stopped.class, EventListener.create(EventListener.Priority.LOWEST, event -> uninstallWorldVariables()), BrickLib.createBrickRL("server_event_stopped"));
             launchArgs = Platform.launchArgs();
             platform = Platform.platform();
@@ -164,7 +164,7 @@ public class Constants {
     /**
      * 获取模组运行的平台
      * */
-    public static PlatformType platform() {
+    public static SideType platform() {
         return platform;
     }
 
@@ -187,6 +187,7 @@ public class Constants {
     }
 
     public static Path serverConfigFolder() {
+        System.out.println("worldFolder = " + worldFolder);
         return serverConfigFolder;
     }
 
