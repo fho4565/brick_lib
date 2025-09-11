@@ -15,6 +15,7 @@ import com.arc_studio.brick_lib.client.command.ClientCommands;
 import com.arc_studio.brick_lib.config.*;
 import com.arc_studio.brick_lib.core.global_pack.GlobalPack;
 import com.arc_studio.brick_lib.core.global_pack.GlobalPacks;
+import com.arc_studio.brick_lib.datagen.BrickDataGenerator;
 import com.arc_studio.brick_lib.events.client.ClientTickEvent;
 import com.arc_studio.brick_lib.events.client.RenderEvent;
 import com.arc_studio.brick_lib.events.game.CommandEvent;
@@ -33,9 +34,11 @@ import com.arc_studio.brick_lib.register.CommandSelectorOption;
 import com.arc_studio.brick_lib.tools.*;
 import com.google.gson.*;
 import com.llamalad7.mixinextras.MixinExtrasBootstrap;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -45,10 +48,12 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.Connection;
 import net.minecraft.network.ConnectionProtocol;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -143,34 +148,7 @@ public final class BrickLib {
                     }
                     return builder;
                 });
-        BrickRegistries.NETWORK_PACKET.register(BrickLib.createBrickRL("config_sync_packet"),() ->
-                new PacketConfig.Login<>(
-                        ConfigSyncPacket.class,
-                        ConfigSyncPacket::encoder,
-                        ConfigSyncPacket::new,
-                        ConfigSyncPacket::new,
-                        ConfigSyncPacket::serverHandle,
-                        ConfigSyncPacket::clientHandle,
-                        isLocal1 -> {
-                            Map<String, byte[]> configData = ConfigTracker.configSets().get(ModConfig.Type.SERVER).stream().collect(Collectors.toMap(ModConfig::getFileName, mc -> {
-                                try {
-                                    if (Platform.isClient() || mc.getConfigData() == null) {
-                                        System.out.println("ConfigSyncPacket.generatePackets = NULL");
-                                    }else{
-                                        System.out.println("ConfigSyncPacket.generatePackets = YES");
-                                    }
-                                    return Platform.isClient() || mc.getConfigData() == null ? new byte[0] : Files.readAllBytes(mc.getFullPath());
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }));
-                            return configData.entrySet().stream().map(e-> {
-                                System.out.println("ConfigSyncPacket.generatePackets Name = config_" + e.getKey());
-                                return Pair.of("config_" + e.getKey(), new ConfigSyncPacket(e.getKey(), e.getValue()));
-                            }).collect(Collectors.toList());
-                        }
-                )
-        );
+
         BrickRegistries.NETWORK_PACKET.register(BrickLib.createBrickRL("demo_login_packet"),() ->
                 new PacketConfig.Login<>(
                         LoginPacketDemo.class,
@@ -216,27 +194,7 @@ public final class BrickLib {
                 }
             });
         });
-        BrickRegisterManager.register(BrickRegistries.COMMAND, BrickLib.createBrickRL("gp"), () -> buildContext ->
-                Commands.literal("globalpack")
-                        .then(Commands.literal("create")
-                                .executes(context -> {
-                                    if (GlobalPacks.createExample()) {
-                                        context.getSource().sendSuccess(() -> Component.literal("Generated"), false);
-                                        return 1;
-                                    }
-                                    context.getSource().sendFailure(Component.literal("Failed"));
-                                    return 0;
-                                })
-                        )
-                        .then(Commands.literal("list")
-                                .executes(context -> {
-                                    for (GlobalPack globalPack : BrickRegistries.GLOBAL_PACK.values()) {
-                                        context.getSource().sendSuccess(() -> Component.literal(globalPack.name()), false);
-                                    }
-                                    return 1;
-                                })
-                        )
-        );
+
         BrickRegisterManager.register(BrickRegistries.COMMAND_ENTITY_SELECTORS,
                 BrickLib.createBrickRL("man_selector"),
                 ()->new CommandEntitySelector("pig", Component.literal("find pigs"), entity -> entity.getType() == EntityType.PIG)
@@ -517,6 +475,68 @@ public final class BrickLib {
     }
 
     private static void preLoad() {
+        BrickRegistries.NETWORK_PACKET.register(BrickLib.createBrickRL("config_sync_packet"),() ->
+                new PacketConfig.Login<>(
+                        ConfigSyncPacket.class,
+                        ConfigSyncPacket::encoder,
+                        ConfigSyncPacket::new,
+                        ConfigSyncPacket::new,
+                        ConfigSyncPacket::serverHandle,
+                        ConfigSyncPacket::clientHandle,
+                        isLocal -> {
+                            Map<String, byte[]> configData = ConfigTracker.configSets().get(ModConfig.Type.SERVER).stream().collect(Collectors.toMap(ModConfig::getFileName, mc -> {
+                                try {
+                                    if (Platform.isClient() || mc.getConfigData() == null) {
+                                        System.out.println("ConfigSyncPacket.generatePackets = NULL");
+                                    }else{
+                                        System.out.println("ConfigSyncPacket.generatePackets = YES");
+                                    }
+                                    return Platform.isClient() || mc.getConfigData() == null ? new byte[0] : Files.readAllBytes(mc.getFullPath());
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }));
+                            return configData.entrySet().stream().map(e-> {
+                                System.out.println("ConfigSyncPacket.generatePackets Name = config_" + e.getKey());
+                                return Pair.of("config_" + e.getKey(), new ConfigSyncPacket(e.getKey(), e.getValue()));
+                            }).collect(Collectors.toList());
+                        }
+                )
+        );
+        BrickRegisterManager.register(BrickRegistries.COMMAND, BrickLib.createBrickRL("gp"), () -> buildContext ->
+                Commands.literal("globalpack")
+                        .then(Commands.literal("create")
+                                .executes(context -> {
+                                    if (GlobalPacks.createExample()) {
+                                        context.getSource().sendSuccess(() -> Component.literal("Generated"), false);
+                                        return 1;
+                                    }
+                                    context.getSource().sendFailure(Component.literal("Failed"));
+                                    return 0;
+                                })
+                        )
+                        .then(Commands.literal("list")
+                                .executes(context -> {
+                                    for (GlobalPack globalPack : BrickRegistries.GLOBAL_PACK.values()) {
+                                        context.getSource().sendSuccess(() -> Component.literal(globalPack.name()), false);
+                                    }
+                                    return 1;
+                                })
+                        )
+        );
+        BrickRegisterManager.register(BrickRegistries.COMMAND, createBrickRL("datagen_command"), () -> buildContext ->
+                Commands.literal("datagen")
+                        .requires(stack -> Constants.isInDevelopEnvironment())
+                        .executes(context -> genData(context, true, true))
+                        .then(Commands.argument("genClient", BoolArgumentType.bool())
+                                .executes(context -> genData(context, BoolArgumentType.getBool(context,"genClient"), true))
+                                .then(Commands.argument("genServer", BoolArgumentType.bool())
+                                        .executes(context -> genData(context,
+                                                BoolArgumentType.getBool(context,"genClient"),
+                                                BoolArgumentType.getBool(context,"genServer")))
+                                )
+                        )
+        );
         BrickRegisterManager.register(BrickRegistries.NETWORK_PACKET, BrickLib.createBrickRL("built_in_packet"), () -> new PacketConfig.SAC<>(BuiltInPacket.class, BuiltInPacket::encoder, BuiltInPacket::new, BuiltInPacket::serverHandle, BuiltInPacket::clientHandle, false, false));
         BrickRegisterManager.register(BrickRegistries.GLOBAL_PACK_FILE_TYPE, BrickLib.createBrickRL("item"), ItemType::new);
         BrickEventBus.registerListener(PlayerEvent.Tick.Pre.class, event -> {
@@ -562,6 +582,16 @@ public final class BrickLib {
         BrickEventBus.registerListenerClient(LogInEvent.ClientSuccess.class,event -> {
             ConfigTracker.loadDefaultServerConfigs();
         });
+    }
+
+    private static int genData(CommandContext<CommandSourceStack> context, boolean client, boolean server) {
+        try {
+            BrickDataGenerator.run(client, server);
+        } catch (IOException e) {
+            context.getSource().sendFailure(Component.literal("Error when generate data").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,Component.literal(e.getMessage())))));
+            return 0;
+        }
+        return 1;
     }
 
     private static Path getServerConfigPath(final MinecraftServer server) {

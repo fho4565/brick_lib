@@ -154,7 +154,7 @@ public final class ClientCommandInternals {
 		List<ParsedCommandNode<ClientSuggestionProvider>> nodes = parseResults.getContext().getNodes();
 
 		if (nodes.isEmpty()) {
-			throw new SimpleCommandExceptionType(Component.literal("Node is empty!")).create();
+			throw new SimpleCommandExceptionType(Component.literal("AbstractNode is empty!")).create();
 		}
 
 		return executeHelp(Iterables.getLast(nodes).getNode(), context);

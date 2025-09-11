@@ -201,7 +201,7 @@ public class PlacerHelper {
             }
             getEntity.ifPresent(blockEntity -> {
                 //? if >= 1.20.6 {
-                /*getEntity.loadWithComponents(action.singleBlock().nbt(), Constants.currentServer().registryAccess());
+                /*blockEntity.loadWithComponents(action.singleBlock().nbt(), Constants.currentServer().registryAccess());
                  *///?} else {
                 blockEntity.load(action.singleBlock().nbt());
                 //?}

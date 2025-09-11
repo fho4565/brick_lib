@@ -8,10 +8,12 @@ import com.arc_studio.brick_lib.core.global_pack.files.GlobalPackFileType;
 import com.arc_studio.brick_lib.api.register.BrickRegistry;
 import com.arc_studio.brick_lib.api.register.VanillaRegistry;
 import com.arc_studio.brick_lib.api.json_function.JsonFunction;
+import com.arc_studio.brick_lib.datagen.DataGenerateEntry;
 import com.arc_studio.brick_lib.render.ItemDecorationRender;
 import com.arc_studio.brick_lib.api.network.type.PacketConfig;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.commands.CommandBuildContext;
@@ -251,6 +253,7 @@ public static final VanillaRegistry<PaintingVariant> PAINTING_VARIANT = new Vani
      * */
     public static final BrickRegistry<CommandSelectorOption> COMMAND_ENTITY_SELECTOR_OPTIONS = create("command_entity_selector_option");
 
+    public static final BrickRegistry<DataGenerateEntry> DATA_GENERATE = create("data_generate");
 
     private static <T> BrickRegistry<T> create(String name) {
         return new BrickRegistry<>(ResourceKey.createRegistryKey(BrickLib.createBrickRL(name)));

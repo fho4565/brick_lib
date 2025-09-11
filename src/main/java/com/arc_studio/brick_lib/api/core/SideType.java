@@ -7,7 +7,7 @@ public final class SideType {
             FALSE = 0,
             CLIENT = 1,
             SERVER = 2,
-            CAS = 4,
+            CLIENT_AND_SERVER = 4,
             FORGE = 8,
             FABRIC = 16,
             NEOFORGE = 32,
@@ -189,7 +189,7 @@ public final class SideType {
         boolean c = this.isClient() && other.isClient();
         boolean s = this.isServer() && other.isServer();
         if (c && s) {
-            return CAS;
+            return CLIENT_AND_SERVER;
         } else if (c) {
             return CLIENT;
         } else if (s) {
