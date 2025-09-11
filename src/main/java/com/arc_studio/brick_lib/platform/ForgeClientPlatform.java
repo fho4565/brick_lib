@@ -14,7 +14,7 @@ public class ForgeClientPlatform {
     //? if forge {
     @SubscribeEvent
     public static void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {
-        BrickRegistries.KEY_MAPPING.foreachAndClear((resourceLocation, keyMapping) -> event.register(keyMapping));
+        BrickRegistries.KEY_MAPPING.registerForeach((resourceLocation, keyMapping) -> event.register(keyMapping));
     }
     //?}
 }

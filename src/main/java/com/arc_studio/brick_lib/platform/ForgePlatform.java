@@ -16,7 +16,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.network.*;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 //? if forge && < 1.20.4 {
 import net.minecraftforge.fml.common.Mod;
@@ -127,7 +126,7 @@ public class ForgePlatform {
 
     @SubscribeEvent
     public static void onNetwork(FMLCommonSetupEvent event) {
-        BrickRegistries.NETWORK_PACKET.foreachValueAndClear(packetConfig -> {
+        BrickRegistries.NETWORK_PACKET.registerForeachValue(packetConfig -> {
             if (packetConfig instanceof PacketConfig.C2S c2S) {
                 SimpleChannel.MessageBuilder<? extends C2SPacket> command = c2sPlayChannel
                         .messageBuilder(c2S.type(), c2sID.getAndIncrement(), NetworkDirection.PLAY_TO_SERVER)

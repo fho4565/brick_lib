@@ -82,7 +82,7 @@ import java.util.stream.Collectors;
 public final class BrickLib {
     public static final Logger LOGGER = LogUtils.getLogger();
     public static final String MOD_ID = "brick_lib";
-    public static final Version BRICK_LIB_VERSION = new Version.Builder(1, 0, 0).preRelease(Version.PreReleaseType.ALPHA, 2).build();
+    public static final Version BRICK_LIB_VERSION = new Version.Builder(1, 0, 0).preRelease(Version.PreReleaseType.ALPHA,3).build();
 
     private static final BiConsumer<Player, ItemStack> COOLDOWN_ITEM_CONSUMER = (player, itemStack) -> {
         if (itemStack.getItem() instanceof ICooldownItem item) {

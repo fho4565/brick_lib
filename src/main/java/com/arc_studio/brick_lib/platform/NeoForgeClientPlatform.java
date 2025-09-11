@@ -53,7 +53,7 @@ public class NeoForgeClientPlatform {
     //? if neoforge {
     /^@SubscribeEvent
     public static void onRegisterKeyMappings(RegisterKeyMappingsEvent events) {
-        BrickRegistries.KEY_MAPPING.foreachAndClear((resourceLocation, keyMapping) -> events.register(keyMapping));
+        BrickRegistries.KEY_MAPPING.registerForeach((resourceLocation, keyMapping) -> events.register(keyMapping));
     }
     ^///?}
 }

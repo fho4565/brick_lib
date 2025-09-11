@@ -122,7 +122,7 @@ public static final VanillaRegistry<PaintingVariant> PAINTING_VARIANT = new Vani
     public static final VanillaRegistry<ResourceLocation> CUSTOM_STAT = new VanillaRegistry<>(BuiltInRegistries.CUSTOM_STAT);
     //? if <= 1.20.4 {
     public static final VanillaRegistry<ChunkStatus> CHUNK_STATUS = new VanillaRegistry<>(BuiltInRegistries.CHUNK_STATUS);
-    //?} else {
+    //? } else {
     /*public static final BrickRegistry<Object> CHUNK_STATUS = create("chunk_status");
     *///?}
     public static final VanillaRegistry<RuleTestType<?>> RULE_TEST = new VanillaRegistry<>(BuiltInRegistries.RULE_TEST);

@@ -431,7 +431,7 @@ public class Platform {
     public static <T> void brickFinalizeRegistry() {
         //? if fabric {
         /*//? if >= 1.20.6 {
-        BrickRegistries.NETWORK_PACKET.foreachValueAndClear(packetConfig -> {
+        BrickRegistries.NETWORK_PACKET.registerForeachValue(packetConfig -> {
             if (packetConfig instanceof PacketConfig.C2S c2S) {
                 c2s(c2S);
             } else if (packetConfig instanceof PacketConfig.S2C s2C) {
@@ -443,7 +443,7 @@ public class Platform {
             }
         });
         //?} else {
-        /^BrickRegistries.NETWORK_PACKET.foreachValueAndClear(packetConfig -> {
+        /^BrickRegistries.NETWORK_PACKET.registerForeachValue(packetConfig -> {
             if (packetConfig instanceof PacketConfig.C2S c2SPlay) {
                 SideExecutor.runOnServer(() -> () -> ServerPlayNetworking.registerGlobalReceiver(c2SPlay.id(),
                         (server, player, handler, buf, responseSender) -> {
@@ -528,7 +528,7 @@ public class Platform {
             }
         }));
         SideExecutor.runOnClient(() -> () ->
-                BrickRegistries.KEY_MAPPING.foreachValueAndClear(KeyBindingHelper::registerKeyBinding));
+                BrickRegistries.KEY_MAPPING.registerForeachValue(KeyBindingHelper::registerKeyBinding));
         *///?} else {
 
         //?}

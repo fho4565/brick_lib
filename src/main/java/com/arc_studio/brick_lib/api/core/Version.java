@@ -1,8 +1,7 @@
 package com.arc_studio.brick_lib.api.core;
 
 /**
- * 符合语义化版本规范（Semantic Versioning 2.0.0）的版本号
- *
+ * 符合<a href="https://semver.org/">语义化版本规范（Semantic Versioning 2.0.0）</a>的版本号
  * @author arc_studio
  */
 public final class Version implements Comparable<Version> {

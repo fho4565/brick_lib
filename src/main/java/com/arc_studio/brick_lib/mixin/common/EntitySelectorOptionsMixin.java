@@ -16,12 +16,17 @@ import java.util.function.Predicate;
 public abstract class EntitySelectorOptionsMixin {
 
     @Shadow
-    private static void register(String id, EntitySelectorOptions.Modifier handler, Predicate<EntitySelectorParser> predicate, Component tooltip) {
+    //? if >= 1.20.6 {
+    /*private*/
+    //? } else {
+    public
+    //? }
+    static void register(String id, EntitySelectorOptions.Modifier handler, Predicate<EntitySelectorParser> predicate, Component tooltip) {
     }
 
     @Inject(method = "get", at = @At("HEAD"), remap = false)
     private static void getMixin(EntitySelectorParser parser, String id, int cursor, CallbackInfoReturnable<EntitySelectorOptions.Modifier> cir) {
-        BrickRegistries.COMMAND_ENTITY_SELECTOR_OPTIONS.foreachValueAndClear(option -> {
+        BrickRegistries.COMMAND_ENTITY_SELECTOR_OPTIONS.registerForeachValue(option -> {
             register(option.name(), option.handler(), option.canUse(), option.description());
         });
     }

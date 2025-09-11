@@ -1,18 +1,15 @@
 package com.arc_studio.brick_lib.mixin.common.client;
 
-import com.arc_studio.brick_lib.api.event.BrickEventBus;
 import com.arc_studio.brick_lib.client.command.ClientCommandInternals;
 import com.arc_studio.brick_lib.events.server.entity.living.player.PlayerEvent;
 import com.arc_studio.brick_lib.register.BrickRegistries;
 import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.ClientRegistryLayer;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.LayeredRegistryAccess;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.protocol.game.ClientboundCommandsPacket;
 import net.minecraft.network.protocol.game.ClientboundLoginPacket;
 import net.minecraft.world.flag.FeatureFlagSet;
@@ -51,7 +48,7 @@ public abstract class ClientPacketListenerMixin {
     private void onGameJoin(ClientboundLoginPacket packet, CallbackInfo info) {
         CommandDispatcher<ClientSuggestionProvider> dispatcher = new CommandDispatcher<>();
         ClientCommandInternals.setActiveDispatcher(dispatcher);
-        BrickRegistries.CLIENT_COMMAND.foreachValueAndClear(function -> {
+        BrickRegistries.CLIENT_COMMAND.registerForeachValue(function -> {
                     //? if >= 1.20.6 {
                     /*dispatcher.register(function.apply(CommandBuildContext.simple(this.registryAccess, this.enabledFeatures)));
                     *///?} else {

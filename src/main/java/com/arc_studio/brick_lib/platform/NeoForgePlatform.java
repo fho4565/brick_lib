@@ -75,7 +75,7 @@ public class NeoForgePlatform {
                     events) {
         /^¹? >1.20.4 {¹^/ /^¹PayloadRegistrar ¹^//^¹?} else {¹^/
         IPayloadRegistrar/^¹?}¹^/ registrar = events.registrar(BrickLib.MOD_ID);
-        BrickRegistries.NETWORK_PACKET.foreachValueAndClear(packetConfig -> {
+        BrickRegistries.NETWORK_PACKET.registerForeachValue(packetConfig -> {
             if (packetConfig instanceof PacketConfig.C2S c2S) {
                 c2s(registrar, c2S);
             } else if (packetConfig instanceof PacketConfig.S2C s2C) {

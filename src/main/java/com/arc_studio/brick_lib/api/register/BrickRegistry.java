@@ -1,6 +1,5 @@
 package com.arc_studio.brick_lib.api.register;
 
-import com.arc_studio.brick_lib.BrickLib;
 import com.arc_studio.brick_lib.tools.Utils;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
 public class BrickRegistry<T> extends RegistryType<T> implements Iterable<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(BrickRegistry.class);
     protected HashMap<ResourceLocation, Supplier<T>> map = new HashMap<>();
-    protected HashMap<ResourceLocation, Supplier<T>> toReg = new HashMap<>();
+    protected boolean registered = false;
 
     private final ResourceKey<? extends Registry<T>> key;
 
@@ -118,14 +117,18 @@ public class BrickRegistry<T> extends RegistryType<T> implements Iterable<T> {
         return map.values().stream().map(Supplier::get).collect(Collectors.toSet());
     }
 
-    public void foreachAndClear(BiConsumer<ResourceLocation, T> consumer) {
-        toReg.forEach((rl, supplier) -> consumer.accept(rl, supplier.get()));
-        toReg.clear();
+    public void registerForeach(BiConsumer<ResourceLocation, T> consumer) {
+        if(!registered){
+            map.forEach((rl, supplier) -> consumer.accept(rl, supplier.get()));
+            registered = true;
+        }
     }
 
-    public void foreachValueAndClear(Consumer<T> consumer) {
-        toReg.forEach((rl, supplier) -> consumer.accept(supplier.get()));
-        toReg.clear();
+    public void registerForeachValue(Consumer<T> consumer) {
+        if(!registered){
+            map.forEach((rl, supplier) -> consumer.accept(supplier.get()));
+            registered = true;
+        }
     }
 
     public Set<Map.Entry<ResourceKey<T>, T>> entrySet() {
@@ -157,7 +160,6 @@ public class BrickRegistry<T> extends RegistryType<T> implements Iterable<T> {
             LOGGER.error("Duplicated key {} in registry {}",key,this.key);
         } else {
             map.put(key.location(), () -> value);
-            toReg.put(key.location(), () -> value);
         }
         return value;
     }
@@ -175,10 +177,6 @@ public class BrickRegistry<T> extends RegistryType<T> implements Iterable<T> {
     @Override
     public Spliterator<T> spliterator() {
         return values().spliterator();
-    }
-
-    public void clear() {
-        toReg.clear();
     }
 
     @Override

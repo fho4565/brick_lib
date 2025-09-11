@@ -1,9 +1,5 @@
 package com.arc_studio.brick_lib.tools;
 
-// WorldUtils 工具类，提供了大量与世界(Level)相关的便捷操作方法
-// 包括方块、实体、声音、战利品、命令等常用操作
-// 适用于 Minecraft Mod 开发中对世界内容的批量处理、范围查询、掉落、声音播放等场景
-
 import com.arc_studio.brick_lib.api.core.SingleBlock;
 import com.arc_studio.brick_lib.api.core.SingleBlockWithNbt;
 import com.arc_studio.brick_lib.api.core.interfaces.consumer.BlockPosConsumer;
@@ -52,7 +48,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
+/**
+ * WorldUtils 工具类，提供了大量与世界(Level)相关的便捷操作方法。包括方块、实体、声音、战利品、命令等常用操作。适用于 Minecraft Mod 开发中对世界内容的批量处理、范围查询、掉落、声音播放等场景
+ * */
 public class WorldUtils {
     /**
      * 在指定位置掉落一个指定物品。
