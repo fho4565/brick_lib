@@ -176,12 +176,13 @@ public final class SideType {
             } else {
                 return FALSE;
             }
-        } else if (this.isNeoForge())
+        } else if (this.isNeoForge()) {
             if (other.isNeoForge()) {
                 return NEOFORGE;
             } else {
                 return FALSE;
             }
+        }
         return FALSE;
     }
 

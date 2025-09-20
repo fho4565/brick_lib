@@ -5,6 +5,7 @@ import com.arc_studio.brick_lib.api.event.IClientOnlyEvent;
 import com.arc_studio.brick_lib.api.event.IResultEvent;
 import com.arc_studio.brick_lib.events.server.entity.living.LivingEntityEvent;
 import net.minecraft.advancements.AdvancementProgress;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -23,10 +24,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 当发生和玩家有关的事件时，会触发该事件。
+ * @author fho4565
  */
 public abstract class PlayerEvent extends LivingEntityEvent {
     protected Player player;
@@ -41,37 +44,39 @@ public abstract class PlayerEvent extends LivingEntityEvent {
         return player;
     }
 
-    @ApiStatus.Experimental
-    public static abstract class Advancement extends PlayerEvent {
+    public static abstract class Advancement extends PlayerEvent implements ICancelableEvent {
         net.minecraft.advancements.Advancement advancement;
+
+        public net.minecraft.advancements.Advancement advancement() {
+            return advancement;
+        }
 
         public Advancement(Player player, net.minecraft.advancements.Advancement advancement) {
             super(player);
             this.advancement = advancement;
         }
 
-        public static class Earn extends Advancement {
-
-            public Earn(Player player, net.minecraft.advancements.Advancement advancement) {
+        public static class Complete extends Advancement {
+            public Complete(Player player, net.minecraft.advancements.Advancement advancement) {
                 super(player, advancement);
             }
         }
 
-        public static class Grant extends Advancement {
+        public static class Progress extends Advancement {
             private final AdvancementProgress advancementProgress;
             private final String criterionName;
 
-            public Grant(Player player, net.minecraft.advancements.Advancement advancement, AdvancementProgress advancementProgress, String criterionName) {
+            public Progress(Player player, net.minecraft.advancements.Advancement advancement, AdvancementProgress advancementProgress, String criterionName) {
                 super(player, advancement);
                 this.advancementProgress = advancementProgress;
                 this.criterionName = criterionName;
             }
 
-            public String getCriterionName() {
+            public String criterionName() {
                 return criterionName;
             }
 
-            public AdvancementProgress getAdvancementProgress() {
+            public AdvancementProgress advancementProgress() {
                 return advancementProgress;
             }
         }
@@ -90,21 +95,13 @@ public abstract class PlayerEvent extends LivingEntityEvent {
                 return criterionName;
             }
 
-            public AdvancementProgress getAdvancementProgress() {
+            public AdvancementProgress advancementProgress() {
                 return advancementProgress;
             }
         }
     }
 
-    @ApiStatus.Experimental
-    public static class Jump extends PlayerEvent {
-        public Jump(Player player) {
-            super(player);
-        }
-    }
-
-    @ApiStatus.Experimental
-    public static class Sneak extends PlayerEvent {
+    public static class Sneak extends PlayerEvent implements IClientOnlyEvent,ICancelableEvent {
         public Sneak(Player player) {
             super(player);
         }
@@ -163,7 +160,6 @@ public abstract class PlayerEvent extends LivingEntityEvent {
         }
     }
 
-    @ApiStatus.Experimental
     public static abstract class BreakBlock extends PlayerEvent {
         private final BlockPos blockPos;
         private final BlockState blockState;
@@ -247,13 +243,12 @@ public abstract class PlayerEvent extends LivingEntityEvent {
         }
     }
 
-    @ApiStatus.Experimental
     public static class RequestItemTooltip extends PlayerEvent {
         private final TooltipFlag flags;
         private final ItemStack itemStack;
-        private final List<Component> toolTip;
+        private final ArrayList<Component> toolTip;
 
-        public RequestItemTooltip(Player player, TooltipFlag flags, ItemStack itemStack, List<Component> toolTip) {
+        public RequestItemTooltip(Player player, TooltipFlag flags, ItemStack itemStack, ArrayList<Component> toolTip) {
             super(player);
             this.flags = flags;
             this.itemStack = itemStack;
@@ -268,83 +263,91 @@ public abstract class PlayerEvent extends LivingEntityEvent {
             return itemStack;
         }
 
-        public List<Component> getToolTip() {
+        public ArrayList<Component> getToolTipLines() {
             return toolTip;
         }
     }
 
-    @ApiStatus.Experimental
     public static class PermissionsChange extends PlayerEvent {
-        public PermissionsChange(Player player) {
+        final int from;
+        final int to;
+        public PermissionsChange(Player player,int from,int to) {
             super(player);
+            this.from = from;
+            this.to = to;
+        }
+
+        public int from() {
+            return from;
+        }
+
+        public int to() {
+            return to;
         }
     }
 
     @ApiStatus.Experimental
     public static abstract class Gui extends PlayerEvent {
-        private final AbstractContainerMenu menu;
-
-        public Gui(Player player, AbstractContainerMenu menu) {
+        public Gui(Player player) {
             super(player);
-            this.menu = menu;
-        }
-
-        public AbstractContainerMenu getMenu() {
-            return menu;
         }
 
         public static class TakeItem extends Gui {
             private final Slot slot;
             private final ItemStack stack;
+            private final AbstractContainerMenu menu;
 
             public TakeItem(Player player, AbstractContainerMenu menu, Slot slot, ItemStack stack) {
-                super(player, menu);
+                super(player);
+                this.menu = menu;
                 this.slot = slot;
                 this.stack = stack;
-            }
-
-            public Slot getSlot() {
-                return slot;
-            }
-
-            public ItemStack getItemStack() {
-                return stack;
             }
         }
 
         public static class PutItem extends Gui {
             private final Slot slot;
             private final ItemStack stack;
+            private final AbstractContainerMenu menu;
 
             public PutItem(Player player, AbstractContainerMenu menu, Slot slot, ItemStack stack) {
-                super(player, menu);
+                super(player);
+                this.menu = menu;
                 this.slot = slot;
                 this.stack = stack;
             }
-
-            public Slot getSlot() {
-                return slot;
-            }
-
-            public ItemStack getItemStack() {
-                return stack;
-            }
         }
 
-        public static class Open extends Gui {
-            public Open(Player player, AbstractContainerMenu menu) {
-                super(player, menu);
+        public static class Open extends Gui implements ICancelableEvent{
+            Screen screen;
+            public Open(Player player,Screen screen) {
+                super(player);
+                this.screen = screen;
+            }
+
+            public Screen screen() {
+                return screen;
+            }
+
+            public void setScreen(Screen screen) {
+                this.screen = screen;
             }
         }
 
         public static class Close extends Gui {
-            public Close(Player player, AbstractContainerMenu menu) {
-                super(player, menu);
+            Screen screen;
+            public Close(Player player,Screen screen) {
+                super(player);
+                this.screen = screen;
+            }
+
+            public Screen screen() {
+                return screen;
             }
         }
     }
 
-    @ApiStatus.Experimental
+/*    @ApiStatus.Experimental
     public static class DestroyItem extends PlayerEvent {
         private final ItemStack itemStack;
 
@@ -542,28 +545,30 @@ public abstract class PlayerEvent extends LivingEntityEvent {
             this.playerUUID = playerUUID;
         }
 
-        /**
+        *//**
          * Construct and return save recommended file for the supplied suffix
          *
          * @param suffix The suffix to use.
-         */
+         *//*
         public File getPlayerFile(String suffix) {
-            if ("dat".equals(suffix)) throw new IllegalArgumentException("后缀 'dat' 是保留的");
+            if ("dat".equals(suffix)) {
+                throw new IllegalArgumentException("The suffix 'dat' is retained");
+            }
             return new File(this.getPlayerDirectory(), this.getPlayerUUID() + "." + suffix);
         }
 
-        /**
+        *//**
          * The directory where player data is being stored. Use this
          * to locate your mod additional file.
-         */
+         *//*
         public File getPlayerDirectory() {
             return playerDirectory;
         }
 
-        /**
+        *//**
          * The UUID is the standard for player related file storage.
          * It is broken out here for convenience for quick file generation.
-         */
+         *//*
         public String getPlayerUUID() {
             return playerUUID;
         }
@@ -580,32 +585,34 @@ public abstract class PlayerEvent extends LivingEntityEvent {
             this.playerUUID = playerUUID;
         }
 
-        /**
+        *//**
          * Construct and return save recommended file for the supplied suffix
          *
          * @param suffix The suffix to use.
-         */
+         *//*
         public File getPlayerFile(String suffix) {
-            if ("dat".equals(suffix)) throw new IllegalArgumentException("后缀 'dat' 是保留的");
+            if ("dat".equals(suffix)) {
+                throw new IllegalArgumentException("The suffix 'dat' is retained");
+            }
             return new File(this.getPlayerDirectory(), this.getPlayerUUID() + "." + suffix);
         }
 
-        /**
+        *//**
          * The directory where player data is being stored. Use this
          * to locate your mod additional file.
-         */
+         *//*
         public File getPlayerDirectory() {
             return playerDirectory;
         }
 
-        /**
+        *//**
          * The UUID is the standard for player related file storage.
          * It is broken out here for convenience for quick file generation.
-         */
+         *//*
         public String getPlayerUUID() {
             return playerUUID;
         }
-    }
+    }*/
 
     /**
      * 玩家加入服务器的事件，分为"加入前"和"加入后"两个具体事件
@@ -635,7 +642,7 @@ public abstract class PlayerEvent extends LivingEntityEvent {
         }
     }
 
-    @ApiStatus.Experimental
+/*    @ApiStatus.Experimental
     public static class PlayerLeave extends PlayerEvent {
         public PlayerLeave(Player player) {
             super(player);
@@ -645,12 +652,6 @@ public abstract class PlayerEvent extends LivingEntityEvent {
     @ApiStatus.Experimental
     public static class PlayerRespawn extends PlayerEvent {
         public PlayerRespawn(Player player, boolean endConquered) {
-            super(player);
-        }
-    }
-
-    public static class WonTheGame extends PlayerEvent {
-        public WonTheGame(Player player) {
             super(player);
         }
     }
@@ -743,6 +744,82 @@ public abstract class PlayerEvent extends LivingEntityEvent {
         public BlockPos getPos() {
             return this.pos;
         }
+    }*/
+
+    @ApiStatus.Experimental
+    public abstract static class UseItem extends PlayerEvent implements IResultEvent {
+        private final ItemStack usedItemStack;
+        private final InteractionHand hand;
+
+        public UseItem(Player player, ItemStack usedItemStack, InteractionHand hand) {
+            super(player);
+            this.usedItemStack = usedItemStack;
+            this.hand = hand;
+        }
+
+        public ItemStack getUsedItemStack() {
+            return usedItemStack;
+        }
+
+        public InteractionHand getHand() {
+            return hand;
+        }
+
+        public static class Start extends UseItem implements ICancelableEvent {
+            public Start(Player player, ItemStack usedItemStack, InteractionHand hand) {
+                super(player, usedItemStack, hand);
+            }
+        }
+
+        public static class Using extends UseItem {
+            private final int useTicks;
+
+            public Using(Player player, ItemStack usedItemStack, InteractionHand hand, int useTicks) {
+                super(player, usedItemStack, hand);
+                this.useTicks = useTicks;
+            }
+
+            public int getUseTicks() {
+                return useTicks;
+            }
+        }
+
+        public static class Stop extends UseItem {
+            private final int usedTicks;
+
+            public Stop(Player player, ItemStack usedItemStack, InteractionHand hand, int usedTicks) {
+                super(player, usedItemStack, hand);
+                this.usedTicks = usedTicks;
+            }
+
+            public int getUsedTicks() {
+                return usedTicks;
+            }
+        }
+
+        public static class Finish extends UseItem {
+            ItemStack finish;
+
+            public Finish(Player player, ItemStack usedItemStack, InteractionHand hand) {
+                super(player, usedItemStack, hand);
+                this.finish = usedItemStack;
+            }
+
+            public Finish(Player player, ItemStack usedItemStack,ItemStack finish, InteractionHand hand) {
+                super(player, usedItemStack, hand);
+                this.finish = finish;
+            }
+
+            public ItemStack getFinish() {
+                return finish;
+            }
+        }
+    }
+
+    public static class WonTheGame extends PlayerEvent {
+        public WonTheGame(Player player) {
+            super(player);
+        }
     }
 
     public static class Chat extends PlayerEvent {
@@ -828,76 +905,6 @@ public abstract class PlayerEvent extends LivingEntityEvent {
 
             public void setMessage(String message) {
                 this.message = message;
-            }
-        }
-    }
-
-    @ApiStatus.Experimental
-    public abstract static class UseItem extends PlayerEvent implements IResultEvent {
-        private final ItemStack usedItemStack;
-        private final InteractionHand hand;
-
-        public UseItem(Player player, ItemStack usedItemStack, InteractionHand hand) {
-            super(player);
-            this.usedItemStack = usedItemStack;
-            this.hand = hand;
-        }
-
-        public ItemStack getUsedItemStack() {
-            return usedItemStack;
-        }
-
-        public InteractionHand getHand() {
-            return hand;
-        }
-
-        public static class Start extends UseItem implements ICancelableEvent {
-            public Start(Player player, ItemStack usedItemStack, InteractionHand hand) {
-                super(player, usedItemStack, hand);
-            }
-        }
-
-        public static class Using extends UseItem {
-            private final int useTicks;
-
-            public Using(Player player, ItemStack usedItemStack, InteractionHand hand, int useTicks) {
-                super(player, usedItemStack, hand);
-                this.useTicks = useTicks;
-            }
-
-            public int getUseTicks() {
-                return useTicks;
-            }
-        }
-
-        public static class Stop extends UseItem {
-            private final int usedTicks;
-
-            public Stop(Player player, ItemStack usedItemStack, InteractionHand hand, int usedTicks) {
-                super(player, usedItemStack, hand);
-                this.usedTicks = usedTicks;
-            }
-
-            public int getUsedTicks() {
-                return usedTicks;
-            }
-        }
-
-        public static class Finish extends UseItem {
-            ItemStack finish;
-
-            public Finish(Player player, ItemStack usedItemStack, InteractionHand hand) {
-                super(player, usedItemStack, hand);
-                this.finish = usedItemStack;
-            }
-
-            public Finish(Player player, ItemStack usedItemStack,ItemStack finish, InteractionHand hand) {
-                super(player, usedItemStack, hand);
-                this.finish = finish;
-            }
-
-            public ItemStack getFinish() {
-                return finish;
             }
         }
     }

@@ -33,7 +33,7 @@ plugins {
 // 除非添加更多依赖项，否则不要管它。
 // TODO 确认添加的仓库
 repositories {
-    mavenLocal()
+    //mavenLocal()
     maven("https://maven.aliyun.com/repository/google")
     maven("https://maven.aliyun.com/repository/public")
     maven("https://maven.aliyun.com/repository/gradle-plugin")
@@ -44,9 +44,9 @@ repositories {
     maven("https://maven.neoforged.net/releases/")
     maven("https://maven.architectury.dev/")
     maven("https://modmaven.dev/")
-    /*maven("https://mirrors.imucraft.cn")
+    maven("https://mirrors.imucraft.cn")
     maven("https://mirrors.imucraft.cn/neoforge/")
-    maven("https://mirrors.qlu.edu.cn/bmclapi/")*/
+    maven("https://mirrors.qlu.edu.cn/bmclapi/")
     maven("https://lss233.littleservice.cn/repositories/minecraft")
     exclusiveContent {
         forRepository { maven("https://www.cursemaven.com") { name = "CurseForge" } }

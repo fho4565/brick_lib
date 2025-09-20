@@ -5,10 +5,12 @@
   "compatibilityLevel": "JAVA_${java_ver}",
   "mixins": [
     "CommandsMixin",
+    "EntityMixin",
     "EntitySelectorOptionsMixin",
     "EntitySelectorParserMixin",
     "ItemStackMixin",
     "LivingEntityMixin",
+    "LookControlMixin",
     "ReloadableResourceManagerMixin",
     "ServerLevelMixin",
     "player.MobMixin",
@@ -19,11 +21,12 @@
     "server.GameTestServerMixin",
     "server.MemoryServerHandshakePacketListenerImplMixin",
     "server.MinecraftServerMixin",
+    "server.PlayerAdvancementsMixin",
     "server.PlayerListMixin",
     "server.ServerHandshakePacketListenerImplMixin"
   ],
   "client": [
-    "MinecraftMixin",
+    "client.MinecraftMixin",
     "client.ChatComponentMixin",
     "client.ChatScreenMixin",
     "client.ClientHandshakePacketListenerImplMixin",
@@ -31,6 +34,7 @@
     "client.GuiEffectsMixin",
     "client.GuiExpBarMixin",
     "client.GuiGraphicsMixin",
+    "client.KeyboardInputMixin",
     "player.MultiPlayerGameModeMixin",
     "server.IntegratedServerMixin"
   ],

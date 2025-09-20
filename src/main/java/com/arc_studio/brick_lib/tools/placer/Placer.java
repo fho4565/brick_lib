@@ -439,7 +439,9 @@ public class Placer implements ICompoundTagSerializer {
         }
         AABB aabb = getCCTV(blockPos.offset(offset));
         for (BlockState blockState : levelAccessor.getBlockStates(aabb).toList()) {
-            if (!canPlaceBlock(blockState)) return false;
+            if (!canPlaceBlock(blockState)) {
+                return false;
+            }
         }
         return true;
     }
@@ -450,7 +452,9 @@ public class Placer implements ICompoundTagSerializer {
         }
         AABB aabb = getCCTV(blockPos.offset(offset));
         for (BlockState blockState : chunkAccess.getBlockStates(aabb).toList()) {
-            if (!canPlaceBlock(blockState)) return false;
+            if (!canPlaceBlock(blockState)) {
+                return false;
+            }
         }
         return true;
     }

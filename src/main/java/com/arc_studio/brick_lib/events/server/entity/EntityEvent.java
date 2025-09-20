@@ -1,11 +1,17 @@
 package com.arc_studio.brick_lib.events.server.entity;
 
 import com.arc_studio.brick_lib.api.event.BaseEvent;
+import com.arc_studio.brick_lib.api.event.ICancelableEvent;
+import com.arc_studio.brick_lib.events.server.entity.living.player.PlayerEvent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.ApiStatus;
 
+/**
+ * @author fho4565
+ */
 public abstract class EntityEvent extends BaseEvent {
     protected final Entity entity;
 
@@ -16,7 +22,7 @@ public abstract class EntityEvent extends BaseEvent {
     public Entity getEntity() {
         return entity;
     }
-    @ApiStatus.Experimental
+/*    @ApiStatus.Experimental
     public static class ChangedDimension extends EntityEvent {
         private final ResourceKey<Level> from;
         private ResourceKey<Level> to;
@@ -42,5 +48,6 @@ public abstract class EntityEvent extends BaseEvent {
         public boolean isToChanged() {
             return toChanged;
         }
-    }
+    }*/
+
 }

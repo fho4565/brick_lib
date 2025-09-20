@@ -136,7 +136,7 @@ public abstract class LevelEvent extends BaseEvent {
         }
     }
 
-    public static class TryToSpawnMob extends LevelEvent {
+/*    public static class TryToSpawnMob extends LevelEvent {
         private final MobCategory mobcategory;
         private final BlockPos pos;
         private final List<MobSpawnSettings.SpawnerData> list;
@@ -147,57 +147,58 @@ public abstract class LevelEvent extends BaseEvent {
             super(level);
             this.pos = pos;
             this.mobcategory = category;
-            if (!oldList.isEmpty())
+            if (!oldList.isEmpty()) {
                 this.list = new ArrayList<>(oldList.unwrap());
-            else
+            } else {
                 this.list = new ArrayList<>();
+            }
 
             this.view = Collections.unmodifiableList(list);
         }
 
-        /**
+        *//**
          * {@return the category of the mobs in the spawn list.}
-         */
+         *//*
         public MobCategory getMobCategory()
         {
             return mobcategory;
         }
 
-        /**
+        *//**
          * {@return the block position where the chosen mob will be spawned.}
-         */
+         *//*
         public BlockPos getPos()
         {
             return pos;
         }
 
-        /**
+        *//**
          * {@return the list of mobs that can potentially be spawned.}
-         */
+         *//*
         public List<MobSpawnSettings.SpawnerData> getSpawnerDataList()
         {
             return view;
         }
 
-        /**
+        *//**
          * Appends save SpawnerData entry to the spawn list.
          *
          * @param data SpawnerData entry to be appended to the spawn list.
-         */
+         *//*
         public void addSpawnerData(MobSpawnSettings.SpawnerData data)
         {
             list.add(data);
         }
 
-        /**
+        *//**
          * Removes save SpawnerData entry from the spawn list.
          *
          * @param data SpawnerData entry to be removed from the spawn list.
          * {@return {@code true} if the spawn list contained the specified element.}
-         */
+         *//*
         public boolean removeSpawnerData(MobSpawnSettings.SpawnerData data)
         {
             return list.remove(data);
         }
-    }
+    }*/
 }

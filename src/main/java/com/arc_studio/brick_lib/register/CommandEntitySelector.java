@@ -77,8 +77,12 @@ public final class CommandEntitySelector {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
         var that = (CommandEntitySelector) obj;
         return Objects.equals(this.sign, that.sign) &&
                Objects.equals(this.description, that.description) &&

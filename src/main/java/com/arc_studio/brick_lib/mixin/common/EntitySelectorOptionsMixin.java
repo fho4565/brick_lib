@@ -18,9 +18,9 @@ public abstract class EntitySelectorOptionsMixin {
     @Shadow
     //? if >= 1.20.6 {
     /*private*/
-    //? } else {
+    //?} else {
     public
-    //? }
+    //?}
     static void register(String id, EntitySelectorOptions.Modifier handler, Predicate<EntitySelectorParser> predicate, Component tooltip) {
     }
 

@@ -171,8 +171,9 @@ public class BrickConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             if (specValue instanceof Config) {
                 if (configValue instanceof CommentedConfig) {
                     count += correct((Config) specValue, (CommentedConfig) configValue, parentPath, parentPathUnmodifiable, listener, commentListener, dryRun);
-                    if (count > 0 && dryRun)
+                    if (count > 0 && dryRun) {
                         return count;
+                    }
                 } else if (dryRun) {
                     return 1;
                 } else {
@@ -186,19 +187,22 @@ public class BrickConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 String newComment = levelComments.get(parentPath);
                 String oldComment = config.getComment(key);
                 if (!stringsMatchIgnoringNewlines(oldComment, newComment)) {
-                    if (commentListener != null)
+                    if (commentListener != null) {
                         commentListener.onCorrect(action, parentPathUnmodifiable, oldComment, newComment);
+                    }
 
-                    if (dryRun)
+                    if (dryRun) {
                         return 1;
+                    }
 
                     config.setComment(key, newComment);
                 }
             } else {
                 ValueSpec valueSpec = (ValueSpec) specValue;
                 if (!valueSpec.test(configValue)) {
-                    if (dryRun)
+                    if (dryRun) {
                         return 1;
+                    }
 
                     Object newValue = valueSpec.correct(configValue);
                     configMap.put(key, newValue);
@@ -207,11 +211,13 @@ public class BrickConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 }
                 String oldComment = config.getComment(key);
                 if (!stringsMatchIgnoringNewlines(oldComment, valueSpec.getComment())) {
-                    if (commentListener != null)
+                    if (commentListener != null) {
                         commentListener.onCorrect(action, parentPathUnmodifiable, oldComment, valueSpec.getComment());
+                    }
 
-                    if (dryRun)
+                    if (dryRun) {
                         return 1;
+                    }
 
                     config.setComment(key, valueSpec.getComment());
                 }
@@ -224,8 +230,9 @@ public class BrickConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         for (Iterator<Map.Entry<String, Object>> ittr = configMap.entrySet().iterator(); ittr.hasNext(); ) {
             Map.Entry<String, Object> entry = ittr.next();
             if (!specMap.containsKey(entry.getKey())) {
-                if (dryRun)
+                if (dryRun) {
                     return 1;
+                }
 
                 ittr.remove();
                 parentPath.addLast(entry.getKey());
@@ -316,8 +323,9 @@ public class BrickConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             Range<V> range = new Range<>(clazz, min, max);
             context.setRange(range);
             comment("Range: " + range.toString());
-            if (min.compareTo(max) > 0)
+            if (min.compareTo(max) > 0) {
                 throw new IllegalArgumentException("Range min most be less then max.");
+            }
             return define(path, defaultSupplier, range);
         }
 
@@ -516,8 +524,9 @@ public class BrickConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         public BooleanValue define(List<String> path, Supplier<Boolean> defaultSupplier) {
             return new BooleanValue(this, define(path, defaultSupplier, o -> {
-                if (o instanceof String)
+                if (o instanceof String) {
                     return ((String) o).equalsIgnoreCase("true") || ((String) o).equalsIgnoreCase("false");
+                }
                 return o instanceof Boolean;
             }, Boolean.class).getPath(), defaultSupplier);
         }
@@ -581,11 +590,13 @@ public class BrickConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public Builder comment(String... comment) {
             // Iterate list first, to throw meaningful errors
             // Don't add any comments until we make sure there is no nulls
-            for (int i = 0; i < comment.length; i++)
+            for (int i = 0; i < comment.length; i++) {
                 Preconditions.checkNotNull(comment[i], "Comment string at " + i + " is null.");
+            }
 
-            for (String s : comment)
+            for (String s : comment) {
                 context.addComment(s);
+            }
 
             return this;
         }
@@ -623,10 +634,12 @@ public class BrickConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
 
         public Builder pop(int count) {
-            if (count > currentPath.size())
+            if (count > currentPath.size()) {
                 throw new IllegalArgumentException("Attempted to pop " + count + " elements when we only had: " + currentPath);
-            for (int x = 0; x < count; x++)
+            }
+            for (int x = 0; x < count; x++) {
                 currentPath.remove(currentPath.size() - 1);
+            }
             return this;
         }
 
@@ -678,11 +691,12 @@ public class BrickConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         public String buildComment(final List<String> path) {
             if (comment.stream().allMatch(String::isBlank)) {
-                if (Constants.isInDevelopEnvironment())
+                if (Constants.isInDevelopEnvironment()) {
                     LOGGER.warn("Detected a comment that is all whitespace for config option {}, which causes obscure bugs in Forge's config system and will cause a crash in the future. Please report this to the mod author.",
                             DOT_JOINER.join(path));
-                else
+                } else {
                     throw new IllegalStateException("Can not build comment for config option " + DOT_JOINER.join(path) + " as it comprises entirely of blank lines/whitespace. This is not allowed as it causes a \"constantly correcting config\" bug with NightConfig in Forge's config system.");
+                }
 
                 return "A developer of this mod has defined this config option with a blank comment, which causes obscure bugs in Forge's config system and will cause a crash in the future. Please report this to the mod author.";
             }
@@ -732,13 +746,15 @@ public class BrickConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
 
         private void validate(Object value, String message) {
-            if (value != null)
+            if (value != null) {
                 throw new IllegalStateException(message);
+            }
         }
 
         private void validate(boolean value, String message) {
-            if (value)
+            if (value) {
                 throw new IllegalStateException(message);
+            }
         }
     }
 
@@ -780,7 +796,9 @@ public class BrickConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 }
                 return result;
             }
-            if (!clazz.isInstance(t)) return false;
+            if (!clazz.isInstance(t)) {
+                return false;
+            }
             V c = clazz.cast(t);
 
             boolean result = c.compareTo(min) >= 0 && c.compareTo(max) <= 0;
@@ -795,7 +813,9 @@ public class BrickConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 Number n = (Number) value;
                 return n.doubleValue() < ((Number) min).doubleValue() ? min : n.doubleValue() > ((Number) max).doubleValue() ? max : value;
             }
-            if (!clazz.isInstance(value)) return def;
+            if (!clazz.isInstance(value)) {
+                return def;
+            }
             V c = clazz.cast(value);
             return c.compareTo(min) < 0 ? min : c.compareTo(max) > 0 ? max : value;
         }
@@ -911,13 +931,15 @@ public class BrickConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                         """);
             }
 
-            if (spec.childConfig == null)
+            if (spec.childConfig == null) {
                 return defaultSupplier.get();
+            }
 
-            if (USE_CACHES && cachedValue == null)
+            if (USE_CACHES && cachedValue == null) {
                 cachedValue = getRaw(spec.childConfig, path, defaultSupplier);
-            else if (!USE_CACHES)
+            } else if (!USE_CACHES) {
                 return getRaw(spec.childConfig, path, defaultSupplier);
+            }
 
             return cachedValue;
         }

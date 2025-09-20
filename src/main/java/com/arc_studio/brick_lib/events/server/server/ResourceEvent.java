@@ -10,6 +10,9 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author fho4565
+ */
 public class ResourceEvent extends BaseEvent {
     @ApiStatus.Experimental
     public static class Reload extends ResourceEvent {

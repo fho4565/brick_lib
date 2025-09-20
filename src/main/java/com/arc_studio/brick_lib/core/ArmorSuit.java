@@ -77,7 +77,9 @@ public class ArmorSuit {
     }
 
     public final void tick(Player player) {
-        if (!enabled) return;
+        if (!enabled) {
+            return;
+        }
         if (isComplete(player)) {
             if (!contains(player)) {
                 if (!com.arc_studio.brick_lib.api.event.BrickEventBus.postEvent(new ArmorSuitEvent.Complete(player, this))) {
@@ -121,8 +123,12 @@ public class ArmorSuit {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ArmorSuit armorSuit)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ArmorSuit armorSuit)) {
+            return false;
+        }
         return this.id.equals(armorSuit.id);
     }
 

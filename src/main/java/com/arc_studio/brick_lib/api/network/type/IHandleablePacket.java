@@ -18,6 +18,8 @@ import net.fabricmc.fabric.api.networking.v1.FabricPacket;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.List;
+
 interface IHandleablePacket
         //? if >=1.20.4 {
          /*extends CustomPacketPayload

@@ -2,18 +2,19 @@ package com.arc_studio.brick_lib.api.event;
 
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 跨平台通用的事件总线
  * <p>事件总线会自动匹配事件类型和相应的处理器，高优先级的处理器会被优先调用。当优先级更高的处理器尝试取消事件时，其后面的事件处理器均不会被调用</p>
  */
 public final class BrickEventBus {
-    private static final HashMap<Class<?>, ArrayList<EventWrapper<?>>[]> SERVER_LISTENERS = new HashMap<>();
-    private static final HashMap<Class<?>, ArrayList<EventWrapper<?>>[]> CLIENT_LISTENERS = new HashMap<>();
-    private static final HashMap<Class<?>, ArrayList<EventWrapper<?>>[]> COMMON_LISTENERS = new HashMap<>();
+    private static final HashMap<Class<?>, HashSet<EventWrapper<?>>[]> SERVER_LISTENERS = new HashMap<>();
+    private static final HashMap<Class<?>, HashSet<EventWrapper<?>>[]> CLIENT_LISTENERS = new HashMap<>();
+    private static final HashMap<Class<?>, HashSet<EventWrapper<?>>[]> COMMON_LISTENERS = new HashMap<>();
 
     private BrickEventBus() {
     }
@@ -45,12 +46,12 @@ public final class BrickEventBus {
         if (IClientOnlyEvent.class.isAssignableFrom(type)) {
             CLIENT_LISTENERS.compute(type, (k, priorityTiers) -> {
                 if (priorityTiers == null) {
-                    priorityTiers = new ArrayList[]{
-                            new ArrayList<>(),
-                            new ArrayList<>(),
-                            new ArrayList<>(),
-                            new ArrayList<>(),
-                            new ArrayList<>()
+                    priorityTiers = new HashSet[]{
+                            new HashSet<>(),
+                            new HashSet<>(),
+                            new HashSet<>(),
+                            new HashSet<>(),
+                            new HashSet<>()
                     };
                 }
                 priorityTiers[listener.getPriority().priority - 1].add(new EventWrapper<>(id, listener));
@@ -59,12 +60,12 @@ public final class BrickEventBus {
         } else if (IServerOnlyEvent.class.isAssignableFrom(type)) {
             SERVER_LISTENERS.compute(type, (k, priorityTiers) -> {
                 if (priorityTiers == null) {
-                    priorityTiers = new ArrayList[]{
-                            new ArrayList<>(),
-                            new ArrayList<>(),
-                            new ArrayList<>(),
-                            new ArrayList<>(),
-                            new ArrayList<>()
+                    priorityTiers = new HashSet[]{
+                            new HashSet<>(),
+                            new HashSet<>(),
+                            new HashSet<>(),
+                            new HashSet<>(),
+                            new HashSet<>()
                     };
                 }
                 priorityTiers[listener.getPriority().priority - 1].add(new EventWrapper<>(id, listener));
@@ -73,12 +74,12 @@ public final class BrickEventBus {
         } else {
             COMMON_LISTENERS.compute(type, (k, priorityTiers) -> {
                 if (priorityTiers == null) {
-                    priorityTiers = new ArrayList[]{
-                            new ArrayList<>(),
-                            new ArrayList<>(),
-                            new ArrayList<>(),
-                            new ArrayList<>(),
-                            new ArrayList<>()
+                    priorityTiers = new HashSet[]{
+                            new HashSet<>(),
+                            new HashSet<>(),
+                            new HashSet<>(),
+                            new HashSet<>(),
+                            new HashSet<>()
                     };
                 }
                 priorityTiers[listener.getPriority().priority - 1].add(new EventWrapper<>(id, listener));
@@ -96,12 +97,12 @@ public final class BrickEventBus {
     public static <E extends BaseEvent> void registerListenerServer(Class<E> type, EventListener<E> listener) {
         SERVER_LISTENERS.compute(type, (k, priorityTiers) -> {
             if (priorityTiers == null) {
-                priorityTiers = new ArrayList[]{
-                        new ArrayList<>(),
-                        new ArrayList<>(),
-                        new ArrayList<>(),
-                        new ArrayList<>(),
-                        new ArrayList<>()
+                priorityTiers = new HashSet[]{
+                        new HashSet<>(),
+                        new HashSet<>(),
+                        new HashSet<>(),
+                        new HashSet<>(),
+                        new HashSet<>()
                 };
             }
             priorityTiers[listener.getPriority().priority - 1].add(new EventWrapper<>(null, listener));
@@ -118,12 +119,12 @@ public final class BrickEventBus {
     public static <E extends BaseEvent> void registerListenerClient(Class<E> type, EventListener<E> listener) {
         CLIENT_LISTENERS.compute(type, (k, priorityTiers) -> {
             if (priorityTiers == null) {
-                priorityTiers = new ArrayList[]{
-                        new ArrayList<>(),
-                        new ArrayList<>(),
-                        new ArrayList<>(),
-                        new ArrayList<>(),
-                        new ArrayList<>()
+                priorityTiers = new HashSet[]{
+                        new HashSet<>(),
+                        new HashSet<>(),
+                        new HashSet<>(),
+                        new HashSet<>(),
+                        new HashSet<>()
                 };
             }
             priorityTiers[listener.getPriority().priority - 1].add(new EventWrapper<>(null, listener));
@@ -140,12 +141,12 @@ public final class BrickEventBus {
     public static <E extends BaseEvent> void registerListenerCommon(Class<E> type, EventListener<E> listener) {
         COMMON_LISTENERS.compute(type, (k, priorityTiers) -> {
             if (priorityTiers == null) {
-                priorityTiers = new ArrayList[]{
-                        new ArrayList<>(),
-                        new ArrayList<>(),
-                        new ArrayList<>(),
-                        new ArrayList<>(),
-                        new ArrayList<>()
+                priorityTiers = new HashSet[]{
+                        new HashSet<>(),
+                        new HashSet<>(),
+                        new HashSet<>(),
+                        new HashSet<>(),
+                        new HashSet<>()
                 };
             }
             priorityTiers[listener.getPriority().priority - 1].add(new EventWrapper<>(null, listener));
@@ -196,7 +197,7 @@ public final class BrickEventBus {
     }
 
     @SuppressWarnings("unchecked")
-    private static <E extends BaseEvent> boolean processEvent(E event, ArrayList<EventWrapper<?>>[] tiers) {
+    private static <E extends BaseEvent> boolean processEvent(E event, HashSet<EventWrapper<?>>[] tiers) {
         for (int i = tiers.length - 1; i >= 0; i--) {
             for (EventWrapper<?> wrapper : tiers[i]) {
                 try {
@@ -227,8 +228,8 @@ public final class BrickEventBus {
         }
     }
 
-    private static List<Class<?>> collectExtendClassesServer(Class<?> type) {
-        ArrayList<Class<?>> set = new ArrayList<>();
+    private static Set<Class<?>> collectExtendClassesServer(Class<?> type) {
+        HashSet<Class<?>> set = new HashSet<>();
         SERVER_LISTENERS.keySet().forEach(aClass -> {
             if (aClass.isAssignableFrom(type)) {
                 set.add(aClass);
@@ -237,8 +238,8 @@ public final class BrickEventBus {
         return set;
     }
 
-    private static List<Class<?>> collectExtendClassesClient(Class<?> type) {
-        ArrayList<Class<?>> set = new ArrayList<>();
+    private static Set<Class<?>> collectExtendClassesClient(Class<?> type) {
+        HashSet<Class<?>> set = new HashSet<>();
         CLIENT_LISTENERS.keySet().forEach(aClass -> {
             if (aClass.isAssignableFrom(type)) {
                 set.add(aClass);
@@ -247,8 +248,8 @@ public final class BrickEventBus {
         return set;
     }
 
-    private static List<Class<?>> collectExtendClassesCommon(Class<?> type) {
-        ArrayList<Class<?>> set = new ArrayList<>();
+    private static Set<Class<?>> collectExtendClassesCommon(Class<?> type) {
+        HashSet<Class<?>> set = new HashSet<>();
         COMMON_LISTENERS.keySet().forEach(aClass -> {
             if (aClass.isAssignableFrom(type)) {
                 set.add(aClass);

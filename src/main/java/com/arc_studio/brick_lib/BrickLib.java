@@ -17,10 +17,14 @@ import com.arc_studio.brick_lib.core.global_pack.GlobalPack;
 import com.arc_studio.brick_lib.core.global_pack.GlobalPacks;
 import com.arc_studio.brick_lib.datagen.BrickDataGenerator;
 import com.arc_studio.brick_lib.events.client.ClientTickEvent;
+import com.arc_studio.brick_lib.events.client.KeyEvent;
 import com.arc_studio.brick_lib.events.client.RenderEvent;
 import com.arc_studio.brick_lib.events.game.CommandEvent;
 import com.arc_studio.brick_lib.events.game.LogInEvent;
 import com.arc_studio.brick_lib.events.server.NetworkMessageEvent;
+import com.arc_studio.brick_lib.events.server.entity.EntityEvent;
+import com.arc_studio.brick_lib.events.server.entity.living.LivingEntityEvent;
+import com.arc_studio.brick_lib.events.server.entity.living.mob.MobEvent;
 import com.arc_studio.brick_lib.events.server.entity.living.player.PlayerEvent;
 import com.arc_studio.brick_lib.events.server.server.ServerEvent;
 import com.arc_studio.brick_lib.globalpack.file_types.ItemType;
@@ -44,12 +48,15 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.ChatFormatting;
+import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.Connection;
 import net.minecraft.network.ConnectionProtocol;
 import net.minecraft.network.chat.Component;
@@ -58,6 +65,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -79,10 +87,15 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
+/**
+ * @author fho4565
+ */
 public final class BrickLib {
     public static final Logger LOGGER = LogUtils.getLogger();
     public static final String MOD_ID = "brick_lib";
     public static final Version BRICK_LIB_VERSION = new Version.Builder(1, 0, 0).preRelease(Version.PreReleaseType.ALPHA,3).build();
+    public static final List<Entity> ENTITIES = new ArrayList<>();
+    static boolean test01 = false;
 
     private static final BiConsumer<Player, ItemStack> COOLDOWN_ITEM_CONSUMER = (player, itemStack) -> {
         if (itemStack.getItem() instanceof ICooldownItem item) {
@@ -110,7 +123,61 @@ public final class BrickLib {
     private static void test() {
         BrickEventBus.registerListener(ServerEvent.AboutToStart.class, event -> System.out.println("Server About to start"));
         BrickEventBus.registerListener(ServerEvent.LoadData.class, event -> System.out.println("Server Load data"));
-        BrickRegisterManager.register(BrickRegistries.CLIENT_COMMAND,createBrickRL("client_command_config"),
+
+        BrickEventBus.registerListener(PlayerEvent.RequestItemTooltip.class,event -> {
+            ArrayList<Component> lines = event.getToolTipLines();
+            lines.clear();
+            lines.add(Component.literal("man!"));
+        });
+
+        BrickEventBus.registerListener(PlayerEvent.Advancement.Progress.class,event -> {
+            if (event.advancement().getDisplay() != null) {
+                event.getEntity().sendSystemMessage(Component.literal("progress"));
+                event.getEntity().sendSystemMessage(event.advancement().getDisplay().getTitle());
+            }
+        });
+        BrickEventBus.registerListener(PlayerEvent.Advancement.Complete.class,event -> {
+            if (event.advancement().getDisplay() != null) {
+                event.getEntity().sendSystemMessage(Component.literal("complete"));
+                event.getEntity().sendSystemMessage(event.advancement().getDisplay().getTitle());
+            }
+            event.cancel();
+        });
+        BrickEventBus.registerListener(PlayerEvent.Advancement.Revoke.class,event -> {
+            DisplayInfo display = event.advancement().getDisplay();
+            if (display != null) {
+                event.getEntity().sendSystemMessage(Component.literal("revoke"));
+                event.getEntity().sendSystemMessage(display.getTitle());
+                event.getEntity().sendSystemMessage(Component.literal(event.getCriterionName()));
+                event.advancement().getCriteria().forEach((s, criterion) -> event.advancementProgress().grantProgress(s));
+            }
+            event.cancel();
+        });
+        BrickRegisterManager.register(BrickRegistries.COMMAND,  () -> commandBuildContext -> Commands.literal("check").then(Commands.argument("entity", EntityArgument.entities())
+                .executes(commandContext -> {
+                    test01 = !test01;
+                    commandContext.getSource().sendSuccess(()->Component.literal("Now test01 = "+test01),true);
+                    return 1;
+                })));
+        BrickEventBus.registerListenerClient(PlayerEvent.Gui.Open.class, event -> {
+            Screen screen = event.screen();
+            if (screen != null) {
+                if(test01){
+                    event.cancel();
+                }
+                System.out.println("event.screen().getTitle() = " + screen.getTitle().getString());
+            }
+        });
+/*        BrickEventBus.registerListenerClient(PlayerEvent.Gui.Close.class, event -> {
+            Screen screen = event.screen();
+            if (screen != null) {
+                if(test01){
+                    event.cancel();
+                }
+                System.out.println("event.screen().getTitle() = " + screen.getTitle().getString());
+            }
+        });*/
+        BrickRegisterManager.register(BrickRegistries.CLIENT_COMMAND,
                 () ->buildContext -> {
                     LiteralArgumentBuilder<ClientSuggestionProvider> builder = ClientCommands.literal("client_cfg");
                     for (ModConfig.Type type : ConfigTracker.configSets().keySet()) {
@@ -178,7 +245,6 @@ public final class BrickLib {
                 )
         );
 
-
         BrickConfigSpec.Builder builder = new BrickConfigSpec.Builder();
         builder.comment("Brick Lib Config");
         builder.comment("very man string");
@@ -188,18 +254,18 @@ public final class BrickLib {
         SideExecutor.runOnClient(() -> {
             KeyMapping man = new KeyMapping("man", GLFW.GLFW_KEY_J, "man");
             BrickRegisterManager.register(BrickRegistries.KEY_MAPPING, BrickLib.createBrickRL("mankey"), () -> man);
-            BrickEventBus.registerListener(ClientTickEvent.class, event -> {
-                if (man.isDown()) {
-                    BrickNetwork.sendMessageToServer("bl", "k_skill");
-                }
-            });
+        });
+        BrickEventBus.registerListenerClient(KeyEvent.Down.class,event -> {
+            if ("man".equals(event.keyMapping().getName())) {
+                System.out.println("send");
+                BrickNetwork.sendMessageToServer("bl", "k_skill");
+            }
         });
 
         BrickRegisterManager.register(BrickRegistries.COMMAND_ENTITY_SELECTORS,
-                BrickLib.createBrickRL("man_selector"),
                 ()->new CommandEntitySelector("pig", Component.literal("find pigs"), entity -> entity.getType() == EntityType.PIG)
         );
-        BrickRegisterManager.register(BrickRegistries.COMMAND_ENTITY_SELECTOR_OPTIONS,createBrickRL("manba"),() ->
+        BrickRegisterManager.register(BrickRegistries.COMMAND_ENTITY_SELECTOR_OPTIONS,() ->
                 new CommandSelectorOption("man", entitySelectorParser -> {
             String key = entitySelectorParser.getReader().readUnquotedString();
             entitySelectorParser.addPredicate(entity -> {
@@ -242,7 +308,7 @@ public final class BrickLib {
             }
         });
 
-        SideExecutor.runOnClient(() -> () -> BrickRegisterManager.register(BrickRegistries.CLIENT_COMMAND, BrickLib.createBrickRL("client_command_demo"),
+        SideExecutor.runOnClient(() -> () -> BrickRegisterManager.register(BrickRegistries.CLIENT_COMMAND,
                 () -> buildContext -> ClientCommands.literal("client")
                         .executes(context -> {
                             System.out.println("BrickLib.test");
@@ -252,7 +318,7 @@ public final class BrickLib {
                         })
         ));
 
-        BrickRegisterManager.register(BrickRegistries.COMMAND, BrickLib.createBrickRL("network_list_command"), () ->
+        BrickRegisterManager.register(BrickRegistries.COMMAND, () ->
                 buildContext -> Commands.literal("net_list")
                         .executes(context -> {
                             Constants.currentServer().getConnection().getConnections().forEach(connection -> {
@@ -265,7 +331,7 @@ public final class BrickLib {
                             return 1;
                         })
         );
-        BrickRegisterManager.register(BrickRegistries.COMMAND, BrickLib.createBrickRL("test01"), () ->
+        BrickRegisterManager.register(BrickRegistries.COMMAND, () ->
                 buildContext -> Commands.literal("test01")
                         .executes(context -> {
                             try {
@@ -309,7 +375,7 @@ public final class BrickLib {
                             return 1;
                         })
         );
-        BrickRegisterManager.register(BrickRegistries.COMMAND, BrickLib.createBrickRL("network_test_command"), () ->
+        BrickRegisterManager.register(BrickRegistries.COMMAND, () ->
                 buildContext -> Commands.literal("net_test")
                         .then(Commands.literal("s2c")
                                 .executes(context -> {
@@ -334,7 +400,7 @@ public final class BrickLib {
                                 })
                         )
         );
-        BrickRegisterManager.register(BrickRegistries.COMMAND, createBrickRL("color"), () ->
+        BrickRegisterManager.register(BrickRegistries.COMMAND, () ->
                 buildContext -> Commands.literal("color")
                         .then(Commands.literal("int2rgb")
                                 .then(Commands.argument("int", IntegerArgumentType.integer())
@@ -404,7 +470,7 @@ public final class BrickLib {
             }
         });
         BrickEventBus.registerListener(NetworkMessageEvent.ClientReceive.class, event -> {
-            if (event.getId().equals("bl")) {
+            if ("bl".equals(event.getId())) {
                 System.out.println(event.getMessage());
             } else {
                 System.out.println("kksk");
@@ -412,8 +478,10 @@ public final class BrickLib {
             }
         });
         BrickEventBus.registerListener(NetworkMessageEvent.ServerReceive.class, event -> {
-            if (event.getId().equals("bl")) {
-                if (event.getMessage().equals("k_skill")) {
+            System.out.println("event.getId() = " + event.getId());
+            System.out.println("event.getMessage() = " + event.getMessage());
+            if ("bl".equals(event.getId())) {
+                if ("k_skill".equals(event.getMessage())) {
                     ItemUtils.giveItem(Items.DIAMOND.getDefaultInstance(), List.of(event.getSender()));
                 }
             } else {
@@ -465,7 +533,6 @@ public final class BrickLib {
         BrickEventBus.registerListener(PlayerEvent.UseItem.Stop.class, event -> System.out.println("Stop use item"));
         BrickEventBus.registerListener(PlayerEvent.UseItem.Finish.class, event -> System.out.println("Finish use item"));
         BrickEventBus.registerListener(PlayerEvent.BreakBlock.Start.class, event -> {
-            event.cancel();
             System.out.println("Start breaking blocks");
         });
         BrickEventBus.registerListener(PlayerEvent.BreakBlock.Stop.class, event -> System.out.println("Stop breaking blocks, is client ? = " + event.getEntity().level().isClientSide));
@@ -503,7 +570,7 @@ public final class BrickLib {
                         }
                 )
         );
-        BrickRegisterManager.register(BrickRegistries.COMMAND, BrickLib.createBrickRL("gp"), () -> buildContext ->
+        BrickRegisterManager.register(BrickRegistries.COMMAND, () -> buildContext ->
                 Commands.literal("globalpack")
                         .then(Commands.literal("create")
                                 .executes(context -> {
@@ -524,7 +591,7 @@ public final class BrickLib {
                                 })
                         )
         );
-        BrickRegisterManager.register(BrickRegistries.COMMAND, createBrickRL("datagen_command"), () -> buildContext ->
+        BrickRegisterManager.register(BrickRegistries.COMMAND, () -> buildContext ->
                 Commands.literal("datagen")
                         .requires(stack -> Constants.isInDevelopEnvironment())
                         .executes(context -> genData(context, true, true))
@@ -537,7 +604,17 @@ public final class BrickLib {
                                 )
                         )
         );
-        BrickRegisterManager.register(BrickRegistries.NETWORK_PACKET, BrickLib.createBrickRL("built_in_packet"), () -> new PacketConfig.SAC<>(BuiltInPacket.class, BuiltInPacket::encoder, BuiltInPacket::new, BuiltInPacket::serverHandle, BuiltInPacket::clientHandle, false, false));
+        BrickRegisterManager.register(BrickRegistries.NETWORK_PACKET,
+                BrickLib.createBrickRL("built_in_packet"),
+                () -> new PacketConfig.SAC<>(BuiltInPacket.class,
+                        BuiltInPacket::encoder,
+                        BuiltInPacket::new,
+                        BuiltInPacket::serverHandle,
+                        BuiltInPacket::clientHandle,
+                        false,
+                        false
+                )
+        );
         BrickRegisterManager.register(BrickRegistries.GLOBAL_PACK_FILE_TYPE, BrickLib.createBrickRL("item"), ItemType::new);
         BrickEventBus.registerListener(PlayerEvent.Tick.Pre.class, event -> {
             Player player = event.getEntity();

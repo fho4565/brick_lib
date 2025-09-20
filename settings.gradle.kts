@@ -2,6 +2,8 @@ import dev.kikugie.stonecutter.settings.StonecutterSettings
 
 pluginManagement {
     repositories {
+        gradlePluginPortal()
+        mavenCentral()
         maven {
             setUrl("https://maven.aliyun.com/repository/google")
         }
@@ -11,8 +13,6 @@ pluginManagement {
         maven {
             setUrl("https://maven.aliyun.com/repository/gradle-plugin")
         }
-        gradlePluginPortal()
-        mavenCentral()
         maven("https://maven.fabricmc.net/")
         maven("https://maven.architectury.dev")
         maven("https://maven.minecraftforge.net/")
@@ -20,6 +20,19 @@ pluginManagement {
         maven("https://repo.spongepowered.org/maven")
         maven("https://maven.kikugie.dev/snapshots")
         maven("https://maven.kikugie.dev/releases")
+        maven("https://maven.aliyun.com/repository/google")
+        maven("https://maven.aliyun.com/repository/public")
+        maven("https://maven.aliyun.com/repository/gradle-plugin")
+        maven("https://repo.huaweicloud.com/repository/maven/")
+        maven("https://mirrors.cloud.tencent.com/nexus/repository/maven-public/")
+        maven("https://mirrors.163.com/maven/repository/maven-public/")
+        maven("https://maven.parchmentmc.org")
+        maven("https://maven.neoforged.net/releases/")
+        maven("https://maven.architectury.dev/")
+        maven("https://modmaven.dev/")
+        maven("https://mirrors.imucraft.cn")
+        maven("https://mirrors.imucraft.cn/neoforge/")
+        maven("https://mirrors.qlu.edu.cn/bmclapi/")
     }
     plugins {
         kotlin("jvm") version "1.9.24"

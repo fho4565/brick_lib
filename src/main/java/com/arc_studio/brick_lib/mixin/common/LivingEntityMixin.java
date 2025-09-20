@@ -1,6 +1,7 @@
 package com.arc_studio.brick_lib.mixin.common;
 
 import com.arc_studio.brick_lib.api.event.BrickEventBus;
+import com.arc_studio.brick_lib.events.server.entity.living.LivingEntityEvent;
 import com.arc_studio.brick_lib.events.server.entity.living.player.PlayerEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -52,6 +53,13 @@ public abstract class LivingEntityMixin {
                 ) - this.getUseItemRemainingTicks());
                 BrickEventBus.postEvent(stop);
             }
+        }
+    }
+
+    @Inject(method = "jumpFromGround", at = @At("HEAD"), cancellable = true)
+    public void inject59(CallbackInfo ci) {
+        if (BrickEventBus.postEvent(new LivingEntityEvent.Jump(getThis()))) {
+            ci.cancel();
         }
     }
 

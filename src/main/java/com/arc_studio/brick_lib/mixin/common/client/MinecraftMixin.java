@@ -1,24 +1,31 @@
-package com.arc_studio.brick_lib.mixin.common;
+package com.arc_studio.brick_lib.mixin.common.client;
 
 import com.arc_studio.brick_lib.api.event.BrickEventBus;
-import com.arc_studio.brick_lib.config.ConfigTracker;
-import com.arc_studio.brick_lib.config.ModConfig;
 import com.arc_studio.brick_lib.events.client.ClientTickEvent;
+import com.arc_studio.brick_lib.events.client.KeyEvent;
 import com.arc_studio.brick_lib.events.server.entity.living.player.PlayerClickContext;
 import com.arc_studio.brick_lib.events.server.entity.living.player.PlayerEvent;
 import com.arc_studio.brick_lib.events.server.world.LevelEvent;
-import com.arc_studio.brick_lib.tools.Constants;
-import com.arc_studio.brick_lib.tools.SideExecutor;
+import com.arc_studio.brick_lib.register.BrickRegistries;
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.Window;
+import com.mojang.blaze3d.vertex.BufferUploader;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.ReceivingLevelScreen;
-import net.minecraft.client.main.GameConfig;
+import net.minecraft.client.MouseHandler;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.screens.DeathScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -41,6 +48,27 @@ public abstract class MinecraftMixin {
     @Shadow
     @Nullable
     public ClientLevel level;
+
+    @Shadow
+    public Screen screen;
+
+    @Shadow
+    @Final
+    public MouseHandler mouseHandler;
+
+    @Shadow
+    public boolean noRender;
+
+    @Shadow
+    @Final
+    private Window window;
+
+    @Shadow
+    @Final
+    private SoundManager soundManager;
+
+    @Shadow
+    public abstract void updateTitle();
 
     @Inject(method = "startUseItem", locals = LocalCapture.CAPTURE_FAILSOFT, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isEmpty()Z", ordinal = 1), cancellable = true)
     public void rightClickAir(CallbackInfo ci, InteractionHand[] var1, int var2, int var3, InteractionHand interactionHand) {
@@ -105,11 +133,48 @@ public abstract class MinecraftMixin {
 
     @Inject(at = @At("HEAD"), method = "tick")
     public void clientTickPre(CallbackInfo info) {
-        BrickEventBus.postEvent(new ClientTickEvent.Pre());
+        BrickEventBus.postEventClient(new ClientTickEvent.Pre());
+        for (KeyMapping keyMapping : BrickRegistries.KEY_MAPPING.values()) {
+            if (keyMapping.isDown()) {
+                BrickEventBus.postEventClient(new KeyEvent.Down(keyMapping));
+            }
+            if (keyMapping.consumeClick()) {
+                BrickEventBus.postEventClient(new KeyEvent.Press(keyMapping));
+            }
+        }
     }
 
     @Inject(at = @At("RETURN"), method = "tick")
     public void clientTickPost(CallbackInfo info) {
         BrickEventBus.postEvent(new ClientTickEvent.Post());
+    }
+
+    @Inject(method = "setScreen", at = @At("HEAD"), cancellable = true)
+    public void inject111(Screen guiScreen, CallbackInfo ci) {
+        if (guiScreen != null) {
+            if (BrickEventBus.postEventClient(new PlayerEvent.Gui.Open(Minecraft.getInstance().player, guiScreen))) {
+                this.screen = null;
+                BufferUploader.reset();
+                soundManager.resume();
+                if (Minecraft.getInstance().isWindowActive() && !this.mouseHandler.isMouseGrabbed()) {
+                    if (!Minecraft.ON_OSX) {
+                        KeyMapping.setAll();
+                    }
+                    Minecraft.getInstance().setScreen(null);
+                    this.mouseHandler.setIgnoreFirstMove();
+                }
+                ci.cancel();
+            }
+        } else {
+            if (BrickEventBus.postEventClient(new PlayerEvent.Gui.Close(Minecraft.getInstance().player,null))) {
+                BufferUploader.reset();
+                this.soundManager.resume();
+                this.mouseHandler.grabMouse();
+            }
+        }
+    }
+
+    private Minecraft getThis(){
+        return (Minecraft) (Object) this;
     }
 }

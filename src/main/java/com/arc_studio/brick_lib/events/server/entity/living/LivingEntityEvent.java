@@ -1,5 +1,6 @@
 package com.arc_studio.brick_lib.events.server.entity.living;
 
+import com.arc_studio.brick_lib.api.event.ICancelableEvent;
 import com.arc_studio.brick_lib.events.server.entity.EntityEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -7,6 +8,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 
+/**
+ * @author fho4565
+ */
 public abstract class LivingEntityEvent extends EntityEvent {
     protected LivingEntity livingEntity;
 
@@ -19,7 +23,7 @@ public abstract class LivingEntityEvent extends EntityEvent {
     public LivingEntity getEntity() {
         return livingEntity;
     }
-    @ApiStatus.Experimental
+/*    @ApiStatus.Experimental
     public static class Move extends LivingEntityEvent {
         public Move(LivingEntity entity) {
             super(entity);
@@ -33,8 +37,16 @@ public abstract class LivingEntityEvent extends EntityEvent {
             super(entity);
             this.itemStack = itemStack;
         }
+    }*/
+
+    public static class Jump extends LivingEntityEvent implements ICancelableEvent {
+
+        public Jump(LivingEntity entity) {
+            super(entity);
+        }
     }
-    @ApiStatus.Experimental
+
+   /* @ApiStatus.Experimental
     public static abstract class Attack extends LivingEntityEvent {
         private final Entity target;
         private float damage = 0;
@@ -113,5 +125,5 @@ public abstract class LivingEntityEvent extends EntityEvent {
             super(entity);
         }
     }
-
+*/
 }

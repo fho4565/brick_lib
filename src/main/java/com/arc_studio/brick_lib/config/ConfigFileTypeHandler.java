@@ -118,10 +118,11 @@ public class ConfigFileTypeHandler {
                 Path oldBak = bakFileLocation.resolve(bakFileName + "-" + i + "." + bakFileExtension);
                 if(Files.exists(oldBak))
                 {
-                    if(i >= maxBackups)
+                    if(i >= maxBackups) {
                         Files.delete(oldBak);
-                    else
+                    } else {
                         Files.move(oldBak, bakFileLocation.resolve(bakFileName + "-" + (i + 1) + "." + bakFileExtension));
+                    }
                 }
             }
             Files.copy(commentedFileConfig.getNioPath(), bakFile);

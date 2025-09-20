@@ -34,8 +34,12 @@ public class Pair<L, R> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
         var that = (Pair) obj;
         return Objects.equals(this.left, that.left) &&
                 Objects.equals(this.right, that.right);

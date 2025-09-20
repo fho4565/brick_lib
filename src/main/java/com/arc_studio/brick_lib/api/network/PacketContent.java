@@ -15,19 +15,22 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import org.joml.Vector3f;
 
+import java.util.LinkedList;
+import java.util.ListIterator;
+
 /**
  * 网络数据包内容处理器，封装了对 {@link FriendlyByteBuf} 的读写操作，
  * 提供类型安全的链式读写方法，用于模组网络通信中数据的序列化与反序列化。
  */
 public class PacketContent {
-    protected final FriendlyByteBuf friendlyByteBuf;
+    protected FriendlyByteBuf friendlyByteBuf;
 
     public PacketContent() {
-        friendlyByteBuf = new FriendlyByteBuf(Unpooled.buffer());
+        this(new FriendlyByteBuf(Unpooled.buffer()));
     }
 
-    public PacketContent(FriendlyByteBuf friendlyByteBuf) {
-        this.friendlyByteBuf = friendlyByteBuf;
+    public PacketContent(FriendlyByteBuf buf) {
+        friendlyByteBuf = buf;
     }
 
     public PacketContent writeUTF(String string, int maxLength) {

@@ -183,7 +183,9 @@ public final class ClientCommandInternals {
 			Map<CommandNode<ClientSuggestionProvider>, CommandNode<ClientSuggestionProvider>> originalToCopy
 	) {
 		for (CommandNode<ClientSuggestionProvider> child : origin.getChildren()) {
-			if (!child.canUse(source)) continue;
+			if (!child.canUse(source)) {
+                continue;
+            }
 			ArgumentBuilder<ClientSuggestionProvider, ?> builder = child.createBuilder();
 			builder.requires(s -> true);
 			if (builder.getCommand() != null) {

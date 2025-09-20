@@ -21,6 +21,12 @@ public class BrickRegistry<T> extends RegistryType<T> implements Iterable<T> {
     protected HashMap<ResourceLocation, Supplier<T>> map = new HashMap<>();
     protected boolean registered = false;
 
+    public int count() {
+        return count;
+    }
+
+    protected int count = 0;
+
     private final ResourceKey<? extends Registry<T>> key;
 
     public BrickRegistry(ResourceKey<? extends Registry<T>> key) {
@@ -160,6 +166,7 @@ public class BrickRegistry<T> extends RegistryType<T> implements Iterable<T> {
             LOGGER.error("Duplicated key {} in registry {}",key,this.key);
         } else {
             map.put(key.location(), () -> value);
+            count++;
         }
         return value;
     }
