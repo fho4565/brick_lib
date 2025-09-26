@@ -1,6 +1,6 @@
 package com.arc_studio.brick_lib.mixin.common;
 
-import com.arc_studio.brick_lib.register.CommandEntitySelector;
+import com.arc_studio.brick_lib.core.CommandEntitySelector;
 import com.arc_studio.brick_lib.register.BrickRegistries;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.mojang.brigadier.StringReader;

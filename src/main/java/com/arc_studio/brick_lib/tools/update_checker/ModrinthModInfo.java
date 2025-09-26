@@ -1,53 +1,219 @@
 package com.arc_studio.brick_lib.tools.update_checker;
 
-import java.util.List;
+import com.arc_studio.brick_lib.api.core.SideType;
 import com.google.gson.annotations.SerializedName;
 
-public record ModrinthModInfo(
+import java.util.List;
+import java.util.Objects;
 
-	@SerializedName("featured")
-	boolean featured,
+/**
+ * @author fho4565
+ */
+public final class ModrinthModInfo {
+    @SerializedName("featured")
+    private final boolean featured;
+    @SerializedName("version_type")
+    private final String versionType;
+    @SerializedName("changelog")
+    private final String changelog;
+    @SerializedName("version_number")
+    private final String versionNumber;
+    @SerializedName("dependencies")
+    private final List<String> dependencies;
+    @SerializedName("loaders")
+    private final List<String> loaders;
+    @SerializedName("project_id")
+    private final String projectId;
+    @SerializedName("date_published")
+    private final String datePublished;
+    @SerializedName("downloads")
+    private final int downloads;
+    @SerializedName("name")
+    private final String name;
+    @SerializedName("files")
+    private final List<ModrinthModsItem> files;
+    @SerializedName("id")
+    private final String id;
+    @SerializedName("game_versions")
+    private final List<String> gameVersions;
+    @SerializedName("author_id")
+    private final String authorId;
+    @SerializedName("status")
+    private final String status;
 
-	@SerializedName("version_type")
-	String versionType,
+    private transient SideType platform;
 
-	@SerializedName("changelog")
-	String changelog,
+    public ModrinthModInfo(
+            boolean featured,
+            String versionType,
+            String changelog,
+            String versionNumber,
+            List<String> dependencies,
+            List<String> loaders,
+            String projectId,
+            String datePublished,
+            int downloads,
+            String name,
+            List<ModrinthModsItem> files,
+            String id,
+            List<String> gameVersions,
+            String authorId,
+            String status
+    ) {
+        this.featured = featured;
+        this.versionType = versionType;
+        this.changelog = changelog;
+        this.versionNumber = versionNumber;
+        this.dependencies = dependencies;
+        this.loaders = loaders;
+        this.projectId = projectId;
+        this.datePublished = datePublished;
+        this.downloads = downloads;
+        this.name = name;
+        this.files = files;
+        this.id = id;
+        this.gameVersions = gameVersions;
+        this.authorId = authorId;
+        this.status = status;
+    }
 
-	@SerializedName("version_number")
-	String versionNumber,
+    @SerializedName("featured")
+    public boolean featured() {
+        return featured;
+    }
 
-	@SerializedName("dependencies")
-	List<String> dependencies,
+    @SerializedName("version_type")
+    public String versionType() {
+        return versionType;
+    }
 
-	@SerializedName("loaders")
-	List<String> loaders,
+    @SerializedName("changelog")
+    public String changelog() {
+        return changelog;
+    }
 
-	@SerializedName("project_id")
-	String projectId,
+    @SerializedName("version_number")
+    public String versionNumber() {
+        return versionNumber;
+    }
 
-	@SerializedName("date_published")
-	String datePublished,
+    @SerializedName("dependencies")
+    public List<String> dependencies() {
+        return dependencies;
+    }
 
-	@SerializedName("downloads")
-	int downloads,
+    @SerializedName("loaders")
+    public List<String> loaders() {
+        return loaders;
+    }
 
-	@SerializedName("name")
-	String name,
+    @SerializedName("project_id")
+    public String projectId() {
+        return projectId;
+    }
 
-	@SerializedName("files")
-	List<ModrinthModsItem> files,
+    @SerializedName("date_published")
+    public String datePublished() {
+        return datePublished;
+    }
 
-	@SerializedName("id")
-	String id,
+    @SerializedName("downloads")
+    public int downloads() {
+        return downloads;
+    }
 
-	@SerializedName("game_versions")
-	List<String> gameVersions,
+    @SerializedName("name")
+    public String name() {
+        return name;
+    }
 
-	@SerializedName("author_id")
-	String authorId,
+    @SerializedName("files")
+    public List<ModrinthModsItem> files() {
+        return files;
+    }
 
-	@SerializedName("status")
-	String status
-) {
+    @SerializedName("id")
+    public String id() {
+        return id;
+    }
+
+    @SerializedName("game_versions")
+    public List<String> gameVersions() {
+        return gameVersions;
+    }
+
+    @SerializedName("author_id")
+    public String authorId() {
+        return authorId;
+    }
+
+    @SerializedName("status")
+    public String status() {
+        return status;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (ModrinthModInfo) obj;
+        return this.featured == that.featured &&
+                Objects.equals(this.versionType, that.versionType) &&
+                Objects.equals(this.changelog, that.changelog) &&
+                Objects.equals(this.versionNumber, that.versionNumber) &&
+                Objects.equals(this.dependencies, that.dependencies) &&
+                Objects.equals(this.loaders, that.loaders) &&
+                Objects.equals(this.projectId, that.projectId) &&
+                Objects.equals(this.datePublished, that.datePublished) &&
+                this.downloads == that.downloads &&
+                Objects.equals(this.name, that.name) &&
+                Objects.equals(this.files, that.files) &&
+                Objects.equals(this.id, that.id) &&
+                Objects.equals(this.gameVersions, that.gameVersions) &&
+                Objects.equals(this.authorId, that.authorId) &&
+                Objects.equals(this.status, that.status);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(featured, versionType, changelog, versionNumber, dependencies, loaders, projectId, datePublished, downloads, name, files, id, gameVersions, authorId, status);
+    }
+
+    @Override
+    public String toString() {
+        return "ModrinthModInfo[" +
+                "featured=" + featured + ", " +
+                "versionType=" + versionType + ", " +
+                "changelog=" + changelog + ", " +
+                "versionNumber=" + versionNumber + ", " +
+                "dependencies=" + dependencies + ", " +
+                "loaders=" + loaders + ", " +
+                "projectId=" + projectId + ", " +
+                "datePublished=" + datePublished + ", " +
+                "downloads=" + downloads + ", " +
+                "name=" + name + ", " +
+                "files=" + files + ", " +
+                "id=" + id + ", " +
+                "gameVersions=" + gameVersions + ", " +
+                "authorId=" + authorId + ", " +
+                "status=" + status + ']';
+    }
+
+    public SideType platform(){
+        if(this.platform == null){
+            SideType type = new SideType();
+            type.removeAll();
+            for (String s : loaders) {
+                if ("forge".equals(s)) {
+                    type.setForge();
+                } else if ("fabric".equals(s)) {
+                    type.setFabric();
+                } else if ("neoforge".equals(s)) {
+                    type.setNeoForge();
+                }
+            }
+            this.platform = type;
+        }
+        return platform;
+    }
 }

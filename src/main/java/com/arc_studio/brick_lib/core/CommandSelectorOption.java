@@ -1,4 +1,4 @@
-package com.arc_studio.brick_lib.register;
+package com.arc_studio.brick_lib.core;
 
 import net.minecraft.commands.arguments.selector.EntitySelectorParser;
 import net.minecraft.commands.arguments.selector.options.EntitySelectorOptions;

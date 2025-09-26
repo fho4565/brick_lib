@@ -41,26 +41,26 @@ public final class Version implements Comparable<Version> {
             String[] split2 = split[0].split("\\.");
             version.major = Integer.parseInt(split2[0]);
             version.minor = Integer.parseInt(split2[1]);
-            version.patch = Integer.parseInt(split2[2]);
+            version.patch = split2.length>=3 ? Integer.parseInt(split2[2]):0;
         } else if (pre) {
             String[] split = string.split("-");
             version.preRelease = split[1];
             String[] split1 = split[0].split("\\.");
             version.major = Integer.parseInt(split1[0]);
             version.minor = Integer.parseInt(split1[1]);
-            version.patch = Integer.parseInt(split1[2]);
+            version.patch = split1.length>=3 ? Integer.parseInt(split1[2]):0;
         } else if (build) {
             String[] split = string.split("\\+");
             version.buildMeta = split[1];
             String[] split1 = split[0].split("\\.");
             version.major = Integer.parseInt(split1[0]);
             version.minor = Integer.parseInt(split1[1]);
-            version.patch = Integer.parseInt(split1[2]);
+            version.patch = split1.length>=3 ? Integer.parseInt(split1[2]):0;
         } else {
             String[] split = string.split("\\.");
             version.major = Integer.parseInt(split[0]);
             version.minor = Integer.parseInt(split[1]);
-            version.patch = Integer.parseInt(split[2]);
+            version.patch = split.length>=3 ? Integer.parseInt(split[2]):0;
         }
         return version;
     }

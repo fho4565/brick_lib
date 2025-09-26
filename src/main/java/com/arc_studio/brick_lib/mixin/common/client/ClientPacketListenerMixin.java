@@ -1,17 +1,30 @@
 package com.arc_studio.brick_lib.mixin.common.client;
 
+import com.arc_studio.brick_lib.api.event.BrickEventBus;
 import com.arc_studio.brick_lib.client.command.ClientCommandInternals;
 import com.arc_studio.brick_lib.events.server.entity.living.player.PlayerEvent;
 import com.arc_studio.brick_lib.register.BrickRegistries;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.ClientRegistryLayer;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
+import net.minecraft.client.multiplayer.PlayerInfo;
+import net.minecraft.client.multiplayer.chat.ChatListener;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.SharedSuggestionProvider;
+//? if >1.20.1 {
+/*import net.minecraft.core.RegistryAccess;
+*///?}
 import net.minecraft.core.LayeredRegistryAccess;
+import net.minecraft.network.chat.*;
 import net.minecraft.network.protocol.game.ClientboundCommandsPacket;
 import net.minecraft.network.protocol.game.ClientboundLoginPacket;
+import net.minecraft.network.protocol.game.ClientboundPlayerChatPacket;
 import net.minecraft.world.flag.FeatureFlagSet;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,6 +33,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.Optional;
 
 @Mixin(ClientPacketListener.class)
 public abstract class ClientPacketListenerMixin {

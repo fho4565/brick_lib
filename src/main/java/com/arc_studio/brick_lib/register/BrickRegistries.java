@@ -2,6 +2,8 @@ package com.arc_studio.brick_lib.register;
 
 import com.arc_studio.brick_lib.BrickLib;
 import com.arc_studio.brick_lib.core.ArmorSuit;
+import com.arc_studio.brick_lib.core.CommandEntitySelector;
+import com.arc_studio.brick_lib.core.CommandSelectorOption;
 import com.arc_studio.brick_lib.core.global_pack.GlobalPack;
 import com.arc_studio.brick_lib.core.global_pack.files.GlobalPackFileType;
 
@@ -11,6 +13,7 @@ import com.arc_studio.brick_lib.api.json_function.JsonFunction;
 import com.arc_studio.brick_lib.datagen.DataGenerateEntry;
 import com.arc_studio.brick_lib.render.ItemDecorationRender;
 import com.arc_studio.brick_lib.api.network.type.PacketConfig;
+import com.arc_studio.brick_lib.tools.update_checker.UpdateChecker;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -254,6 +257,8 @@ public static final VanillaRegistry<PaintingVariant> PAINTING_VARIANT = new Vani
     public static final BrickRegistry<CommandSelectorOption> COMMAND_ENTITY_SELECTOR_OPTIONS = create("command_entity_selector_option");
 
     public static final BrickRegistry<DataGenerateEntry> DATA_GENERATE = create("data_generate");
+
+    public static final BrickRegistry<UpdateChecker.Entry> UPDATE_CHECK = create("update_check");
 
     private static <T> BrickRegistry<T> create(String name) {
         return new BrickRegistry<>(ResourceKey.createRegistryKey(BrickLib.createBrickRL(name)));

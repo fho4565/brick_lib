@@ -16,15 +16,11 @@ import com.arc_studio.brick_lib.config.*;
 import com.arc_studio.brick_lib.core.global_pack.GlobalPack;
 import com.arc_studio.brick_lib.core.global_pack.GlobalPacks;
 import com.arc_studio.brick_lib.datagen.BrickDataGenerator;
-import com.arc_studio.brick_lib.events.client.ClientTickEvent;
 import com.arc_studio.brick_lib.events.client.KeyEvent;
 import com.arc_studio.brick_lib.events.client.RenderEvent;
 import com.arc_studio.brick_lib.events.game.CommandEvent;
 import com.arc_studio.brick_lib.events.game.LogInEvent;
 import com.arc_studio.brick_lib.events.server.NetworkMessageEvent;
-import com.arc_studio.brick_lib.events.server.entity.EntityEvent;
-import com.arc_studio.brick_lib.events.server.entity.living.LivingEntityEvent;
-import com.arc_studio.brick_lib.events.server.entity.living.mob.MobEvent;
 import com.arc_studio.brick_lib.events.server.entity.living.player.PlayerEvent;
 import com.arc_studio.brick_lib.events.server.server.ServerEvent;
 import com.arc_studio.brick_lib.globalpack.file_types.ItemType;
@@ -33,9 +29,12 @@ import com.arc_studio.brick_lib.network.DemoReplyPacket;
 import com.arc_studio.brick_lib.network.LoginPacketDemo;
 import com.arc_studio.brick_lib.platform.Platform;
 import com.arc_studio.brick_lib.register.BrickRegistries;
-import com.arc_studio.brick_lib.register.CommandEntitySelector;
-import com.arc_studio.brick_lib.register.CommandSelectorOption;
+import com.arc_studio.brick_lib.core.CommandEntitySelector;
+import com.arc_studio.brick_lib.core.CommandSelectorOption;
 import com.arc_studio.brick_lib.tools.*;
+import com.arc_studio.brick_lib.tools.update_checker.ModrinthModInfo;
+import com.arc_studio.brick_lib.tools.update_checker.UpdateChecker;
+import com.google.common.collect.Lists;
 import com.google.gson.*;
 import com.llamalad7.mixinextras.MixinExtrasBootstrap;
 import com.mojang.brigadier.arguments.BoolArgumentType;
@@ -57,10 +56,14 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
+//? if > 1.20.4 {
+/*import net.minecraft.core.component.DataComponents;
+*///?}
 import net.minecraft.network.Connection;
 import net.minecraft.network.ConnectionProtocol;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -85,6 +88,8 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -125,25 +130,57 @@ public final class BrickLib {
         BrickEventBus.registerListener(ServerEvent.LoadData.class, event -> System.out.println("Server Load data"));
 
         BrickEventBus.registerListener(PlayerEvent.RequestItemTooltip.class,event -> {
+            ItemStack itemStack = event.getItemStack();
             ArrayList<Component> lines = event.getToolTipLines();
             lines.clear();
-            lines.add(Component.literal("man!"));
+            //? if <= 1.20.4 {
+            MutableComponent mutablecomponent = Component.empty().append("这是").withStyle(itemStack.getRarity().color)
+                    .append(itemStack.getHoverName()).withStyle(itemStack.getRarity().color);
+            //?} else {
+            /*MutableComponent mutablecomponent = Component.empty().append("这是").withStyle(itemStack.getRarity().color())
+                    .append(itemStack.getHoverName()).withStyle(itemStack.getRarity().color());
+            *///?}
+            lines.add(mutablecomponent);
         });
 
         BrickEventBus.registerListener(PlayerEvent.Advancement.Progress.class,event -> {
-            if (event.advancement().getDisplay() != null) {
+            //? >1.20.1 {
+            /*event.advancement().display().ifPresent(displayInfo -> {
+                event.getEntity().sendSystemMessage(Component.literal("progress"));
+                event.getEntity().sendSystemMessage(displayInfo.getTitle());
+            });
+            *///?} else {
+            if (event.advancement().getDisplay()
+                    != null) {
                 event.getEntity().sendSystemMessage(Component.literal("progress"));
                 event.getEntity().sendSystemMessage(event.advancement().getDisplay().getTitle());
             }
+            //?}
         });
         BrickEventBus.registerListener(PlayerEvent.Advancement.Complete.class,event -> {
-            if (event.advancement().getDisplay() != null) {
+            //? >1.20.1 {
+            /*event.advancement().display().ifPresent(displayInfo -> {
+                event.getEntity().sendSystemMessage(Component.literal("complete"));
+                event.getEntity().sendSystemMessage(displayInfo.getTitle());
+            });
+            *///?} else {
+            if (event.advancement().getDisplay()
+                    != null) {
                 event.getEntity().sendSystemMessage(Component.literal("complete"));
                 event.getEntity().sendSystemMessage(event.advancement().getDisplay().getTitle());
             }
+            //?}
             event.cancel();
         });
         BrickEventBus.registerListener(PlayerEvent.Advancement.Revoke.class,event -> {
+                        //? >1.20.1 {
+            /*event.advancement().display().ifPresent(displayInfo -> {
+                event.getEntity().sendSystemMessage(Component.literal("complete"));
+                event.getEntity().sendSystemMessage(displayInfo.getTitle());
+                event.getEntity().sendSystemMessage(Component.literal(event.getCriterionName()));
+                event.advancement().criteria().forEach((s, criterion) -> event.advancementProgress().grantProgress(s));
+            });
+            *///?} else {
             DisplayInfo display = event.advancement().getDisplay();
             if (display != null) {
                 event.getEntity().sendSystemMessage(Component.literal("revoke"));
@@ -151,6 +188,7 @@ public final class BrickLib {
                 event.getEntity().sendSystemMessage(Component.literal(event.getCriterionName()));
                 event.advancement().getCriteria().forEach((s, criterion) -> event.advancementProgress().grantProgress(s));
             }
+            //?}
             event.cancel();
         });
         BrickRegisterManager.register(BrickRegistries.COMMAND,  () -> commandBuildContext -> Commands.literal("check").then(Commands.argument("entity", EntityArgument.entities())
@@ -215,6 +253,14 @@ public final class BrickLib {
                     }
                     return builder;
                 });
+        BrickRegistries.UPDATE_CHECK.register("mankkk", () -> UpdateChecker.Entry.modrinth("LZu4H9cp", modrinthModInfos -> {
+            System.out.println("The newest one key miner version is " +
+                    modrinthModInfos.stream().max(Comparator.comparing(o ->
+                            Version.parse(o.versionNumber()))).orElseThrow().versionNumber());
+            for (ModrinthModInfo info : modrinthModInfos) {
+                System.out.println("version : " + info.versionNumber() + " platform : "+info.platform() + " loaders : "+info.loaders());
+            }
+        }));
 
         BrickRegistries.NETWORK_PACKET.register(BrickLib.createBrickRL("demo_login_packet"),() ->
                 new PacketConfig.Login<>(
@@ -339,21 +385,21 @@ public final class BrickLib {
                                         (l, r) -> DataResult.success(Pair.of(l, r))
                                         , Pair::getLeft, Pair::getRight);
                                 System.out.println("codec.encodeStart(JsonOps.INSTANCE,Pair.of(1,8)).get().orThrow() = " + codec.encodeStart(JsonOps.INSTANCE, Pair.of(1, 8))
-                                        //? if >= 1.20.6 {
+                                        //? if > 1.20.4 {
                                         /*.getOrThrow()
                                         *///?} else {
                                         .get().orThrow()
                                         //?}
                                 );
                                 System.out.println("codec.decode(JsonOps.INSTANCE, JsonParser.parseString(\"[1, 10]\")) = " + codec.decode(JsonOps.INSTANCE, JsonParser.parseString("[1, 10]"))
-                                        //? if >= 1.20.6 {
+                                        //? if > 1.20.4 {
                                         /*.getOrThrow()
                                         *///?} else {
                                         .get().orThrow()
                                         //?}
                                 );
                                 System.out.println("codec.decode(JsonOps.INSTANCE, JsonParser.parseString(\"5\")) = " + codec.decode(JsonOps.INSTANCE, JsonParser.parseString("5"))
-                                                //? if >= 1.20.6 {
+                                                //? if > 1.20.4 {
                                                 /*.getOrThrow()
                                         *///?} else {
                                         .get().orThrow()
@@ -363,7 +409,7 @@ public final class BrickLib {
                                 object.addProperty("l",2);
                                 object.addProperty("r",5);
                                 System.out.println("codec.decode(JsonOps.INSTANCE, JsonParser.parseString(\"{\"l\": 1, \"r\": 10}\")) = " + codec.decode(JsonOps.INSTANCE, JsonParser.parseString(object.toString()))
-                                                //? if >= 1.20.6 {
+                                                //? if > 1.20.4 {
                                                 /*.getOrThrow()
                                         *///?} else {
                                         .get().orThrow()

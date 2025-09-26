@@ -1,4 +1,5 @@
 import org.gradle.api.tasks.Input
+import org.gradle.kotlin.dsl.resolver.buildSrcSourceRootsFilePath
 import java.util.Optional
 import java.util.function.BiConsumer
 import java.util.function.Consumer
@@ -335,6 +336,14 @@ class ModMixins {
     }
 }
 
+class ModAWs {
+    val vanillaAW = "src/main/resources/${mod.id}.accesswidener"
+
+    fun getAWs() : String {
+        return vanillaAW
+    }
+}
+
 //TODO 如果您打算自动发布，请确认此控制器和相关 API 令牌（强烈推荐）
 //TODO 版本数量过多Modrinth可能会限制您的速率。如果是这种情况，您应该给他们发电子邮件寻求帮助。
 /**
@@ -412,6 +421,7 @@ val dependencies = ModDependencies()
 class SpecialMultiversionedConstants {
     private val mandatoryIndicator = if(env.isNeo) "required" else "mandatory"
     val mixinField = if(env.atLeast("1.20.4") && env.isNeo) neoForgeMixinField() else if(env.isFabric) fabricMixinField() else ""
+    val awField = if(env.isFabric) "  \"accessWidener\" : \"brick_lib.accesswidener\"," else ""
 
     val forgelikeLoaderVer =  if(env.isForge) env.forgeLanguageVersion.asForgelike() else env.neoforgeLoaderVersion.asForgelike()
     val forgelikeAPIVer = if(env.isForge) env.forgeVersion.asForgelike() else env.neoforgeVersion.asForgelike()
@@ -496,6 +506,7 @@ class SpecialMultiversionedConstants {
 val mod = ModProperties()
 val modFabric = ModFabric()
 val modMixins = ModMixins()
+val modAWs = ModAWs()
 val dynamics = SpecialMultiversionedConstants()
 
 //TODO: 如果您希望上传版本格式不同，请更改此格式（强烈建议使用这种格式）
@@ -522,7 +533,12 @@ stonecutter.const("neoforge",env.isNeo)
 stonecutter.const("newnf",env.isNeo && env.atLeast("1.20.4"))
 stonecutter.const("oldnf",env.isNeo && env.atMost("1.20.3"))
 
+
+
 loom {
+    val file = file("../../"+modAWs.getAWs())
+    println("aw path : $file")
+    accessWidenerPath = file
     silentMojangMappingsLicense()
     if (env.isForge) forge {
         for (mixin in modMixins.getMixins(EnvType.FORGE)) {
@@ -604,7 +620,7 @@ java {
 /**
  * 替换普通的复制任务并对文件进行后处理。
  * 由于 1.20.4 之后的去复数化，有效地重命名了数据包目录。
- * TODO：确认您不应在错误的版本使用复数名字的数据包类型（mojang让你学会了多个单词的附属形式，快谢谢mojang(）。
+ * TODO：确认您不应在错误的版本使用复数名字的数据包类型（mojang让你学会了多个单词的复数形式，快谢谢mojang(）。
  */
 abstract class ProcessResourcesExtension : ProcessResources() {
     @get:Input
@@ -656,6 +672,7 @@ tasks.processResources {
         "loader_id" to env.loader,
         "license" to mod.license,
         "mixin_field" to dynamics.mixinField,
+        "aw_field" to dynamics.awField,
         "dependencies_field" to dynamics.dependenciesField
     )
     map.forEach{ (key, value) ->
@@ -668,9 +685,10 @@ tasks.processResources {
     filesMatching("fabric.mod.json") { expand(map) }
     filesMatching("META-INF/mods.toml") { expand(map) }
     filesMatching("META-INF/neoforge.mods.toml") { expand(map) }
-    modMixins.getMixins(env.type).forEach { str->
+    for (str in modMixins.getMixins(env.type)) {
         filesMatching(str) { expand(map) }
     }
+    filesMatching(modAWs.vanillaAW) { expand(map) }
 }
 
 //TODO: 启用自动发布。

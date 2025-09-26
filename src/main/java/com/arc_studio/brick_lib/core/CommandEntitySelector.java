@@ -1,4 +1,4 @@
-package com.arc_studio.brick_lib.register;
+package com.arc_studio.brick_lib.core;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
@@ -7,7 +7,10 @@ import net.minecraft.world.entity.EntityType;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-public final class CommandEntitySelector {
+/**
+ * @author fho4565
+ */
+public class CommandEntitySelector {
     private final String sign;
     private final Component description;
     private final Predicate<Entity> entityPredicate;

@@ -26,6 +26,7 @@ import org.jetbrains.annotations.ApiStatus;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * 当发生和玩家有关的事件时，会触发该事件。
@@ -878,20 +879,24 @@ public abstract class PlayerEvent extends LivingEntityEvent {
         }
 
         /**
-         * 当服务端处理聊天消息时触发
-         * */
-        public static class ServerProcess extends Chat {
-            public ServerProcess(Player player, String message, String originalMessage,boolean isCommand) {
-                super(player, message, originalMessage,isCommand);
-            }
-        }
-
-        /**
          * 当客户端接收一条聊天消息时触发
          * */
         public static class Receive extends Chat {
-            public Receive(Player player, String message,boolean isCommand) {
-                super(player, message, message,isCommand);
+            private final UUID from;
+            private final Component msg;
+
+            public Receive(Player player, UUID from, Component message, boolean isCommand) {
+                super(player, message.getString(), message.getString(),isCommand);
+                this.msg = message;
+                this.from = from;
+            }
+
+            public Component msg() {
+                return msg;
+            }
+
+            public UUID from() {
+                return from;
             }
         }
 

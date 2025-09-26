@@ -2,6 +2,9 @@ package com.arc_studio.brick_lib.api.core;
 
 import java.util.Map;
 
+/**
+ * @author fho4565
+ */
 public final class SideType {
     public static final int
             FALSE = 0,
@@ -13,7 +16,7 @@ public final class SideType {
             NEOFORGE = 32,
             FORGELIKE = 64,
             TRUE = 128;
-    private static final Map<Integer, String> map = Map.of(
+    private static final Map<Integer, String> MAP = Map.of(
             CLIENT, "CLIENT",
             SERVER, "SERVER",
             FORGE, "FORGE",
@@ -141,7 +144,7 @@ public final class SideType {
         StringBuilder sb = new StringBuilder("Sides[");
         for (int i = 0; i < 5; i++) {
             if ((types & (1 << i)) == (1 << i)) {
-                sb.append(map.get(1 << i)).append(",");
+                sb.append(MAP.get(1 << i)).append(",");
             }
         }
         if(sb.lastIndexOf(",") != -1){

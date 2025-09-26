@@ -71,16 +71,25 @@ public abstract class ItemStackMixin {
     }
     //?}
 
-    @Inject(method = "getTooltipLines", at = @At("TAIL"), cancellable = true)
-    public void inject66(Player player, TooltipFlag isAdvanced, CallbackInfoReturnable<List<Component>> cir, @Local List<Component> list) {
-        if (player != null){
-            System.out.println("player.level().isClientSide = " + player.level().isClientSide);
-            PlayerEvent.RequestItemTooltip event = new PlayerEvent.RequestItemTooltip(player, isAdvanced, getThis(), new ArrayList<>(list));
+    //? if > 1.20.4 {
+    /*@Inject(method = "getTooltipLines", at = @At("TAIL"), cancellable = true)
+    public void inject66(Item.TooltipContext tooltipContext, Player player, TooltipFlag tooltipFlag, CallbackInfoReturnable<List<Component>> cir, @Local List<Component> list) {
+        if (player != null) {
+            PlayerEvent.RequestItemTooltip event = new PlayerEvent.RequestItemTooltip(player, tooltipFlag, getThis(), new ArrayList<>(list));
             BrickEventBus.postEvent(event);
-            System.out.println("event.getToolTipLines() = " + event.getToolTipLines());
             cir.setReturnValue(event.getToolTipLines());
         }
     }
+    *///?} else {
+    @Inject(method = "getTooltipLines", at = @At("TAIL"), cancellable = true)
+    public void inject66(Player player, TooltipFlag isAdvanced, CallbackInfoReturnable<List<Component>> cir, @Local List<Component> list) {
+        if (player != null) {
+            PlayerEvent.RequestItemTooltip event = new PlayerEvent.RequestItemTooltip(player, isAdvanced, getThis(), new ArrayList<>(list));
+            BrickEventBus.postEvent(event);
+            cir.setReturnValue(event.getToolTipLines());
+        }
+    }
+    //?}
 
     private ItemStack getThis(){
         return (ItemStack) (Object) this;

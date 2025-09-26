@@ -45,13 +45,13 @@ public class BlockEvent extends BaseEvent {
         return blockPos;
     }
 
-    /**
+/*    *//**
      * 当一个方块即将被破坏时触发的事件，取消这个事件会阻止方块被破坏
-     */
+     *//*
     public static class Break extends BlockEvent implements ICancelableEvent {
-        /**
+        *//**
          * 破坏此方块的玩家，有可能为空
-         */
+         *//*
         protected Player player;
 
         public Break(LevelAccessor level, BlockPos blockPos, BlockState blockState) {
@@ -91,20 +91,20 @@ public class BlockEvent extends BaseEvent {
             this.forceRedStoneUpdate = forceRedStoneUpdate;
         }
 
-        /**
+        *//**
          * Gets save list of directions from the base block that updates will occur upon.
          *
          * @return list of notified directions
-         */
+         *//*
         public EnumSet<Direction> getNotifiedSides() {
             return notifiedSides;
         }
 
-        /**
+        *//**
          * Get if redstone update was forced during setBlock call (0x16 to flags)
          *
          * @return if the flag was set
-         */
+         *//*
         public boolean getForceRedStoneUpdate() {
             return forceRedStoneUpdate;
         }
@@ -128,16 +128,16 @@ public class BlockEvent extends BaseEvent {
             this.origState = level.getBlockState(pos);
         }
 
-        /**
+        *//**
          * @return The position of the liquid this events originated from. This may be the same as {@link #getBlockPos()} ()}.
-         */
+         *//*
         public BlockPos getLiquidPos() {
             return liquidPos;
         }
 
-        /**
+        *//**
          * @return The block state that will be placed after this events resolves.
-         */
+         *//*
         public BlockState getNewState() {
             return newState;
         }
@@ -146,9 +146,9 @@ public class BlockEvent extends BaseEvent {
             this.newState = state;
         }
 
-        /**
+        *//**
          * @return The state of the block to be changed before the events was fired.
-         */
+         *//*
         public BlockState getOriginalState() {
             return origState;
         }
@@ -225,62 +225,62 @@ public class BlockEvent extends BaseEvent {
             this.simulate = simulate;
         }
 
-        /**
+        *//**
          * @return the player using the tool.
          * May be null based on what was provided by {@link #getContext() the use on context}.
-         */
+         *//*
         @Nullable
         public Player getPlayer() {
             return this.context.getPlayer();
         }
 
-        /**
+        *//**
          * @return the tool being used
-         */
+         *//*
         public ItemStack getHeldItemStack() {
             return this.context.getItemInHand();
         }
 
-        /**
+        *//**
          * Returns {@code true} if this events should not perform any actions that modify the level.
          * If {@code false}, then level-modifying actions can be performed.
          *
          * @return {@code true} if this events should not perform any actions that modify the level.
          * If {@code false}, then level-modifying actions can be performed.
-         */
+         *//*
         public boolean isSimulated() {
             return this.simulate;
         }
 
-        /**
+        *//**
          * Returns the nonnull use on context that this events was performed in.
          *
          * @return the nonnull use on context that this events was performed in
-         */
+         *//*
         @NotNull
         public UseOnContext getContext() {
             return context;
         }
 
-        /**
+        *//**
          * Returns the state to transform the block into after tool use.
          * If {@link #setFinalState(BlockState)} is not called, this will return the original state.
          * If {@link #isCanceled()} is {@code true}, this value will be ignored and the tool action will be canceled.
          *
          * @return the state to transform the block into after tool use
-         */
+         *//*
         public BlockState getFinalState() {
             return state;
         }
 
-        /**
+        *//**
          * Sets the state to transform the block into after tool use.
          *
          * @param finalState the state to transform the block into after tool use
          * @see #getFinalState()
-         */
+         *//*
         public void setFinalState(@Nullable BlockState finalState) {
             this.state = finalState;
         }
-    }
+    }*/
 }

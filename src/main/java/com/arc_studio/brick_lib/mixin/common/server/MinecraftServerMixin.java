@@ -1,15 +1,21 @@
 package com.arc_studio.brick_lib.mixin.common.server;
 
 import com.arc_studio.brick_lib.api.event.BrickEventBus;
+import com.arc_studio.brick_lib.events.server.server.ResourceEvent;
 import com.arc_studio.brick_lib.events.server.server.ServerEvent;
 import com.arc_studio.brick_lib.events.server.world.LevelEvent;
+import com.google.common.collect.ImmutableList;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.progress.ChunkProgressListener;
+import net.minecraft.server.packs.PackResources;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ServerLevelData;
@@ -24,8 +30,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.function.BooleanSupplier;
+import java.util.function.Function;
 
+/**
+ * @author fho4565
+ */
 @SuppressWarnings({"rawtypes"})
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin {
@@ -139,6 +151,26 @@ public abstract class MinecraftServerMixin {
         System.out.println("server = " + server);
         BrickEventBus.postEventServer(new ServerEvent.LoadData(server));
     }
+
+    //? if neoforge {
+    /*@WrapOperation(method = "reloadResources", at = @At(value = "INVOKE", target = "Ljava/util/concurrent/CompletableFuture;thenCompose(Ljava/util/function/Function;)Ljava/util/concurrent/CompletableFuture;"))
+    public CompletableFuture<MinecraftServer.ReloadableResources> wrapOperation153(CompletableFuture instance,
+                                                                                   Function<? super ImmutableList<PackResources>, ? extends CompletionStage<MinecraftServer.ReloadableResources>> fn,
+                                                                                   Operation<CompletableFuture<MinecraftServer.ReloadableResources>> original) {
+        CompletableFuture<MinecraftServer.ReloadableResources> called = original.call(instance, fn);
+        called.copy().thenAccept(reloadableResources -> BrickEventBus.postEvent(new ResourceEvent.Reload(reloadableResources.managers(), getThis().registryAccess())));
+        return called;
+    }
+    *///?} else {
+    @WrapOperation(method = "reloadResources", at = @At(value = "INVOKE", target = "Ljava/util/concurrent/CompletableFuture;thenCompose(Ljava/util/function/Function;)Ljava/util/concurrent/CompletableFuture;"))
+    public CompletableFuture<MinecraftServer.ReloadableResources> wrapOperation153(CompletableFuture instance,
+                                                                                   Function<? super ImmutableList<PackResources>, ? extends CompletionStage<MinecraftServer.ReloadableResources>> fn,
+                                                                                   Operation<CompletableFuture<MinecraftServer.ReloadableResources>> original) {
+        CompletableFuture<MinecraftServer.ReloadableResources> called = original.call(instance, fn);
+        called.copy().thenAccept(reloadableResources -> BrickEventBus.postEvent(new ResourceEvent.Reload(reloadableResources.managers(), getThis().registryAccess())));
+        return called;
+    }
+    //?}
     @Unique
     private MinecraftServer getThis(){
         return (MinecraftServer) (Object) this;

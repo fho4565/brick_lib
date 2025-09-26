@@ -19,6 +19,7 @@
     "player.ServerPlayerMixin",
     "server.DedicatedServerMixin",
     "server.GameTestServerMixin",
+    "server.MainMixin",
     "server.MemoryServerHandshakePacketListenerImplMixin",
     "server.MinecraftServerMixin",
     "server.PlayerAdvancementsMixin",
@@ -26,15 +27,16 @@
     "server.ServerHandshakePacketListenerImplMixin"
   ],
   "client": [
-    "client.MinecraftMixin",
     "client.ChatComponentMixin",
     "client.ChatScreenMixin",
     "client.ClientHandshakePacketListenerImplMixin",
     "client.ClientPacketListenerMixin",
+    "client.GameLoadTimesEventMixin",
     "client.GuiEffectsMixin",
     "client.GuiExpBarMixin",
     "client.GuiGraphicsMixin",
     "client.KeyboardInputMixin",
+    "client.MinecraftMixin",
     "player.MultiPlayerGameModeMixin",
     "server.IntegratedServerMixin"
   ],
