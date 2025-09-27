@@ -27,13 +27,13 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.*;
 import net.fabricmc.loader.api.ModContainer;
 //? if >= 1.20.6 {
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+/^import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-//?} else {
-/^import net.fabricmc.loader.api.FabricLoader;
-^///?}
+^///?} else {
+import net.fabricmc.loader.api.FabricLoader;
+//?}
 
 *///?}
 
@@ -385,10 +385,10 @@ public class Platform {
         for (ServerPlayer serverPlayer : serverPlayers) {
             //? if fabric {
             /*//? if < 1.20.6 {
-            /^ServerPlayNetworking.send(serverPlayer, id, packet.getEncodedPacketContent(new PacketContent()).friendlyByteBuf());
-            ^///?} else {
-            ServerPlayNetworking.send(serverPlayer, packet);
-            //?}
+            ServerPlayNetworking.send(serverPlayer, id, packet.getEncodedPacketContent(new PacketContent()).friendlyByteBuf());
+            //?} else {
+            /^ServerPlayNetworking.send(serverPlayer, packet);
+            ^///?}
             *///?} else if forge {
             ForgePlatform.s2cPlayChannel.send(/*? <1.20.4 {*/ PacketDistributor.PLAYER.with(() -> serverPlayer), packet /*?} else {*//*packet,PacketDistributor.PLAYER.with(serverPlayer)*//*?}*/);
             //?} else if neoforge {
@@ -409,11 +409,11 @@ public class Platform {
     public static void sendToServer(ISHandlePacket packet) {
         //? if fabric {
         /*//? if < 1.20.6 {
-        /^ResourceLocation id = Optional.ofNullable(packet.id()).orElseGet(() -> new ResourceLocation(BrickLib.MOD_ID, packet.getClass().getName().replace(".", "_").toLowerCase() + "_c2s"));
+        ResourceLocation id = Optional.ofNullable(packet.id()).orElseGet(() -> new ResourceLocation(BrickLib.MOD_ID, packet.getClass().getName().replace(".", "_").toLowerCase() + "_c2s"));
         ClientPlayNetworking.send(id, packet.getEncodedPacketContent(new PacketContent()).friendlyByteBuf());
-        ^///?} else {
-        ClientPlayNetworking.send(packet);
-        //?}
+        //?} else {
+        /^ClientPlayNetworking.send(packet);
+        ^///?}
         *///?} else if forge {
         
         ForgePlatform.c2sPlayChannel/*? <1.20.4 {*/ .sendToServer(packet) /*?} else {*//*.send(packet,PacketDistributor.SERVER.noArg())*//*?}*/;
@@ -431,7 +431,7 @@ public class Platform {
     public static <T> void brickFinalizeRegistry() {
         //? if fabric {
         /*//? if >= 1.20.6 {
-        BrickRegistries.NETWORK_PACKET.registerForeachValue(packetConfig -> {
+        /^BrickRegistries.NETWORK_PACKET.registerForeachValue(packetConfig -> {
             if (packetConfig instanceof PacketConfig.C2S c2S) {
                 c2s(c2S);
             } else if (packetConfig instanceof PacketConfig.S2C s2C) {
@@ -442,8 +442,8 @@ public class Platform {
                 login(login);
             }
         });
-        //?} else {
-        /^BrickRegistries.NETWORK_PACKET.registerForeachValue(packetConfig -> {
+        ^///?} else {
+        BrickRegistries.NETWORK_PACKET.registerForeachValue(packetConfig -> {
             if (packetConfig instanceof PacketConfig.C2S c2SPlay) {
                 SideExecutor.runOnServer(() -> () -> ServerPlayNetworking.registerGlobalReceiver(c2SPlay.id(),
                         (server, player, handler, buf, responseSender) -> {
@@ -520,7 +520,7 @@ public class Platform {
                 });
             }
         });
-        ^///?}
+        //?}
         BrickRegisterManager.vanillaEntries().forEach(vanillaEntry -> vanillaEntry.value().forEach((resourceLocation, supplier) -> {
             if (!vanillaEntry.key().containsKey(resourceLocation)) {
                 Registry.register((Registry<T>) vanillaEntry.key(), resourceLocation, (T) supplier);
