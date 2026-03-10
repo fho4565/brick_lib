@@ -13,7 +13,7 @@
     "issues": "${issue_tracker}"
   },
   "license": "${license}",
-  "accessWidener" : "brick_lib.accesswidener",
+  "accessWidener" : "brick_lib_core.accesswidener",
   "icon": "${icon}",
   "environment": "*",
   "entrypoints": {

@@ -2,36 +2,11 @@ plugins {
     id("dev.kikugie.stonecutter")
     id("dev.architectury.loom") version "1.10-SNAPSHOT" apply false
     id("dev.kikugie.j52j") version "1.0" apply false // Enables asset processing by writing json5 files
-    id("me.modmuss50.mod-publish-plugin") version "0.5.+" apply false // Publishes builds to hosting websites
     id("architectury-plugin") version "3.4-SNAPSHOT" apply false
+    id("me.modmuss50.mod-publish-plugin") version "1.0.0" apply false
+    id("net.darkhax.curseforgegradle") version "1.1.26" apply false
+    id("com.gradleup.shadow") version "9.2.0" apply false
+    id("dev.kikugie.fletching-table") version "0.1.0-alpha.22" apply false
 }
 
-stonecutter active "1.20.1-forge" /* You may have to edit this. Make sure it matches one of the versions present in settings.gradle.kts */
-
-// 将每个版本构建到 'build/libs/{mod.version}/' 中
-stonecutter registerChiseled tasks.register("chiseledBuild", stonecutter.chiseled) {
-    group = "project"
-    ofTask("build")
-}
-
-stonecutter registerChiseled tasks.register("chiseledClean", stonecutter.chiseled) {
-    group = "project"
-    ofTask("clean")
-}
-
-stonecutter registerChiseled tasks.register("chiseledPublishMods", stonecutter.chiseled) {
-    group = "project"
-    ofTask("publishMods")
-}
-
-stonecutter registerChiseled tasks.register("chiseledPublishMaven", stonecutter.chiseled) {
-    group = "project"
-    ofTask("publish")
-}
-
-stonecutter registerChiseled tasks.register("chiseledPublishModrinth", stonecutter.chiseled) {
-    group = "project"
-    ofTask("publishModrinth")
-}
-
-
+stonecutter active "1.18.2-fabric" /* You may have to edit this. Make sure it matches one of the versions present in settings.gradle.kts */
