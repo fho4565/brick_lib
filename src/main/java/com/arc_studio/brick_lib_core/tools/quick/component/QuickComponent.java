@@ -8,158 +8,205 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
-import java.util.function.UnaryOperator;
 
 public class QuickComponent {
-    protected MutableComponent component = ComponentUtils.empty();
-    protected MutableComponent last;
 
-    public QuickComponent() {
+    private QuickComponent() {
     }
 
-    public static QuickComponent of() {
-        return new QuickComponent();
+    public static Builder plaintext(String content) {
+        return new Builder(ComponentUtils.plainText(content));
     }
 
-    public QuickComponent append(TextBase text) {
-        this.component.append(text.build());
-        return this;
+    public static Builder translate(String key, Object... value) {
+        return new Builder(ComponentUtils.translate(key, value));
     }
-    private void push(MutableComponent textBase){
-        if (this.last != null){
-            component.append(this.last);
+
+    public static Builder translateAuto(String content, Object... value) {
+        return new Builder(ComponentUtils.plainTextOrTranslate(content, value));
+    }
+
+    public static Builder keybind(String key) {
+        return new Builder(ComponentUtils.keybind(key));
+    }
+
+    public static Builder score(String objective, String selector) {
+        return new Builder(ComponentUtils.scoreboard(objective, selector));
+    }
+
+    public static Builder blockNBT(String path, boolean interpreting, String pos, @Nullable TextBase separator) {
+        return new Builder(ComponentUtils.blockNBT(path, interpreting, pos, separator != null ? separator.build() : null));
+    }
+
+    public static Builder entityNBT(String path, boolean interpreting, String selector, @Nullable TextBase separator) {
+        return new Builder(ComponentUtils.entityNBT(path, interpreting, selector, separator != null ? separator.build() : null));
+    }
+
+    public static Builder storageNBT(String path, boolean interpreting, ResourceID id, @Nullable TextBase separator) {
+        return new Builder(ComponentUtils.storageNBT(path, interpreting, id, separator != null ? separator.build() : null));
+    }
+
+    public static class Builder {
+        protected MutableComponent component;
+        protected MutableComponent last;
+
+        protected Builder(MutableComponent initial) {
+            component = initial;
         }
-        this.last = textBase;
-    }
-    public QuickComponent plaintext(String content){
-        push(ComponentUtils.plainText(content));
-        return this;
-    }
 
-    public QuickComponent translate(String key,Object... value){
-        push(ComponentUtils.translate(key,value));
-        return this;
-    }
+        public Builder append(TextBase text) {
+            push(text.build());
+            return this;
+        }
 
-    public QuickComponent translateAuto(String content,Object... value){
-        push(ComponentUtils.plainTextOrTranslate(content,value));
-        return this;
-    }
-    public QuickComponent keybind(String key){
-        push(ComponentUtils.keybind(key));
-        return this;
-    }
+        public Builder append(Component component) {
+            push(component.copy());
+            return this;
+        }
 
-    public QuickComponent score(String objective, String selector){
-        push(ComponentUtils.scoreboard(objective,selector));
-        return this;
-    }
+        private void push(MutableComponent textBase) {
+            if (this.last != null) {
+                component.append(this.last);
+            }
+            this.last = textBase;
+        }
 
-    public QuickComponent blockNBT(String path,boolean interpreting,String pos,@Nullable Component separator){
-        push(ComponentUtils.blockNBT(path,interpreting,pos,separator));
-        return this;
-    }
+        public Builder plaintext(String content) {
+            push(ComponentUtils.plainText(content));
+            return this;
+        }
 
-    public QuickComponent entityNBT(String path,boolean interpreting,String selector,@Nullable Component separator){
-        push(ComponentUtils.entityNBT(path,interpreting,selector,separator));
-        return this;
-    }
+        public Builder translate(String key, Object... value) {
+            push(ComponentUtils.translate(key, value));
+            return this;
+        }
 
-    public QuickComponent storageNBT(String path,boolean interpreting,ResourceID id,@Nullable Component separator){
-        push(ComponentUtils.storageNBT(path,interpreting,id,separator));
-        return this;
-    }
+        public Builder translateAuto(String content, Object... value) {
+            push(ComponentUtils.plainTextOrTranslate(content, value));
+            return this;
+        }
 
-    public QuickComponent color(int rgb) {
-        this.last.withStyle(style -> style.withColor(rgb));
-        return this;
-    }
+        public Builder keybind(String key) {
+            push(ComponentUtils.keybind(key));
+            return this;
+        }
 
-    public QuickComponent bold(boolean bold) {
-        this.last.withStyle(style -> style.withBold(bold));
-        return this;
-    }
+        public Builder score(String objective, String selector) {
+            push(ComponentUtils.scoreboard(objective, selector));
+            return this;
+        }
 
-    public QuickComponent italic(boolean italic) {
-        this.last.withStyle(style -> style.withItalic(italic));
-        return this;
-    }
+        public Builder blockNBT(String path, boolean interpreting, String pos, @Nullable TextBase separator) {
+            push(ComponentUtils.blockNBT(path, interpreting, pos, separator != null ? separator.build() : null));
+            return this;
+        }
 
-    public QuickComponent underlined(boolean underlined) {
-        this.last.withStyle(style -> style.withUnderlined(underlined));
-        return this;
-    }
+        public Builder entityNBT(String path, boolean interpreting, String selector, @Nullable TextBase separator) {
+            push(ComponentUtils.entityNBT(path, interpreting, selector, separator != null ? separator.build() : null));
+            return this;
+        }
 
-    public QuickComponent strikethrough(boolean strikethrough) {
-        this.last.withStyle(style -> style.withStrikethrough(strikethrough));
-        return this;
-    }
+        public Builder storageNBT(String path, boolean interpreting, ResourceID id, @Nullable TextBase separator) {
+            push(ComponentUtils.storageNBT(path, interpreting, id, separator != null ? separator.build() : null));
+            return this;
+        }
 
-    public QuickComponent obfuscated(boolean obfuscated) {
-        this.last.withStyle(style -> style.withObfuscated(obfuscated));
-        return this;
-    }
+        public Builder color(@Nullable Integer rgb) {
+            if (rgb != null) {
+                this.last.withStyle(style -> style.withColor(rgb));
+            }
+            return this;
+        }
 
-    public QuickComponent insertion(String insertion) {
-        this.last.withStyle(style -> style.withInsertion(insertion));
-        return this;
-    }
+        public Builder bold(boolean bold) {
+            this.last.withStyle(style -> style.withBold(bold));
+            return this;
+        }
 
-    public QuickComponent font(ResourceID font) {
-        this.last.withStyle(style -> style.withFont(font));
-        return this;
-    }
+        public Builder italic(boolean italic) {
+            this.last.withStyle(style -> style.withItalic(italic));
+            return this;
+        }
 
-    public QuickComponent openUrl(String url) {
-        this.last.withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url)));
-        return this;
-    }
+        public Builder underlined(boolean underlined) {
+            this.last.withStyle(style -> style.withUnderlined(underlined));
+            return this;
+        }
 
-    public QuickComponent openFile(String file) {
-        this.last.withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, file)));
-        return this;
-    }
+        public Builder strikethrough(boolean strikethrough) {
+            this.last.withStyle(style -> style.withStrikethrough(strikethrough));
+            return this;
+        }
 
-    public QuickComponent runCommand(String command) {
-        this.last.withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command)));
-        return this;
-    }
+        public Builder obfuscated(boolean obfuscated) {
+            this.last.withStyle(style -> style.withObfuscated(obfuscated));
+            return this;
+        }
 
-    public QuickComponent suggestCommand(String command) {
-        this.last.withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command)));
-        return this;
-    }
+        public Builder insertion(String insertion) {
+            this.last.withStyle(style -> style.withInsertion(insertion));
+            return this;
+        }
 
-    public QuickComponent changePage(int page) {
-        this.last.withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.CHANGE_PAGE,
-                String.valueOf(page))));
-        return this;
-    }
+        public Builder font(ResourceID font) {
+            this.last.withStyle(style -> style.withFont(font));
+            return this;
+        }
 
-    public QuickComponent copyToClipboard(String text) {
-        this.last.withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, text)));
-        return this;
-    }
+        public Builder openUrl(String url) {
+            this.last.withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url)));
+            return this;
+        }
 
-    public QuickComponent showText(TextBase text) {
-        this.last.withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, text.build())));
-        return this;
-    }
+        public Builder openFile(String file) {
+            this.last.withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, file)));
+            return this;
+        }
 
-    public QuickComponent showItem(ItemStack itemStack) {
-        this.last.withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM,
-                new HoverEvent.ItemStackInfo(itemStack))));
-        return this;
-    }
+        public Builder runCommand(String command) {
+            this.last.withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command)));
+            return this;
+        }
 
-    public QuickComponent showEntity(EntityType<?> entityType, UUID uuid, TextBase name) {
-        this.last.withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ENTITY,
-                new HoverEvent.EntityTooltipInfo(entityType, uuid, name.build()))));
-        return this;
-    }
+        public Builder suggestCommand(String command) {
+            this.last.withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command)));
+            return this;
+        }
 
-    public MutableComponent build() {
-        return component;
+        public Builder changePage(int page) {
+            this.last.withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.CHANGE_PAGE,
+                    String.valueOf(page))));
+            return this;
+        }
+
+        public Builder copyToClipboard(String text) {
+            this.last.withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, text)));
+            return this;
+        }
+
+        public Builder showText(TextBase text) {
+            this.last.withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, text.build())));
+            return this;
+        }
+
+        public Builder showItem(ItemStack itemStack) {
+            this.last.withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM,
+                    new HoverEvent.ItemStackInfo(itemStack))));
+            return this;
+        }
+
+        public Builder showEntity(EntityType<?> entityType, UUID uuid, TextBase name) {
+            this.last.withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ENTITY,
+                    new HoverEvent.EntityTooltipInfo(entityType, uuid, name.build()))));
+            return this;
+        }
+
+        public MutableComponent build() {
+            if (this.last != null) {
+                component.append(this.last);
+            }
+            return component;
+        }
     }
 
     public static abstract class TextBase {

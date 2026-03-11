@@ -8,18 +8,13 @@ import java.util.function.Consumer
 import java.util.function.Predicate
 import kotlin.collections.ArrayList
 import kotlin.collections.List
-import kotlin.collections.addAll
 import kotlin.collections.arrayListOf
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.flatMap
 import kotlin.collections.forEach
 import kotlin.collections.listOf
 import kotlin.collections.mapOf
-import kotlin.collections.set
 import kotlin.collections.withIndex
-import kotlin.sequences.flatMap
-import kotlin.text.flatMap
 import kotlin.text.indexOf
 import kotlin.text.isEmpty
 import kotlin.text.isNotEmpty
@@ -760,88 +755,91 @@ val publishName = "${mod.displayName} ${mod.version} for ${env.loader} ${env.mcV
 
 tasks {
     processResources {
-    val map = mapOf<String, String>(
-        "modid" to mod.id,
-        "id" to mod.id,
-        "name" to mod.displayName,
-        "display_name" to mod.displayName,
-        "version" to mod.version,
-        "description" to mod.description,
-        "authors" to mod.authors,
-        "github_url" to mod.sourceUrl,
-        "source_url" to mod.sourceUrl,
-        "website" to mod.generalWebsite,
-        "icon" to mod.icon,
-        "fabric_common_entry" to modFabric.commonEntry,
-        "fabric_client_entry" to modFabric.clientEntry,
-        "credits" to mod.credits,
-        "contributors" to mod.credits,
-        "mc_min" to env.mcVersion.min,
-        "mc_max" to env.mcVersion.max,
-        "issue_tracker" to mod.issueTracker,
-        "java_ver" to env.javaVer.toString(),
-        "forgelike_loader_ver" to dynamics.forgelikeLoaderVer,
-        "forgelike_api_ver" to dynamics.forgelikeAPIVer,
-        "loader_id" to env.loader,
-        "license" to mod.license,
-        "mixin_field" to dynamics.mixinField,
-        "aw_field" to dynamics.awField,
-        "dependencies_field" to dynamics.dependenciesField
-    )
-    map.forEach { (key, value) ->
-        inputs.property(key, value)
-    }
-    dynamics.excludes.forEach { file ->
-        exclude(file)
-    }
-    filesMatching("pack.mcmeta") { expand(map) }
-    filesMatching("fabric.mod.json") { expand(map) }
-    filesMatching("META-INF/mods.toml") { expand(map) }
-    filesMatching("META-INF/neoforge.mods.toml") { expand(map) }
-    for (str in modMixins.getMixins(env.type)) {
-        filesMatching(str) { expand(map) }
-    }
-    filesMatching(modAWs.vanillaAW) { expand(map) }
-    filesMatching("src/main/resources/META_INF/accesstransformer.cfg") { expand(map) }
-}
-    register<Copy>("buildAndCollect") {
-    group = "build"
-    from(remapJar.map { it.archiveFile }) {
-        into("mod")
-    }
-    from(remapSourcesJar.map { it.archiveFile }) {
-        into("source")
-    }
-    into(rootProject.layout.buildDirectory.dir("outputs"))
-    dependsOn(build)
-}
-    register<TaskPublishCurseForge>("publishToCurseForge") {
-    group = "publishing"
-    apiToken = System.getenv("CF_API_KEY")
-
-    val dry = false
-
-    val shadowFile = remapJar.get().archiveFile
-    if (dry) {
-        println("[publishToCurseForge] Dry run enabled. Would upload: ${shadowFile.get().asFile}")
-    } else {
-        val projectId = "1367515"
-        val mainFile = upload(projectId, remapJar)
-        mainFile.releaseType = Constants.RELEASE_TYPE_BETA
-        mainFile.displayName = publishName
-        val changelogFile = rootProject.file("CHANGELOG.md")
-        if (changelogFile.exists()) {
-            mainFile.changelog = changelogFile.readText()
+        val map = mapOf<String, String>(
+            "modid" to mod.id,
+            "id" to mod.id,
+            "name" to mod.displayName,
+            "display_name" to mod.displayName,
+            "version" to mod.version,
+            "description" to mod.description,
+            "authors" to mod.authors,
+            "github_url" to mod.sourceUrl,
+            "source_url" to mod.sourceUrl,
+            "website" to mod.generalWebsite,
+            "icon" to mod.icon,
+            "fabric_common_entry" to modFabric.commonEntry,
+            "fabric_client_entry" to modFabric.clientEntry,
+            "credits" to mod.credits,
+            "contributors" to mod.credits,
+            "mc_min" to env.mcVersion.min,
+            "mc_max" to env.mcVersion.max,
+            "issue_tracker" to mod.issueTracker,
+            "java_ver" to env.javaVer.toString(),
+            "forgelike_loader_ver" to dynamics.forgelikeLoaderVer,
+            "forgelike_api_ver" to dynamics.forgelikeAPIVer,
+            "loader_id" to env.loader,
+            "license" to mod.license,
+            "mixin_field" to dynamics.mixinField,
+            "aw_field" to dynamics.awField,
+            "dependencies_field" to dynamics.dependenciesField
+        )
+        map.forEach { (key, value) ->
+            inputs.property(key, value)
         }
-        mainFile.changelogType = "markdown"
-        mainFile.gameVersions.addAll(modPublish.mcTargets)
-        mainFile.addJavaVersion("Java ${env.javaVer}")
-        mainFile.addEnvironment("server", "client")
-        mainFile.addModLoader(env.loader)
-        mainFile.withAdditionalFile(remapSourcesJar.get().archiveFile)
+        dynamics.excludes.forEach { file ->
+            exclude(file)
+        }
+        filesMatching("pack.mcmeta") { expand(map) }
+        filesMatching("fabric.mod.json") { expand(map) }
+        filesMatching("META-INF/mods.toml") { expand(map) }
+        filesMatching("META-INF/neoforge.mods.toml") { expand(map) }
+        for (str in modMixins.getMixins(env.type)) {
+            filesMatching(str) { expand(map) }
+        }
+        filesMatching(modAWs.vanillaAW) { expand(map) }
+        filesMatching("src/main/resources/META_INF/accesstransformer.cfg") { expand(map) }
     }
-    dependsOn(build)
-}
+    register<Copy>("buildAndCollect") {
+        group = "build"
+        from(remapJar.map { it.archiveFile }) {
+            into("mod")
+        }
+        from(remapSourcesJar.map { it.archiveFile }) {
+            into("source")
+        }
+        into(rootProject.layout.buildDirectory.dir("outputs"))
+        dependsOn(build)
+    }
+
+
+
+    register<TaskPublishCurseForge>("publishToCurseForge") {
+        group = "publishing"
+        apiToken = System.getenv("CF_API_KEY")
+
+        val dry = false
+
+        val shadowFile = remapJar.get().archiveFile
+        if (dry) {
+            println("[publishToCurseForge] Dry run enabled. Would upload: ${shadowFile.get().asFile}")
+        } else {
+            val projectId = "1367515"
+            val mainFile = upload(projectId, remapJar)
+            mainFile.releaseType = Constants.RELEASE_TYPE_BETA
+            mainFile.displayName = publishName
+            val changelogFile = rootProject.file("CHANGELOG.md")
+            if (changelogFile.exists()) {
+                mainFile.changelog = changelogFile.readText()
+            }
+            mainFile.changelogType = "markdown"
+            mainFile.gameVersions.addAll(modPublish.mcTargets)
+            mainFile.addJavaVersion("Java ${env.javaVer}")
+            mainFile.addEnvironment("server", "client")
+            mainFile.addModLoader(env.loader)
+            mainFile.withAdditionalFile(remapSourcesJar.get().archiveFile)
+        }
+        dependsOn(build)
+    }
 
 }
 tasks.named("processResources") {
