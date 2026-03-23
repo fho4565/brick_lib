@@ -9,4 +9,4 @@ plugins {
     id("dev.kikugie.fletching-table") version "0.1.0-alpha.22" apply false
 }
 
-stonecutter active "1.18.2-fabric" /* You may have to edit this. Make sure it matches one of the versions present in settings.gradle.kts */
+stonecutter active "1.20.1-forge" /* You may have to edit this. Make sure it matches one of the versions present in settings.gradle.kts */

@@ -253,6 +253,8 @@ class Env {
     // The modloader system is separate from the API in Neo
     val neoforgeLoaderVersion = versionProperty("deps.core.neoforge.loader.version_range")
 
+    fun atLeast(version0: String,version: String) = stonecutter.compare(version0, version) >= 0
+    fun atMost(version0: String,version: String) = stonecutter.compare(version0, version) <= 0
     fun atLeast(version: String) = stonecutter.compare(mcVersion.min, version) >= 0
     fun atMost(version: String) = stonecutter.compare(mcVersion.min, version) <= 0
     fun isNot(version: String) = stonecutter.compare(mcVersion.min, version) != 0
@@ -284,6 +286,11 @@ enum class DepType {
 
     // Implementation
     IMPL,
+    FLETCHINGTABLE {
+        override fun includeInDepsList(): Boolean {
+            return false
+        }
+    },
 
     // Forge Runtime Library
     FRL {
@@ -320,13 +327,7 @@ class APIModInfo(val modid: String?, val curseSlug: String?, val rinthSlug: Stri
  * If modid is null then the API will not be declared as a dependency in uploads.
  * The enable condition determines whether the API will be used for this version.
  */
-class APISource(
-    val type: DepType,
-    val modInfo: APIModInfo,
-    val mavenLocation: String,
-    val versionRange: Optional<VersionRange>,
-    private val enableCondition: Predicate<APISource>
-) {
+class APISource(val type: DepType, val modInfo: APIModInfo, val mavenLocation: String, val versionRange: Optional<VersionRange>, private val enableCondition: Predicate<APISource>) {
     val enabled = this.enableCondition.test(this)
 }
 
@@ -356,7 +357,14 @@ val apis = arrayListOf(
         }
     ) { src ->
         src.versionRange.isPresent && env.isFabric
-    },
+    },APISource(
+        DepType.FLETCHINGTABLE, APIModInfo("CSKdjzLF"),
+        mavenLocation = "",
+        versionRange = Optional.of(VersionRange("1.0.0-beta.3","")),
+        enableCondition = {
+                _ -> true
+        }
+    )
 )
 
 // Stores information about the mod itself.
@@ -405,11 +413,11 @@ class ModMixins {
     fun getMixins(env: EnvType): List<String> {
         val out = arrayListOf<String>()
         if (enableVanillaMixin) out.add(vanillaMixin)
-        when (env) {
-            EnvType.FABRIC -> if (enableFabricMixin) out.add(fabricMixin)
-            EnvType.FORGE -> if (enableForgeMixin) out.add(forgeMixin)
-            EnvType.NEOFORGE -> if (enableNeoforgeMixin) out.add(neoForgeMixin)
-        }
+/*        when (env) {
+            EnvType.FABRIC -> if(enableFabricMixin) out.add(fabricMixin)
+            EnvType.FORGE -> if(enableForgeMixin) out.add(forgeMixin)
+            EnvType.NEOFORGE -> if(enableNeoforgeMixin) out.add(neoForgeMixin)
+        }*/
         return out
     }
 }
@@ -470,8 +478,7 @@ class ModDependencies {
             if (src.enabled && src.type.isOptional() && src.type.includeInDepsList()) src.versionRange.ifPresent { ver ->
                 src.modInfo.modid?.let {
                     cons.accept(it, ver)
-                }
-            }
+            }}
         }
     }
 
@@ -503,8 +510,7 @@ val dependencies = ModDependencies()
  */
 class SpecialMultiversionedConstants {
     private val mandatoryIndicator = if (env.isNeo) "required" else "mandatory"
-    val mixinField =
-        if (env.atLeast("1.20.4") && env.isNeo) neoForgeMixinField() else if (env.isFabric) fabricMixinField() else ""
+    val mixinField = if (env.atLeast("1.20.4") && env.isNeo) neoForgeMixinField() else if (env.isFabric) fabricMixinField() else ""
     val awField = if (env.isFabric) "  \"accessWidener\" : \"brick_lib_core.accesswidener\"," else ""
 
     val forgelikeLoaderVer =
@@ -607,7 +613,7 @@ apis.forEach { src ->
     src.modInfo.modid?.let {
         stonecutter.constants[it] = src.enabled
         src.versionRange.ifPresent { ver ->
-            stonecutter.dependencies[it] = ver.min
+            stonecutter.dependencies[it] = ver.min;
         }
     }
 }
@@ -616,14 +622,14 @@ apis.forEach { src ->
 stonecutter.constants["fabric"] = env.isFabric
 stonecutter.constants["forge"] = env.isForge
 stonecutter.constants["neoforge"] = env.isNeo
+stonecutter.constants["forgelike"] = env.isForge || env.isNeo
 stonecutter.constants["newnf"] = env.isNeo && env.atLeast("1.20.4")
 stonecutter.constants["oldnf"] = env.isNeo && env.atMost("1.20.3")
 
 
 
 loom {
-    val file = file("../../" + modAWs.getAWs())
-    accessWidenerPath = file
+    accessWidenerPath = file("../../"+modAWs.getAWs())
     silentMojangMappingsLicense()
     if (env.isForge) forge {
         for (mixin in modMixins.getMixins(EnvType.FORGE)) {
@@ -640,7 +646,7 @@ loom {
     }
 
     runConfigs.all {
-        ideConfigGenerated(stonecutter.current.isActive)
+        ideConfigGenerated(true)
         vmArgs("-Dmixin.debug.export=true")
         runDir = "../../run"
     }
@@ -651,7 +657,7 @@ dependencies {
     minecraft("com.mojang:minecraft:${env.mcVersion.min}")
 
     testImplementation(platform("org.junit:junit-bom:5.13.4"))
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     if (env.atMost("1.19.2")) {
@@ -665,7 +671,6 @@ dependencies {
             parchment("org.parchmentmc.data:parchment-${env.mcVersion.min}:${env.parchmentVersions[env.mcVersion.min]}@zip")
         }
     })
-    modImplementation(fletchingTable.modrinth("brick-lib-api", env.mcVersion.min, env.loader))
 
     if (env.isFabric) {
         modImplementation("net.fabricmc:fabric-loader:${env.fabricLoaderVersion.min}")
@@ -697,6 +702,22 @@ dependencies {
                     modImplementation("${src.mavenLocation}:${ver.min}")
                     include("${src.mavenLocation}:${ver.min}")
                 }
+                if (src.type == DepType.FLETCHINGTABLE) {
+                    src.modInfo.modid?.let {
+                        val dependency = fletchingTable.modrinth(it, env.mcVersion.min, env.loader){
+                            constraint.set { it0 -> env.atLeast(it0.version,src.versionRange.orElse(VersionRange("0","")).min) }
+                        }
+                        println("Found dependency : "+
+                                "\ngroup :"+dependency.group+
+                                "\nname :"+dependency.name+
+                                "\nversion :"+dependency.version+
+                                "\nreason :"+dependency.reason
+                        )
+                        modCompileOnly(dependency)
+                        modRuntimeOnly(dependency)
+                        modImplementation(dependency)
+                    }
+                }
             }
         }
     }
@@ -707,8 +728,17 @@ dependencies {
 java {
     withSourcesJar()
     //TODO 这是需要更新的 Java。
-    val java =
-        if (env.javaVer == 8) JavaVersion.VERSION_1_8 else if (env.javaVer == 17) JavaVersion.VERSION_17 else JavaVersion.VERSION_21
+    val java = when (env.javaVer) {
+        8 -> {
+            JavaVersion.VERSION_1_8
+        }
+        17 -> {
+            JavaVersion.VERSION_17
+        }
+        else -> {
+            JavaVersion.VERSION_21
+        }
+    }
     targetCompatibility = java
     sourceCompatibility = java
 }
@@ -789,8 +819,12 @@ tasks {
         dynamics.excludes.forEach { file ->
             exclude(file)
         }
-        filesMatching("pack.mcmeta") { expand(map) }
-        filesMatching("fabric.mod.json") { expand(map) }
+        filesMatching("pack.mcmeta") {
+            expand(map)
+        }
+        filesMatching("fabric.mod.json") {
+            expand(map)
+        }
         filesMatching("META-INF/mods.toml") { expand(map) }
         filesMatching("META-INF/neoforge.mods.toml") { expand(map) }
         for (str in modMixins.getMixins(env.type)) {
@@ -883,7 +917,8 @@ publishMods {
         accessToken = providers.environmentVariable("M_API_KEY")
         minecraftVersions.addAll(modPublish.mcTargets)
         apis.forEach { src ->
-            if (src.enabled) src.versionRange.ifPresent { ver ->
+            if (src.enabled) {
+                src.versionRange.ifPresent { ver ->
                 if (src.type.isOptional()) {
                     src.modInfo.rinthSlug?.let {
                         optional {
@@ -903,4 +938,5 @@ publishMods {
             }
         }
     }
+}
 }
